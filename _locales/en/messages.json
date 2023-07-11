@@ -1,0 +1,185 @@
+{
+    "extensionDescription": {
+        "message": "Mouse gestures, right-click + wheel to control the browser."
+    },
+    "back": {
+        "message": "Go back"
+    },
+    "forward": {
+        "message": "Go forward"
+    },
+    "scrollup": {
+        "message": "Scroll up"
+    },
+    "scrolldown": {
+        "message": "Scroll down"
+    },
+    "scrollleft": {
+        "message": "Scroll left"
+    },
+    "scrollright": {
+        "message": "Scroll right"
+    },
+    "scrolltotop": {
+        "message": "Scroll to top"
+    },
+    "scrolltobottom": {
+        "message": "Scroll to bottom"
+    },
+    "createtab": {
+        "message": "New tab"
+    },
+    "duplicatetab": {
+        "message": "Duplicate tab"
+    },
+    "closetab": {
+        "message": "Close tab"
+    },
+    "closetableftall": {
+        "message": "Close tabs to the left"
+    },
+    "closetabrightall": {
+        "message": "Close tabs to the right"
+    },
+    "closetabotherall": {
+        "message": "Close other tabs"
+    },
+    "reopenclosedtab": {
+        "message": "Reopen closed tab"
+    },
+    "reloadtab": {
+        "message": "Reload"
+    },
+    "reloadtabhard": {
+        "message": "Hard reload "
+    },
+    "gotolefttab": {
+        "message": "Go to left tab"
+    },
+    "gotorighttab": {
+        "message": "Go to right tab"
+    },
+    "gotolefttabwithloop": {
+        "message": "Go to left tab (or the other side if at the edge)"
+    },
+    "gotorighttabwithloop": {
+        "message": "Go to right tab (or the other side if at the edge)"
+    },
+    "gotomostlefttab": {
+        "message": "Go to the leftmost tab"
+    },
+    "gotomostrighttab": {
+        "message": "Go to the rightmost tab"
+    },
+    "openoptionspage": {
+        "message": "Open options"
+    },
+    "addbookmark": {
+        "message": "Add bookmark"
+    },
+    "deletebookmark": {
+        "message": "Delete bookmark"
+    },
+    "createwindow": {
+        "message": "New window"
+    },
+    "closewindow": {
+        "message": "Close window"
+    },
+    "closewindowall": {
+        "message": "Close all windows"
+    },
+    "maximizewindow": {
+        "message": "Maximize window"
+    },
+    "minimizewindow": {
+        "message": "Minimize window"
+    },
+    "fullscreenwindow": {
+        "message": "Fullscreen"
+    },
+    "copyurl": {
+        "message": "Copy url"
+    },
+    "copytitle": {
+        "message": "Copy title"
+    },
+    "mutetab": {
+        "message": "Mute"
+    },
+    "unmutetab": {
+        "message": "Unmute"
+    },
+    "mutetabtoggle": {
+        "message": "Toggle mute"
+    },
+    "mutetaball": {
+        "message": "Mute all tabs"
+    },
+    "unmutetaball": {
+        "message": "Unmute all tabs"
+    },
+    "zoomin": {
+        "message": "Zoom in"
+    },
+    "zoomout": {
+        "message": "Zoom out"
+    },
+    "zoomdefault": {
+        "message": "Reset to default zoom level"
+    },
+    "disableextension": {
+        "message": "Disable this extension on this tab"
+    },
+    "messageCopied": {
+        "message": "Copied."
+    },
+    "optionsPageTitle": {
+        "message": "Options"
+    },
+    "optionsPageTitleWheelAction": {
+        "message": "Wheel Action"
+    },
+    "optionsEnableWheelAction": {
+        "message": "Enabled wheel action"
+    },
+    "optionsTableRightClickWheelUp": {
+        "message": "Wheel up while holding down the right mouse button"
+    },
+    "optionsTableRightClickWheelDown": {
+        "message": "Wheel down while holding down the right mouse button"
+    },
+    "optionsSelectOptionNone": {
+        "message": "None"
+    },
+    "optionsPageTitleMouseGesture": {
+        "message": "Mouse Gesture"
+    },
+    "optionsEnableMouseGesture": {
+        "message": "Enabled mouse gesture"
+    },
+    "optionsPageTableHeadGesture": {
+        "message": "Gesture"
+    },
+    "optionsPageTableHeadAction": {
+        "message": "Action"
+    },
+    "optionsAddMouseGestureDescription": {
+        "message": "Move the mouse while holding down the right mouse button"
+    },
+    "optionsSelectAction": {
+        "message": "Select action for gesture"
+    },
+    "optionsAdd": {
+        "message": "Add"
+    },
+    "optionsCancel": {
+        "message": "Cancel"
+    },
+    "optionsDelete": {
+        "message": "Delete"
+    },
+    "optionsReset": {
+        "message": "Restore default settings"
+    }
+}

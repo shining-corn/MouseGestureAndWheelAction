@@ -1,0 +1,185 @@
+{
+    "extensionDescription": {
+        "message": "マウスジェスチャー、右クリック＋ホイールによるブラウザの操作。"
+    },
+    "back": {
+        "message": "戻る"
+    },
+    "forward": {
+        "message": "進む"
+    },
+    "scrollup": {
+        "message": "上にスクロール"
+    },
+    "scrolldown": {
+        "message": "下にスクロール"
+    },
+    "scrollleft": {
+        "message": "左にスクロール"
+    },
+    "scrollright": {
+        "message": "右にスクロール"
+    },
+    "scrolltotop": {
+        "message": "一番上にスクロール"
+    },
+    "scrolltobottom": {
+        "message": "一番下にスクロール"
+    },
+    "createtab": {
+        "message": "新しいタブ"
+    },
+    "duplicatetab": {
+        "message": "タブを複製"
+    },
+    "closetab": {
+        "message": "タブを閉じる"
+    },
+    "closetableftall": {
+        "message": "左側のタブをすべて閉じる"
+    },
+    "closetabrightall": {
+        "message": "右側のタブをすべて閉じる"
+    },
+    "closetabotherall": {
+        "message": "他のタブをすべて閉じる"
+    },
+    "reopenclosedtab": {
+        "message": "閉じたタブを開く"
+    },
+    "reloadtab": {
+        "message": "再読み込み"
+    },
+    "reloadtabhard": {
+        "message": "再読み込み（キャッシュ無視）"
+    },
+    "gotolefttab": {
+        "message": "左のタブに移動"
+    },
+    "gotorighttab": {
+        "message": "右のタブに移動"
+    },
+    "gotolefttabwithloop": {
+        "message": "左のタブに移動（端の場合は反対側に移動）"
+    },
+    "gotorighttabwithloop": {
+        "message": "右のタブに移動（端の場合は反対側に移動）"
+    },
+    "gotomostlefttab": {
+        "message": "左端のタブに移動"
+    },
+    "gotomostrighttab": {
+        "message": "右端のタブに移動"
+    },
+    "openoptionspage": {
+        "message": "オプションを開く"
+    },
+    "addbookmark": {
+        "message": "ブックマークに追加"
+    },
+    "deletebookmark": {
+        "message": "ブックマークを削除"
+    },
+    "createwindow": {
+        "message": "新しいウィンドウ"
+    },
+    "closewindow": {
+        "message": "ウィンドウを閉じる"
+    },
+    "closewindowall": {
+        "message": "すべてのウィンドウを閉じる"
+    },
+    "maximizewindow": {
+        "message": "ウィンドウを最大化"
+    },
+    "minimizewindow": {
+        "message": "ウィンドウを最小化"
+    },
+    "fullscreenwindow": {
+        "message": "フルスクリーン"
+    },
+    "copyurl": {
+        "message": "URLをコピー"
+    },
+    "copytitle": {
+        "message": "タイトルをコピー"
+    },
+    "mutetab": {
+        "message": "タブをミュート"
+    },
+    "unmutetab": {
+        "message": "タブのミュートを解除"
+    },
+    "mutetabtoggle": {
+        "message": "タブのミュートを切り替え"
+    },
+    "mutetaball": {
+        "message": "すべてのタブをミュート"
+    },
+    "unmutetaball": {
+        "message": "すべてのタブをミュート解除"
+    },
+    "zoomin": {
+        "message": "ズームイン"
+    },
+    "zoomout": {
+        "message": "ズームアウト"
+    },
+    "zoomdefault": {
+        "message": "ズームをリセット"
+    },
+    "disableextension": {
+        "message": "このタブでこの拡張機能を無効化"
+    },
+    "messageCopied": {
+        "message": "コピーしました。"
+    },
+    "optionsPageTitle": {
+        "message": "設定"
+    },
+    "optionsPageTitleWheelAction": {
+        "message": "ホイールアクション"
+    },
+    "optionsEnableWheelAction": {
+        "message": "ホイールアクションを使用する"
+    },
+    "optionsTableRightClickWheelUp": {
+        "message": "マウス右ボタンを押しながらホイール回転：上"
+    },
+    "optionsTableRightClickWheelDown": {
+        "message": "マウス右ボタンを押しながらホイール回転：下"
+    },
+    "optionsSelectOptionNone": {
+        "message": "なし"
+    },
+    "optionsPageTitleMouseGesture": {
+        "message": "マウスジェスチャー"
+    },
+    "optionsEnableMouseGesture": {
+        "message": "マウスジェスチャーを使用する"
+    },
+    "optionsPageTableHeadGesture": {
+        "message": "ジェスチャー"
+    },
+    "optionsPageTableHeadAction": {
+        "message": "動作"
+    },
+    "optionsAddMouseGestureDescription": {
+        "message": "マウスの右ボタンを押しながらマウスを移動"
+    },
+    "optionsSelectAction": {
+        "message": "ジェスチャーに対する動作を選択"
+    },
+    "optionsAdd": {
+        "message": "追加"
+    },
+    "optionsCancel": {
+        "message": "キャンセル"
+    },
+    "optionsDelete": {
+        "message": "削除"
+    },
+    "optionsReset": {
+        "message": "デフォルト設定に戻す"
+    }
+}
