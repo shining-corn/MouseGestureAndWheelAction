@@ -75,7 +75,10 @@
         "message": "オプションを開く"
     },
     "addbookmark": {
-        "message": "ブックマークに追加"
+        "message": "ブックマークバーに追加"
+    },
+    "upsertbookmark": {
+        "message": "ブックマークを追加"
     },
     "deletebookmark": {
         "message": "ブックマークを削除"
@@ -134,8 +137,35 @@
     "messageCopied": {
         "message": "コピーしました。"
     },
+    "strBookmarkDialogTitleAdd": {
+        "message": "ブックマークを追加"  
+    },
+    "strBookmarkDialogTitleEdit": {
+        "message": "ブックマークを編集"  
+    },
+    "strBookmarkDialogName": {
+        "message": "名前"
+    },
+    "strBookmarkDialogUrl": {
+        "message": "URL"
+    },
+    "strBookmarkDialogFolder": {
+        "message": "フォルダ"
+    },
+    "strClose": {
+        "message": "×"
+    },
+    "strCancel": {
+        "message": "キャンセル"
+    },
+    "strDelete": {
+        "message": "削除"
+    },
+    "strOk": {
+        "message": "OK"
+    },
     "optionsPageTitle": {
-        "message": "設定"
+        "message": "Mouse Gesture and Wheel Action 設定"
     },
     "optionsPageTitleWheelAction": {
         "message": "ホイールアクション"
@@ -172,12 +202,6 @@
     },
     "optionsAdd": {
         "message": "追加"
-    },
-    "optionsCancel": {
-        "message": "キャンセル"
-    },
-    "optionsDelete": {
-        "message": "削除"
     },
     "optionsReset": {
         "message": "デフォルト設定に戻す"

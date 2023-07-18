@@ -106,6 +106,9 @@ function getGestureActions() {
         addbookmark: () => {
             sendMessage({ action: 'addbookmark', bookmark: { title: document.title, url: document.location.href } });
         },
+        upsertbookmark: () => {
+            sendMessage({ action: 'upsertbookmark', bookmark: { title: document.title, url: document.location.href } });
+        },
         deletebookmark: () => {
             sendMessage({ action: 'deletebookmark', bookmark: { url: document.location.href } });
         },
@@ -202,12 +205,12 @@ class ExtensionOption {
                     { gesture: '↑→', action: 'gotorighttabwithloop' },
                     { gesture: '↑←↓', action: 'gotomostlefttab' },
                     { gesture: '↑→↓', action: 'gotomostrighttab' },
-                    { gesture: '←↑', action: 'addbookmark' },
+                    { gesture: '←↑', action: 'upsertbookmark' },
                     { gesture: '←↓', action: 'deletebookmark' },
                     { gesture: '←→', action: 'mutetabtoggle' }
                 ]
             };
-            await chrome.storage.local.set({ 'options': this.options });
+            await chrome.storage.local.set({ options: this.options });
         }
     }
 

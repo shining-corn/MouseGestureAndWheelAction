@@ -75,6 +75,9 @@
         "message": "Open options"
     },
     "addbookmark": {
+        "message": "Add to bookmarks bar"
+    },
+    "upsertbookmark": {
         "message": "Add bookmark"
     },
     "deletebookmark": {
@@ -134,8 +137,35 @@
     "messageCopied": {
         "message": "Copied."
     },
+    "strBookmarkDialogTitleAdd": {
+        "message": "Add Bookmark"  
+    },
+    "strBookmarkDialogTitleEdit": {
+        "message": "Edit Bookmark"  
+    },
+    "strBookmarkDialogName": {
+        "message": "Name"
+    },
+    "strBookmarkDialogUrl": {
+        "message": "URL"
+    },
+    "strBookmarkDialogFolder": {
+        "message": "Folder"
+    },
+    "strClose": {
+        "message": "×"
+    },
+    "strCancel": {
+        "message": "Cancel"
+    },
+    "strDelete": {
+        "message": "Delete"
+    },
+    "strOk": {
+        "message": "OK"
+    },
     "optionsPageTitle": {
-        "message": "Options"
+        "message": "Mouse Gesture and Wheel Action Options"
     },
     "optionsPageTitleWheelAction": {
         "message": "Wheel Action"
@@ -172,12 +202,6 @@
     },
     "optionsAdd": {
         "message": "Add"
-    },
-    "optionsCancel": {
-        "message": "Cancel"
-    },
-    "optionsDelete": {
-        "message": "Delete"
     },
     "optionsReset": {
         "message": "Restore default settings"

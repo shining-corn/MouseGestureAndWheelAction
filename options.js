@@ -301,7 +301,7 @@ function render(options) {
         const operationColumnElement = document.createElement('td');
         const deleteButtonElement = document.createElement('button');
         operationColumnElement.appendChild(deleteButtonElement);
-        deleteButtonElement.dataset.i18n = 'optionsDelete';
+        deleteButtonElement.dataset.i18n = 'strDelete';
         deleteButtonElement.addEventListener('click', () => {
             (async () => {
                 await options.removeGesture(gestureSetting.gesture);

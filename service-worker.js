@@ -129,7 +129,7 @@ class MouseGestureService {
                         chrome.sessions.getRecentlyClosed((sessions) => {
                             (async () => {
                                 if (sessions && sessions[0]) {
-                                    await chrome.sessions.restore(sessions[0].tab ? sessions[0].tab.sessionId: sessions[0].window.sessionId);
+                                    await chrome.sessions.restore(sessions[0].tab ? sessions[0].tab.sessionId : sessions[0].window.sessionId);
                                 }
                             })();
                         });
@@ -180,15 +180,66 @@ class MouseGestureService {
                         chrome.runtime.openOptionsPage();
                         break;
                     case 'addbookmark':
-                        chrome.bookmarks.search({url: request.bookmark.url}, (result) => {
+                        chrome.bookmarks.search({ url: request.bookmark.url }, (result) => {
                             if (result.length === 0) {
                                 request.bookmark.parentId = "1";
                                 chrome.bookmarks.create(request.bookmark);
                             }
                         });
                         break;
+                    case 'upsertbookmark':
+                        (async () => {
+                            let existsBookmark = true;
+
+                            const existingBookmarks = await chrome.bookmarks.search({ url: request.bookmark.url });
+                            if (existingBookmarks.length === 0) {
+                                const data = await chrome.storage.local.get(['defaultBookmarkFolder']);
+                                if (data && data.defaultBookmarkFolder) {
+                                    request.bookmark.parentId = data.defaultBookmarkFolder;
+                                }
+                                else {
+                                    request.bookmark.parentId = "1";
+                                }
+                                chrome.bookmarks.create(request.bookmark);
+
+                                existsBookmark = false;
+                            }
+
+                            const tree = await chrome.bookmarks.getTree();
+                            sendMessageToTabs({ type: 'upsertbookmarkresponse', bookmarks: tree, existsBookmark: existsBookmark }, [sender.tab]);
+                        })();
+                        break;
+                    case 'editbookmark':
+                        (async () => {
+                            let existingBookmark = undefined;
+                            if (request.bookmark.id) {
+                                try {
+                                    existingBookmark = await chrome.bookmarks.get(request.bookmark.id);
+                                    if (existingBookmark) {
+                                        existingBookmark = existingBookmark[0];
+                                    }
+                                }
+                                catch (_) {
+                                    // DO NOTHING
+                                }
+                            }
+
+                            if (existingBookmark) {
+                                if (existingBookmark.parentId === request.bookmark.parentId) {
+                                    await chrome.bookmarks.update(request.bookmark.id, { title: request.bookmark.title, url: request.bookmark.url });
+                                }
+                                else {
+                                    await chrome.bookmarks.remove(request.bookmark.id);
+                                    await chrome.bookmarks.create({ title: request.bookmark.title, url: request.bookmark.url, parentId: request.bookmark.parentId });
+                                }
+                            }
+                            else {
+                                await chrome.bookmarks.create({ title: request.bookmark.title, url: request.bookmark.url, parentId: request.bookmark.parentId });
+                            }
+                        })();
+                        break;
                     case 'deletebookmark':
-                        chrome.bookmarks.search({url: request.bookmark.url}, (result) => {
+                        chrome.bookmarks.search({ url: request.bookmark.url }, (result) => {
                             for (const bookmark of result) {
                                 chrome.bookmarks.remove(bookmark.id);
                             }
@@ -304,4 +355,9 @@ class MouseGestureService {
     }
 }
 
+chrome.runtime.onInstalled.addListener((details) => {
+    if (details.reason === 'install') {
+        chrome.runtime.openOptionsPage();
+    }
+});
 (new MouseGestureService()).start();
