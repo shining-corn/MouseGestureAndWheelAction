@@ -306,11 +306,19 @@ class MouseGestureClient {
             global.shouldPreventContextMenu = false;
         });
 
-        window.addEventListener('mousedown', (event) => {
+        const gestureInit = (event) => {
             if (this.enabled && this.options.enabledMouseGesture && (event.buttons & 2) === 2) {
                 this.previousPoint = { x: event.clientX, y: event.clientY };
             }
-        });
+        };
+        window.addEventListener('mousedown', gestureInit);
+        window.onload = () => {
+            // Fix missing mousedown event of code view textarea in github
+            if (window.location.hostname === "github.com") {
+                document.getElementById('read-only-cursor-text-area')?.addEventListener('mousedown', gestureInit);
+            }
+        };
+        
 
         window.addEventListener('mousemove', (event) => {
             const MINIMUM_DISTANCE = 16;
