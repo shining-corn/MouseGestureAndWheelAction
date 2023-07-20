@@ -312,13 +312,17 @@ class MouseGestureClient {
             }
         };
         window.addEventListener('mousedown', gestureInit);
-        window.onload = () => {
-            // Fix missing mousedown event of code view textarea in github
-            if (window.location.hostname === "github.com") {
-                document.getElementById('read-only-cursor-text-area')?.addEventListener('mousedown', gestureInit);
-            }
-        };
-        
+        // Fix missing mousedown event of code view textarea in github
+        if (window.location.hostname === "github.com") {
+            const listenId = 'read-only-cursor-text-area';
+            new MutationObserver(mutationList => 
+                mutationList.flatMap(mutationRecord => [...mutationRecord.addedNodes]
+                    .filter(n => n.nodeType === 1 ? n.querySelector(`#${listenId}`) : (n.id === listenId ? n : false))
+                    .flatMap(ns => ns)
+                ).forEach(n => n.addEventListener('mousedown', gestureInit))
+            ).observe(document, { childList: true, subtree: true, attributes: false, characterData: false });
+        }
+
 
         window.addEventListener('mousemove', (event) => {
             const MINIMUM_DISTANCE = 16;
