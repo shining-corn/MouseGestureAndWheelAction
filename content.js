@@ -7,7 +7,6 @@ function sendMessage(request) {
 
 function createBackgroundElement(isCentering) {
     const element = document.createElement('div');
-    element.style.all = 'revert';
     element.style.all = 'initial';
     element.style.width = '100vw';
     element.style.height = '100vh';
