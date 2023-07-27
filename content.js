@@ -35,6 +35,7 @@ function createCenteringElement() {
     return element;
 }
 
+// IFRAME間で共有する変数
 const global = new class {
     constructor() {
         this.variables = {
@@ -154,10 +155,12 @@ class ShowArrowsElements {
         this.backgroundElement = createBackgroundElement(true);
         this.backgroundElement.style.zIndex = 16777270;
         this.backgroundElement.style.backgroundColor = 'transparent';
+        this.backgroundElement.style.pointerEvents = 'none'; // 特定のIFRAME（主にブラウザゲーム）でマウスジェスチャ可能にするために必要
 
         this.centeringElement = createCenteringElement();
         this.backgroundElement.appendChild(this.centeringElement);
         this.centeringElement.style.textAlign = 'center';
+        this.centeringElement.style.pointerEvents = 'none';
 
         this.actionNameArea = document.createElement('div');
         this.centeringElement.appendChild(this.actionNameArea);
@@ -173,6 +176,7 @@ class ShowArrowsElements {
         this.actionNameArea.style.color = 'rgba(239, 239, 255, 0.9)';
         this.actionNameArea.style.backgroundColor = 'rgba(0, 0, 32, 0.9)';
         this.actionNameArea.style.display = 'none';
+        this.actionNameArea.style.pointerEvents = 'none';
 
         this.arrowArea = document.createElement('div');
         this.centeringElement.appendChild(this.arrowArea);
@@ -192,6 +196,7 @@ class ShowArrowsElements {
         this.arrowArea.style.width = 'fit-content';
         this.arrowArea.style.height = 'fit-content';
         this.arrowArea.style.overflowWrap = 'anywhere';
+        this.arrowArea.style.pointerEvents = 'none';
 
         window.addEventListener('message', (event) => {
             if (event.data.extensionId !== chrome.runtime.id) {
@@ -286,7 +291,7 @@ class MouseGestureClient {
                 // マウスジェスチャー中の場合はそれをキャンセルする
                 this.resetGesture();
             })();
-        }, { passive: false });
+        }, { capture: true, passive: false });
 
         chrome.runtime.onMessage.addListener((request) => {
             if (request.extensionId !== chrome.runtime.id) {
@@ -305,24 +310,13 @@ class MouseGestureClient {
             global.shouldPreventContextMenu = false;
         });
 
-        const gestureInit = (event) => {
+        window.addEventListener('mousedown', (event) => {
             if (this.enabled && this.options.enabledMouseGesture && (event.buttons & 2) === 2) {
                 this.previousPoint = { x: event.clientX, y: event.clientY };
             }
-        };
-        window.addEventListener('mousedown', gestureInit);
-        // Fix missing mousedown event of code view textarea in github
-        if (window.location.hostname === "github.com") {
-            const listenId = 'read-only-cursor-text-area';
-            const ELEMENT_NODE = 1;
-            new MutationObserver(mutationList => 
-                mutationList.flatMap(mutationRecord => [...mutationRecord.addedNodes]
-                    .filter(n => n.nodeType === ELEMENT_NODE ? n.querySelector(`#${listenId}`) : (n.id === listenId ? n : false))
-                    .flatMap(ns => ns)
-                ).forEach(n => n.addEventListener('mousedown', gestureInit))
-            ).observe(document, { childList: true, subtree: true, attributes: false, characterData: false });
-        }
-
+        }, {
+            capture: true  // WEBサイト上の他のスクリプトのstopImmediatePropagation()への対処
+        });
 
         window.addEventListener('mousemove', (event) => {
             const MINIMUM_DISTANCE = 16;
@@ -361,6 +355,8 @@ class MouseGestureClient {
                     }
                 }
             }
+        }, {
+            capture: true
         });
 
         window.addEventListener('mouseup', (event) => {
@@ -368,17 +364,18 @@ class MouseGestureClient {
                 getRootWindow().postMessage({
                     extensionId: chrome.runtime.id,
                     type: 'done-gesture'
-                },
-                    '*');
+                }, '*');
                 this.doneGesture();
             }
+        }, {
+            capture: true  // WEBサイト上の他のスクリプトのstopImmediatePropagation()への対処
         });
 
         window.addEventListener('message', (event) => {
             if (event.data.extensionId === chrome.runtime.id && event.data.type === 'disable-mousegesture') {
                 this.enabled = false;
             }
-        })
+        });
     }
 
     doneGesture() {

@@ -11,7 +11,7 @@ function getRootWindow() {
 }
 
 function computeDirection(x, y) {
-    const THRESHOLD = Math.PI / 8;
+    const THRESHOLD = Math.PI / 8;  // 斜め方向を無視
     const radian = Math.atan2(y, x);
     if (Math.abs(radian) <= THRESHOLD) {
         return '→';

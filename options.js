@@ -42,8 +42,8 @@ class OptionGestureElements {
         this.descriptionElement.style.height = 'fit-content';
         this.descriptionElement.style.backgroundColor = 'transparent';
         this.descriptionElement.innerText = description;
-        this.descriptionElement.style.pointerEvents = 'none';
-        this.descriptionElement.style.userSelect = 'none';
+        this.descriptionElement.style.pointerEvents = 'none';   // マウスジェスチャ中に左クリックでテキストを選択すると誤動作するので抑制
+        this.descriptionElement.style.userSelect = 'none';      // 同上
 
         this.arrowsElement = document.createElement('div');
         this.centerBox.appendChild(this.arrowsElement);
