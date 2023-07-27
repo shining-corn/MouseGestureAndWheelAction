@@ -42,6 +42,8 @@ class OptionGestureElements {
         this.descriptionElement.style.height = 'fit-content';
         this.descriptionElement.style.backgroundColor = 'transparent';
         this.descriptionElement.innerText = description;
+        this.descriptionElement.style.pointerEvents = 'none';
+        this.descriptionElement.style.userSelect = 'none';
 
         this.arrowsElement = document.createElement('div');
         this.centerBox.appendChild(this.arrowsElement);
@@ -59,6 +61,8 @@ class OptionGestureElements {
         this.arrowsElement.style.height = 'fit-content';
         this.arrowsElement.style.overflowWrap = 'anywhere';
         this.arrowsElement.style.backgroundColor = 'transparent';
+        this.arrowsElement.style.pointerEvents = 'none';
+        this.arrowsElement.style.userSelect = 'none';
 
         this.canvasElement = document.createElement('canvas');
         this.conainerElement.appendChild(this.canvasElement);
