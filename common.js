@@ -1,3 +1,7 @@
+function isRootWindow() {
+    return window === window.parent;
+}
+
 function isInIFrame() {
     return window !== window.parent;
 }

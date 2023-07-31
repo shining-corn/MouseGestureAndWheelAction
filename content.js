@@ -61,7 +61,7 @@ const global = new class {
                     break;
                 case 'mouse-extension-sync':
                     this.variables = event.data.variables;
-                    if (!isInIFrame()) {
+                    if (isRootWindow()) {
                         this.sync();
                     }
                     break;
@@ -710,7 +710,7 @@ class BookMarkEditDialogElements {
     let options = new ExtensionOption();
     await options.loadFromStrageLocal();
     new MouseGestureClient(options).start();
-    if (!isInIFrame()) {
+    if (isRootWindow()) {
         new ShowArrowsElements(options);
         (new BookMarkEditDialogElements()).start();
     }
