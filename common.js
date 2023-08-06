@@ -1,3 +1,10 @@
+function sendMessage(request) {
+    (async () => {
+        request.extensionId = chrome.runtime.id;
+        await chrome.runtime.sendMessage(request);
+    })();
+}
+
 function isRootWindow() {
     return window === window.parent;
 }

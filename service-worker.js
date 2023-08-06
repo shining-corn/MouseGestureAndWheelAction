@@ -69,6 +69,10 @@ function activateMostRightTab(allTabs, shouldPreventContextMenu) {
 }
 
 class MouseGestureService {
+    constructor() {
+        this.previousWindowState = [];
+    }
+
     start() {
         chrome.runtime.onMessage.addListener(
             (request, sender) => {
@@ -252,8 +256,8 @@ class MouseGestureService {
                         break;
                     case 'closewindow':
                         {
-                            const p = chrome.windows.getCurrent();
-                            p.then((w) => {
+                            const window = chrome.windows.getCurrent();
+                            window.then((w) => {
                                 (async () => {
                                     await chrome.windows.remove(w.id);
                                 })();
@@ -262,8 +266,8 @@ class MouseGestureService {
                         break;
                     case 'closewindowall':
                         {
-                            const p = chrome.windows.getAll();
-                            p.then((ws) => {
+                            const window = chrome.windows.getAll();
+                            window.then((ws) => {
                                 for (const w of ws) {
                                     (async () => {
                                         await chrome.windows.remove(w.id);
@@ -274,18 +278,29 @@ class MouseGestureService {
                         break;
                     case 'maximizewindow':
                         {
-                            const p = chrome.windows.getCurrent();
-                            p.then((w) => {
+                            const window = chrome.windows.getCurrent();
+                            window.then((w) => {
                                 (async () => {
-                                    await chrome.windows.update(w.id, { state: 'maximized' });
+                                    if (w.state !== 'maximized') {
+                                        this.previousWindowState[w.id] = w.state;
+                                        await chrome.windows.update(w.id, { state: 'maximized' });
+                                    }
+                                    else {
+                                        if (this.previousWindowState[w.id]) {
+                                            await chrome.windows.update(w.id, { state: this.previousWindowState[w.id] });
+                                        }
+                                        else {
+                                            await chrome.windows.update(w.id, { state: 'normal' });
+                                        }
+                                    }
                                 })();
                             });
                         }
                         break;
                     case 'minimizewindow':
                         {
-                            const p = chrome.windows.getCurrent();
-                            p.then((w) => {
+                            const window = chrome.windows.getCurrent();
+                            window.then((w) => {
                                 (async () => {
                                     await chrome.windows.update(w.id, { state: 'minimized' });
                                 })();
@@ -294,10 +309,21 @@ class MouseGestureService {
                         break;
                     case 'fullscreenwindow':
                         {
-                            const p = chrome.windows.getCurrent();
-                            p.then((w) => {
+                            const window = chrome.windows.getCurrent();
+                            window.then((w) => {
                                 (async () => {
-                                    await chrome.windows.update(w.id, { state: 'fullscreen' });
+                                    if (w.state !== 'fullscreen') {
+                                        this.previousWindowState[w.id] = w.state;
+                                        await chrome.windows.update(w.id, { state: 'fullscreen' });
+                                    }
+                                    else {
+                                        if (this.previousWindowState[w.id]) {
+                                            await chrome.windows.update(w.id, { state: this.previousWindowState[w.id]});
+                                        }
+                                        else {
+                                            await chrome.windows.update(w.id, { state: 'maximized' });
+                                        }
+                                    }
                                 })();
                             });
                         }

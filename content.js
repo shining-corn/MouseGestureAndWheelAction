@@ -1,10 +1,3 @@
-function sendMessage(request) {
-    (async () => {
-        request.extensionId = chrome.runtime.id;
-        await chrome.runtime.sendMessage(request);
-    })();
-}
-
 function createBackgroundElement(isCentering) {
     const element = document.createElement('div');
     element.style.all = 'initial';
