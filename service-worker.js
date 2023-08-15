@@ -71,6 +71,7 @@ function activateMostRightTab(allTabs, shouldPreventContextMenu) {
 class MouseGestureService {
     constructor() {
         this.previousWindowState = [];
+        this.lastCreatedGroupId = undefined;
     }
 
     start() {
@@ -83,6 +84,29 @@ class MouseGestureService {
                 switch (request.action) {
                     case 'createtab':
                         chrome.tabs.create({ active: true });
+                        break;
+                    case 'addtabtogroup':
+                        (async () => {
+                            const tab = await chrome.tabs.get(sender.tab.id);
+                            if (this.lastCreatedGroupId && tab.groupId === this.lastCreatedGroupId) {
+                                this.lastCreatedGroupId = undefined;
+                            }
+
+                            this.lastCreatedGroupId = await chrome.tabs.group({ groupId: this.lastCreatedGroupId, tabIds: sender.tab.id, });
+
+                        })();
+                        break;
+                    case 'removetabfromgroup':
+                        chrome.tabs.ungroup(sender.tab.id);
+                        if(this.lastCreatedGroupId) {
+                            chrome.tabs.query({ groupId: this.lastCreatedGroupId }).then(
+                                (result) => {
+                                    if (result.length === 0) {
+                                        this.lastCreatedGroupId = undefined;
+                                    }
+                                }
+                            );
+                        }
                         break;
                     case 'duplicatetab':
                         chrome.tabs.duplicate(sender.tab.id);
@@ -318,7 +342,7 @@ class MouseGestureService {
                                     }
                                     else {
                                         if (this.previousWindowState[w.id]) {
-                                            await chrome.windows.update(w.id, { state: this.previousWindowState[w.id]});
+                                            await chrome.windows.update(w.id, { state: this.previousWindowState[w.id] });
                                         }
                                         else {
                                             await chrome.windows.update(w.id, { state: 'maximized' });

@@ -29,6 +29,12 @@
     "createtab": {
         "message": "新しいタブ"
     },
+    "addtabtogroup": {
+        "message": "タブをグループに追加"
+    },
+    "removetabfromgroup": {
+        "message": "タブをグループから削除"
+    },
     "duplicatetab": {
         "message": "タブを複製"
     },

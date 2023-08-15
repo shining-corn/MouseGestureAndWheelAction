@@ -69,6 +69,12 @@ function getGestureActions() {
         createtab: () => {
             sendMessage({ action: 'createtab' });
         },
+        addtabtogroup: () => {
+            sendMessage({ action: 'addtabtogroup' });
+        },
+        removetabfromgroup: () => {
+            sendMessage({ action: 'removetabfromgroup' });
+        },
         duplicatetab: () => {
             sendMessage({ action: 'duplicatetab' });
         },

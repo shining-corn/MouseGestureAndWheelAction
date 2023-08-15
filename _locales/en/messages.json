@@ -29,6 +29,12 @@
     "createtab": {
         "message": "New tab"
     },
+    "addtabtogroup": {
+        "message": "Add tab to group"
+    },
+    "removetabfromgroup": {
+        "message": "Remove tab from group"
+    },
     "duplicatetab": {
         "message": "Duplicate tab"
     },
