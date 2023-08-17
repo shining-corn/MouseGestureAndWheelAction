@@ -98,7 +98,7 @@ class MouseGestureService {
                         break;
                     case 'removetabfromgroup':
                         chrome.tabs.ungroup(sender.tab.id);
-                        if(this.lastCreatedGroupId) {
+                        if (this.lastCreatedGroupId) {
                             chrome.tabs.query({ groupId: this.lastCreatedGroupId }).then(
                                 (result) => {
                                     if (result.length === 0) {
