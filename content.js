@@ -289,23 +289,6 @@ class MouseGestureClient {
             })();
         }, { capture: true, passive: false });
 
-        chrome.runtime.onMessage.addListener((request) => {
-            if (request.extensionId !== chrome.runtime.id) {
-                return;
-            }
-
-            if (request.type === 'prevent-contextmenu') {
-                global.shouldPreventContextMenu = true;
-            }
-        });
-
-        window.addEventListener('contextmenu', (event) => {
-            if (global.shouldPreventContextMenu) {
-                event.preventDefault();
-            }
-            global.shouldPreventContextMenu = false;
-        });
-
         window.addEventListener('mousedown', (event) => {
             if (this.enabled && this.options.enabledMouseGesture) {
                 if (((event.buttons & 1) !== 0) && this.previousPoint) {
@@ -402,6 +385,23 @@ class MouseGestureClient {
             capture: true  // WEBサイト上の他のスクリプトのstopImmediatePropagation()への対処
         });
 
+        chrome.runtime.onMessage.addListener((request) => {
+            if (request.extensionId !== chrome.runtime.id) {
+                return;
+            }
+
+            if (request.type === 'prevent-contextmenu') {
+                global.shouldPreventContextMenu = true;
+            }
+        });
+
+        window.addEventListener('contextmenu', (event) => {
+            if (global.shouldPreventContextMenu) {
+                event.preventDefault();
+            }
+            global.shouldPreventContextMenu = false;
+        });
+
         window.addEventListener('click', (event) => {
             if ((event.button === 0) && this.previousPoint) {
                 event.preventDefault();
@@ -409,7 +409,7 @@ class MouseGestureClient {
             }
         }, {
             capture: true
-        })
+        });
 
         window.addEventListener('message', (event) => {
             if (event.data.extensionId === chrome.runtime.id && event.data.type === 'disable-mousegesture') {
