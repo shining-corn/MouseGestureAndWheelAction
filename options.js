@@ -110,6 +110,7 @@ class MouseGestureController {
         this.previousPoint = undefined;
         this.previousDirection = undefined;
         this.finished = false;
+        this.leftButtonDown = false;
 
         this.on = {
             contextmenu: this.onContextMenu.bind(this),
@@ -149,10 +150,14 @@ class MouseGestureController {
     }
 
     onMouseDown(event) {
-        if ((event.buttons & 2) === 2) {
+        if ((event.buttons & 2) !== 0) {
             const point = { x: event.clientX, y: event.clientY };
             this.elements.drawLine(point);
             this.previousPoint = point;
+
+            if ((event.buttons & 1) !== 0) {
+                this.leftButtonDown = true;
+            }
         }
     }
 
@@ -182,7 +187,14 @@ class MouseGestureController {
     }
 
     onMouseUp(event) {
-        if (event.button === 2 && this.previousPoint) {
+        if (((event.buttons & 1) === 0) && this.previousPoint && this.leftButtonDown) {
+            this.elements.addArrow('Click ');
+            this.previousPoint = { x: event.clientX, y: event.clientY };
+            this.previousDirection = undefined;
+            this.leftButtonDown = false;
+        }
+
+        if ((event.button === 2) && this.previousPoint) {
             const arrows = this.elements.arrows;
             if (arrows !== '') {
                 const action = this.options.getGestureAction(arrows) || '';
@@ -258,13 +270,13 @@ function render(options) {
     const selectRightClickWheelUpElement = document.getElementById('select-right-click-wheel-up');
     appendGestureActionOptonsToSelectElement(selectRightClickWheelUpElement, options.rightButtonAndWheelUp);
     selectRightClickWheelUpElement.addEventListener('change', () => {
-            (async () => {
-                await options.changeRightClickWheelUpAction(selectRightClickWheelUpElement.value);
-            })();
-        });
+        (async () => {
+            await options.changeRightClickWheelUpAction(selectRightClickWheelUpElement.value);
+        })();
+    });
 
     const selectRightClickWheelDownElement = document.getElementById
-    ('select-right-click-wheel-down')
+        ('select-right-click-wheel-down')
     appendGestureActionOptonsToSelectElement(selectRightClickWheelDownElement, options.rightButtonAndWheelDown);
     selectRightClickWheelDownElement.addEventListener('change', () => {
         (async () => {

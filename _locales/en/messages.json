@@ -140,6 +140,18 @@
     "disableextension": {
         "message": "Disable this extension on this tab"
     },
+    "openlinkinnwetab": {
+        "message": "Open link in new tab"
+    },
+    "openlinkinnwetabandactivate": {
+        "message": "Open link in new tab and activate"
+    },
+    "openlinkinnwewindow": {
+        "message": "Open link in new window"
+    },
+    "openlinkinnwewindowandactivate": {
+        "message": "Open link in new window and activate"
+    },
     "messageCopied": {
         "message": "Copied."
     },
@@ -194,6 +206,9 @@
     "optionsEnableMouseGesture": {
         "message": "Enabled mouse gesture"
     },
+    "optionsMouseGestureHelp": {
+        "message": "Move the mouse as per the \"Gesture\" while holding down the right mouse button to execute the \"Action\" process."
+    },
     "optionsPageTableHeadGesture": {
         "message": "Gesture"
     },
@@ -201,7 +216,7 @@
         "message": "Action"
     },
     "optionsAddMouseGestureDescription": {
-        "message": "Move the mouse while holding down the right mouse button"
+        "message": "Move the mouse or left click while holding down the right mouse button"
     },
     "optionsSelectAction": {
         "message": "Select action for gesture"

@@ -179,6 +179,26 @@ function getGestureActions() {
         zoomdefault: () => {
             sendMessage({ action: 'zoomdefault' });
         },
+        openlinkinnwetab: (option) => {
+            if (option.url) {
+                sendMessage({ action: 'openlinkinnwetab', url: option.url });
+            }
+        },
+        openlinkinnwetabandactivate: (option) => {
+            if (option.url) {
+                sendMessage({ action: 'openlinkinnwetabandactivate', url: option.url });
+            }
+        },
+        openlinkinnwewindow: (option) => {
+            if (option.url) {
+                sendMessage({ action: 'openlinkinnwewindow', url: option.url });
+            }
+        },
+        openlinkinnwewindowandactivate: (option) => {
+            if (option.url) {
+                sendMessage({ action: 'openlinkinnwewindowandactivate', url: option.url });
+            }
+        },
         disableextension: () => {
             window.postMessage({ extensionId: chrome.runtime.id, type: 'disable-mousegesture' }, '*');
         }
@@ -208,6 +228,7 @@ class ExtensionOption {
                 rightButtonAndWheelUp: 'gotolefttab',
                 rightButtonAndWheelDown: 'gotorighttab',
                 gestureSettings: [
+                    { gesture: 'Click ', action: 'openlinkinnwetabandactivate' },
                     { gesture: '←', action: 'back' },
                     { gesture: '→', action: 'forward' },
                     { gesture: '↑', action: 'scrollup' },

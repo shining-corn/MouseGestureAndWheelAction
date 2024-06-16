@@ -201,7 +201,7 @@ class ShowArrowsElements {
                     this.addArrow(event.data.arrow);
                     break;
                 case 'done-gesture':
-                    this.done();
+                    this.done(event.data.url);
                     break;
                 case 'reset-gesture':
                     this.reset();
@@ -229,10 +229,12 @@ class ShowArrowsElements {
         }
     }
 
-    done() {
+    done(url) {
         const action = this.options.getGestureAction(this.arrows);
         if (action) {
-            getGestureActions()[action]();
+            getGestureActions()[action]({
+                url: url
+            });
         }
 
         this.reset();
@@ -255,6 +257,7 @@ class MouseGestureClient {
         this.previousDirection = undefined;
         this.hasGestureDrawn = false;
         this.gestureElement = new GestureElements();
+        this.url = undefined;
     }
 
     start() {
@@ -304,8 +307,38 @@ class MouseGestureClient {
         });
 
         window.addEventListener('mousedown', (event) => {
-            if (this.enabled && this.options.enabledMouseGesture && (event.buttons & 2) === 2) {
-                this.previousPoint = { x: event.clientX, y: event.clientY };
+            if (this.enabled && this.options.enabledMouseGesture) {
+                if (((event.buttons & 1) !== 0) && this.previousPoint) {
+                    getRootWindow().postMessage(
+                        {
+                            extensionId: chrome.runtime.id,
+                            type: 'add-arrow',
+                            arrow: 'Click '
+                        },
+                        '*'
+                    );
+                    this.previousDirection = undefined;
+                    this.previousPoint = { x: event.clientX, y: event.clientY };
+
+                    global.shouldPreventContextMenu = true;
+                    event.preventDefault();
+                }
+
+                if (event.buttons === 2) {  // right button only
+                    this.previousPoint = { x: event.clientX, y: event.clientY };
+
+                    // get url if event.target is a link
+                    this.url = undefined;
+                    let elem = event.target;
+                    while (elem) {
+                        if (elem.href) {
+                            this.url = elem.href;
+                            break;
+                        }
+
+                        elem = elem.parentNode;
+                    }
+                }
             }
         }, {
             capture: true  // WEBサイト上の他のスクリプトのstopImmediatePropagation()への対処
@@ -353,16 +386,30 @@ class MouseGestureClient {
         });
 
         window.addEventListener('mouseup', (event) => {
-            if (event.button === 2 && this.previousPoint) {
-                getRootWindow().postMessage({
-                    extensionId: chrome.runtime.id,
-                    type: 'done-gesture'
-                }, '*');
-                this.doneGesture();
+            if (event.button === 2) {
+                if (this.previousPoint) {
+                    getRootWindow().postMessage({
+                        extensionId: chrome.runtime.id,
+                        type: 'done-gesture',
+                        url: this.url
+                    }, '*');
+                    this.doneGesture();
+                }
+
+                this.url = undefined;
             }
         }, {
             capture: true  // WEBサイト上の他のスクリプトのstopImmediatePropagation()への対処
         });
+
+        window.addEventListener('click', (event) => {
+            if ((event.button === 0) && this.previousPoint) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+            }
+        }, {
+            capture: true
+        })
 
         window.addEventListener('message', (event) => {
             if (event.data.extensionId === chrome.runtime.id && event.data.type === 'disable-mousegesture') {

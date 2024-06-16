@@ -140,6 +140,18 @@
     "disableextension": {
         "message": "このタブでこの拡張機能を無効化"
     },
+    "openlinkinnwetab": {
+        "message": "リンクを新しいタブで開く"
+    },
+    "openlinkinnwetabandactivate": {
+        "message": "リンクを新しいタブで開いてアクティブにする"
+    },
+    "openlinkinnwewindow": {
+        "message": "リンクを新しいウィンドウで開く"
+    },
+    "openlinkinnwewindowandactivate": {
+        "message": "リンクを新しいウィンドウで開いてアクティブにする"
+    },
     "messageCopied": {
         "message": "コピーしました。"
     },
@@ -194,6 +206,9 @@
     "optionsEnableMouseGesture": {
         "message": "マウスジェスチャーを使用する"
     },
+    "optionsMouseGestureHelp": {
+        "message": "マウスの右ボタンを押しながら「ジェスチャー」のとおりに動かすと、「動作」の処理を実行します。"
+    },
     "optionsPageTableHeadGesture": {
         "message": "ジェスチャー"
     },
@@ -201,7 +216,7 @@
         "message": "動作"
     },
     "optionsAddMouseGestureDescription": {
-        "message": "マウスの右ボタンを押しながらマウスを移動"
+        "message": "マウスの右ボタンを押しながらマウスを移動または左クリック"
     },
     "optionsSelectAction": {
         "message": "ジェスチャーに対する動作を選択"

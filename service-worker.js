@@ -397,8 +397,44 @@ class MouseGestureService {
                             const zoom = (await chrome.tabs.getZoomSettings());
                             chrome.tabs.setZoom(zoom.defaultZoomFactor);
                         })();
+                        break;
+                    case 'openlinkinnwetab':
+                        (async () => {
+                            chrome.tabs.create({
+                                url: request.url,
+                                active: false,
+                                index: sender.tab.index + 1
+                            });
+                        })();
+                        break;
+                    case 'openlinkinnwetabandactivate':
+                        (async () => {
+                            chrome.tabs.create({
+                                url: request.url,
+                                active: true,
+                                index: sender.tab.index + 1
+                            });
+                        })();
+                        break;
+                    case 'openlinkinnwewindow':
+                        (async () => {
+                            await chrome.windows.create({
+                                url: request.url,
+                                focused: false
+                            });
+                        })();
+                        break;
+                    case 'openlinkinnwewindowandactivate':
+                        (async () => {
+                            await chrome.windows.create({
+                                url: request.url,
+                                focused: true
+                            });
+                        })();
+                        break;
                     default:
                         console.log('Unexpected request:', request);
+                        break;
                 }
             }
         );
