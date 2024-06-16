@@ -218,8 +218,14 @@
     "optionsPageTitleHint": {
         "message": "Hint"
     },
-    "optionsHintOpenInNewTab": {
-        "message": "Clicking on a link with the middle mouse button (wheel) opens the link in a new tab (this is a browser feature)"
+    "optionsHintBrowserDefaultFeature": {
+        "message": "Browser Features"
+    },
+    "optionsHintOpenLinkInNewTab": {
+        "message": "Clicking on a link with the middle mouse button (wheel) opens the link in a new tab"
+    },
+    "optionsHintHorizontalScroll": {
+        "message": "Rotate the mouse wheel while holding down the Shift key to scroll horizontally."
     },
     "optionsAddMouseGestureDescription": {
         "message": "Move the mouse or left click while holding down the right mouse button"

@@ -207,7 +207,7 @@
         "message": "マウスジェスチャーを使用する"
     },
     "optionsMouseGestureHelp": {
-        "message": "マウスの右ボタンを押しながら「ジェスチャー」のとおりに動かすと、「動作」の処理を実行します。"
+        "message": "マウスの右ボタンを押しながら「ジェスチャー」のとおりに動かすと、「動作」を行います。"
     },
     "optionsPageTableHeadGesture": {
         "message": "ジェスチャー"
@@ -218,8 +218,14 @@
     "optionsPageTitleHint": {
         "message": "ヒント"
     },
-    "optionsHintOpenInNewTab": {
-        "message": "マウスの中央ボタン（ホイール）でリンクをクリックすると、リンク先を新しいタブで開きます（ブラウザの標準的な機能）"
+    "optionsHintBrowserDefaultFeature": {
+        "message": "ブラウザの標準機能"
+    },
+    "optionsHintOpenLinkInNewTab": {
+        "message": "マウスの中央ボタン（ホイール）でリンクをクリックするとリンク先を新しいタブで開く"
+    },
+    "optionsHintHorizontalScroll": {
+        "message": "shiftキーを押しながらマウスホイールを回転させると横スクロール"
     },
     "optionsAddMouseGestureDescription": {
         "message": "マウスの右ボタンを押しながらマウスを移動または左クリック"
