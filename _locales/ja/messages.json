@@ -215,6 +215,12 @@
     "optionsPageTableHeadAction": {
         "message": "動作"
     },
+    "optionsPageTitleHint": {
+        "message": "ヒント"
+    },
+    "optionsHintOpenInNewTab": {
+        "message": "マウスの中央ボタン（ホイール）でリンクをクリックすると、リンク先を新しいタブで開きます（ブラウザの標準的な機能）"
+    },
     "optionsAddMouseGestureDescription": {
         "message": "マウスの右ボタンを押しながらマウスを移動または左クリック"
     },
