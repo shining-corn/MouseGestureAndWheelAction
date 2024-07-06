@@ -57,7 +57,10 @@
         "message": "Reload"
     },
     "reloadtabhard": {
-        "message": "Hard reload "
+        "message": "Hard reload"
+    },
+    "reloadtaball": {
+        "message": "Reload all tabs"
     },
     "gotolefttab": {
         "message": "Go to left tab"
@@ -152,8 +155,17 @@
     "openlinkinnwewindowandactivate": {
         "message": "Open link in new window and activate"
     },
+    "opencustomurl": {
+        "message": "Open custom URL"
+    },
     "messageCopied": {
         "message": "Copied."
+    },
+    "messageCustomUrlHelp": {
+        "message": "To open a custom URL, drag the mouse to select the text, then make a mouse gesture."
+    },
+    "messageCustomUrlSettingNotFound": {
+        "message": "Custom URL setting not found."
     },
     "strBookmarkDialogTitleAdd": {
         "message": "Add Bookmark"  
@@ -215,6 +227,60 @@
     "optionsPageTableHeadAction": {
         "message": "Action"
     },
+    "optionsPageTitleCustomURL": {
+        "message": "Custom URL"
+    },
+    "optionsCustomUrlDescription1": {
+        "message": "Add \"Custom URL\" to the \"Action\" list of Mouse Gesture."
+    },
+    "optionsCustomUrlDescription2": {
+        "message": "Executing \"Custom URL\" opens the configured URL. The {} in the URL is replaced by the string selected just before the mouse gesture is executed."
+    },
+    "optionsPageTableHeadCustomUrlId": {
+        "message": "ID"
+    },
+    "optionsPageTableHeadCustomUrlUrl": {
+        "message": "URL"
+    },
+    "optionsPageTableHeadCustomUrlOpenInNewTab": {
+        "message": "Open in new tab"
+    },
+    "optionsCustomUrlErrorMessageIdMustBeSpecified": {
+        "message": "ID must be specified."
+    },
+    "optionsCustomUrlErrorMessageIdMustBeUnique": {
+        "message": "Duplicate IDs are not allowed."
+    },
+    "messageSucceededInSave": {
+        "message": "Settings have been saved."
+    },
+    "optionsPageTitleColor": {
+        "message": "Mouse Gesture Color"
+    },
+    "optionsLineColor": {
+        "message": "LINE"
+    },
+    "optionsFontColor": {
+        "message": "FONT"
+    },
+    "optionsBackgroundColor": {
+        "message": "BACKGROUND"
+    },
+    "optionsPageTitleExportImport": {
+        "message": "Export/Import"
+    },
+    "optionsPageTitleExport": {
+        "message": "Export"
+    },
+    "optionsPageTitleImport": {
+        "message": "Import"
+    },
+    "optionsCopyOptionsToClipboard": {
+        "message": "Copy JSON text of all options to clipboard"
+    },
+    "importErrorMessgeOptionsMustBeObject": {
+        "message": "The type of the option must be object."
+    },
     "optionsPageTitleHint": {
         "message": "Hint"
     },
@@ -235,6 +301,9 @@
     },
     "optionsAdd": {
         "message": "Add"
+    },
+    "optionsSave": {
+        "message": "Save"
     },
     "optionsReset": {
         "message": "Restore default settings"

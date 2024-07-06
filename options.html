@@ -19,6 +19,10 @@
       padding-right: 2em;
     }
 
+    details {
+      margin-top: 2em;
+    }
+
     .container {
       left: 0;
       right: 0;
@@ -26,6 +30,7 @@
       margin-bottom: 8em;
       max-width: 100vw;
       width: fit-content;
+      min-width: 63em;
       text-align: left;
     }
 
@@ -111,18 +116,66 @@
           <td></td>
         </tr>
       </thead>
-      <tbody id="gestures">
-      </tbody>
+      <tbody id="gestures"></tbody>
     </table>
 
-    <h1 data-i18n="optionsPageTitleHint"></h1>
+    <details>
+      <summary>
+        <h2 data-i18n="optionsPageTitleCustomURL" style="display:inline;"></h2>
+      </summary>
+      <p data-i18n="optionsCustomUrlDescription1"></p>
+      <p data-i18n="optionsCustomUrlDescription2"></p>
+      <table>
+        <thead>
+          <tr>
+            <td data-i18n="optionsPageTableHeadCustomUrlId"></td>
+            <td data-i18n="optionsPageTableHeadCustomUrlUrl"></td>
+            <td data-i18n="optionsPageTableHeadCustomUrlOpenInNewTab"></td>
+            <td></td>
+          </tr>
+        </thead>
+        <tbody id="customUrlOptions"></tbody>
+      </table>
+      <div id="customUrlOptionsControls" style="margin-left: 2em"></div>
+    </details>
 
+    <details>
+      <summary id="color-summary">
+        <h2 data-i18n="optionsPageTitleColor" style="display:inline;"></h2>
+      </summary>
+      <p>
+        <span data-i18n="optionsLineColor" style="display:block; width: 8em;"></span><input id="color-line"><br>
+        <span data-i18n="optionsFontColor" style="display:block; width: 8em;"></span><input id="color-font"><br>
+        <span data-i18n="optionsBackgroundColor" style="display:block; width: 8em;"></span><input
+          id="color-background"><br>
+        <br>
+        <button id="color-save"><span data-i18n="optionsSave"></span></button>
+      </p>
+    </details>
+
+    <details>
+      <summary>
+        <h2 data-i18n="optionsPageTitleExportImport" style="display:inline;"></h2>
+      </summary>
+      <h3 data-i18n="optionsPageTitleExport"></h3>
+      <p>
+        <button id="import-export-copy-to-clipboard"><span data-i18n="optionsCopyOptionsToClipboard"></span></button>
+      </p>
+      <h3 data-i18n="optionsPageTitleImport"></h3>
+      <p>
+        <textarea id="import-export-textarea" style="width:100%; height:12em;"></textarea>
+        <br>
+        <button id="import-export-save"><span data-i18n="optionsSave"></span></button>
+      </p>
+    </details>
+
+    <h2 data-i18n="optionsPageTitleHint"></h2>
     <p>
       <span data-i18n="optionsHintBrowserDefaultFeature"></span>
-      <ul>
-        <li data-i18n="optionsHintOpenLinkInNewTab"></li>
-        <li data-i18n="optionsHintHorizontalScroll"></li>
-      </ul>
+    <ul>
+      <li data-i18n="optionsHintOpenLinkInNewTab"></li>
+      <li data-i18n="optionsHintHorizontalScroll"></li>
+    </ul>
     </p>
 
   </div>

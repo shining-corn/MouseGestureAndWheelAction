@@ -32,7 +32,8 @@ function createCenteringElement() {
 const global = new class {
     constructor() {
         this.variables = {
-            shouldPreventContextMenu: false
+            shouldPreventContextMenu: false,
+            selectedText: undefined,
         };
 
         this.syncTargets = [];
@@ -83,10 +84,21 @@ const global = new class {
     get shouldPreventContextMenu() {
         return this.variables.shouldPreventContextMenu;
     }
+
+    set selectedText(text) {
+        this.variables.selectedText = text;
+        this.sync();
+    }
+
+    get selectedText() {
+        return this.variables.selectedText;
+    }
 }();
 
 class GestureElements {
-    constructor() {
+    constructor(options) {
+        this.options = options;
+
         this.previousPoint = undefined;
 
         this.backgroundElement = createBackgroundElement();
@@ -116,7 +128,7 @@ class GestureElements {
         if (this.previousPoint) {
             const ctx = this.canvasElement.getContext('2d');
             ctx.lineWidth = 4;
-            ctx.strokeStyle = '#408040';
+            ctx.strokeStyle = this.options.gestureLineColor;
             ctx.beginPath();
             ctx.moveTo(this.previousPoint.x, this.previousPoint.y);
             ctx.lineTo(point.x, point.y);
@@ -166,8 +178,8 @@ class ShowArrowsElements {
         this.actionNameArea.style.fontSize = '24px';
         this.actionNameArea.style.lineHeight = '1';
         this.actionNameArea.style.fontFamily = 'BIZ UDPGothic';
-        this.actionNameArea.style.color = 'rgba(239, 239, 255, 0.9)';
-        this.actionNameArea.style.backgroundColor = 'rgba(0, 0, 32, 0.9)';
+        this.actionNameArea.style.color = this.options.gestureFontColor;
+        this.actionNameArea.style.backgroundColor = this.options.gestureBackgroundColor;
         this.actionNameArea.style.display = 'none';
         this.actionNameArea.style.pointerEvents = 'none';
 
@@ -183,8 +195,8 @@ class ShowArrowsElements {
         this.arrowArea.style.fontSize = '64px';
         this.arrowArea.style.lineHeight = '1';
         this.arrowArea.style.fontFamily = 'monospace';
-        this.arrowArea.style.color = 'rgba(239, 239, 255, 0.9)';
-        this.arrowArea.style.backgroundColor = 'rgba(0, 0, 32, 0.9)';
+        this.arrowArea.style.color = this.options.gestureFontColor;
+        this.arrowArea.style.backgroundColor = this.options.gestureBackgroundColor;
         this.arrowArea.style.maxWidth = 'calc(100vw - 64px)';
         this.arrowArea.style.width = 'fit-content';
         this.arrowArea.style.height = 'fit-content';
@@ -212,6 +224,10 @@ class ShowArrowsElements {
 
     addArrow(arrow) {
         if (this.arrows.length === 0) {
+            this.actionNameArea.style.color = this.options.gestureFontColor;
+            this.actionNameArea.style.backgroundColor = this.options.gestureBackgroundColor;
+            this.arrowArea.style.color = this.options.gestureFontColor;
+            this.arrowArea.style.backgroundColor = this.options.gestureBackgroundColor;
             document.body.appendChild(this.backgroundElement);
         }
         this.arrows += arrow;
@@ -219,7 +235,12 @@ class ShowArrowsElements {
 
         const action = this.options.getGestureAction(this.arrows);
         if (action) {
-            this.actionNameArea.innerText = chrome.i18n.getMessage(action);
+            if (action.startsWith('customurl:')) {
+                this.actionNameArea.innerText = `${chrome.i18n.getMessage('opencustomurl')}:${action.substring(10)}`;
+            }
+            else if (action) {
+                this.actionNameArea.innerText = chrome.i18n.getMessage(action);
+            }
             this.actionNameArea.style.display = 'inline';
             this.arrowArea.style.marginTop = '10px';
         }
@@ -232,9 +253,31 @@ class ShowArrowsElements {
     done(url) {
         const action = this.options.getGestureAction(this.arrows);
         if (action) {
-            getGestureActions()[action]({
-                url: url
-            });
+            if (action.startsWith('customurl:')) {
+                const text = global.selectedText;
+                if (text) {
+                    const id = action.substring(10);
+                    const setting = this.options.getCustomUrlSetting(id);
+                    if (setting) {
+                        const url = setting.customUrl.replace(/\{\}/ig, encodeURI(text));
+                        if (setting.openInNewTab) {
+                            sendMessage({ action: 'openlinkinnwetabandactivate', url: url });
+                        }
+                        else {
+                            window.location.href = url;
+                        }
+                    }
+                    else {
+                        window.alert(`${chrome.i18n.getMessage('messageCustomUrlSettingNotFound')} (ID: ${id} )`);
+                    }
+                }
+                else {
+                    window.alert(chrome.i18n.getMessage('messageCustomUrlHelp'));
+                }
+            }
+            else {
+                getGestureActions()[action]({ url: url });
+            }
         }
 
         this.reset();
@@ -256,11 +299,18 @@ class MouseGestureClient {
         this.previousPoint = undefined;
         this.previousDirection = undefined;
         this.hasGestureDrawn = false;
-        this.gestureElement = new GestureElements();
+        this.gestureElement = new GestureElements(options);
         this.url = undefined;
     }
 
     start() {
+        document.addEventListener("selectionchange", () => {
+            const text = window.getSelection().toString();
+            if (text) {
+                global.selectedText = text;
+            }
+        });
+
         window.addEventListener('wheel', (event) => {
             if (this.enabled && this.options.enabledWheelAction && ((event.buttons & 2) === 2)) {
                 event.preventDefault();
@@ -269,18 +319,22 @@ class MouseGestureClient {
 
             (async () => {
                 if (this.enabled && this.options.enabledWheelAction && ((event.buttons & 2) === 2)) {
-                    if (this.options.rightButtonAndWheelUp.indexOf('goto') === 0) {
+                    if (this.options.rightButtonAndWheelUp && this.options.rightButtonAndWheelUp.indexOf && this.options.rightButtonAndWheelUp.indexOf('goto') === 0) {
                         // 連続でタブ移動する場合、フラグを解除する。
                         global.shouldPreventContextMenu = false;
                     }
 
                     if (event.wheelDelta > 0) {
                         const action = getGestureActions()[this.options.rightButtonAndWheelUp];
-                        action(true);
+                        if (typeof action === 'function') {
+                            action(true);
+                        }
                     }
                     else {
                         const action = getGestureActions()[this.options.rightButtonAndWheelDown];
-                        action(true);
+                        if (typeof action === 'function') {
+                            action(true);
+                        }
                     }
                 }
 

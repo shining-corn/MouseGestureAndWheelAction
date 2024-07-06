@@ -168,6 +168,14 @@ class MouseGestureService {
                     case 'reloadtabhard':
                         chrome.tabs.reload(sender.tab.id, { bypassCache: true });
                         break;
+                    case 'reloadtaball':
+                        (async () => {
+                            const allTabs = await chrome.tabs.query({ currentWindow: true });
+                            for (const tab of allTabs) {
+                                chrome.tabs.reload(tab.id);
+                            }
+                        })();
+                        break;
                     case 'gotolefttab':
                         (async () => {
                             const allTabs = await chrome.tabs.query({ currentWindow: true });

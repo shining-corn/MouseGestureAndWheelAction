@@ -99,6 +99,9 @@ function getGestureActions() {
         reloadtabhard: () => {
             sendMessage({ action: 'reloadtabhard' });
         },
+        reloadtaball: () => {
+            sendMessage({ action: 'reloadtaball' });
+        },
         gotolefttab: (bywheel) => {
             sendMessage({ action: 'gotolefttab', bywheel: bywheel });
         },
@@ -245,9 +248,57 @@ class ExtensionOption {
                     { gesture: '↑→↓', action: 'gotomostrighttab' },
                     { gesture: '←↑', action: 'upsertbookmark' },
                     { gesture: '←↓', action: 'deletebookmark' },
-                    { gesture: '←→', action: 'mutetabtoggle' }
-                ]
+                    { gesture: '←→', action: 'mutetabtoggle' },
+                ],
+                customUrlSettings: [
+                    {
+                        id: 'Google',
+                        customUrl: 'https://google.com/search?q={}',
+                        openInNewTab: true,
+                    },
+                    {
+                        id: 'YouTube',
+                        customUrl: 'https://www.youtube.com/results?search_query={}',
+                        openInNewTab: true,
+                    },
+                ],
+                gestureLineColor: '#408040',
+                gestureFontColor: 'rgba(239, 239, 255, 0.9)',
+                gestureBackgroundColor: 'rgba(0, 0, 32, 0.9)',
             };
+
+            await chrome.storage.local.set({ options: this.options });
+        }
+    }
+
+    async versionUp() {
+        if (this.options) {
+            // v1.3.0 -> v1.4.0
+            if (typeof this.options.customUrlSettings === 'undefined') {
+                this.options.customUrlSettings = [
+                    {
+                        id: 'Google',
+                        customUrl: 'https://google.com/search?q={}',
+                        openInNewTab: true,
+                    },
+                    {
+                        id: 'YouTube',
+                        customUrl: 'https://www.youtube.com/results?search_query={}',
+                        openInNewTab: true,
+                    },
+                ];
+            }
+            
+            if (typeof this.options.gestureLineColor === 'undefined') {
+                this.options.gestureLineColor = '#408040';
+            }
+            if (typeof this.options.gestureFontColor === 'undefined') {
+                this.options.gestureFontColor = 'rgba(239, 239, 255, 0.9)';
+            }
+            if (typeof this.options.gestureBackgroundColor === 'undefined') {
+                this.options.gestureBackgroundColor = 'rgba(0, 0, 32, 0.9)';
+            }
+
             await chrome.storage.local.set({ options: this.options });
         }
     }
@@ -272,10 +323,54 @@ class ExtensionOption {
         return this.options.gestureSettings;
     }
 
+    get customUrlSettings() {
+        return this.options.customUrlSettings;
+    }
+
+    get gestureLineColor() {
+        if (typeof this.options.gestureLineColor === 'string' && this.options.gestureLineColor) {
+            return this.options.gestureLineColor;
+        }
+
+        return '#408040';
+    }
+
+    get gestureFontColor() {
+        if (typeof this.options.gestureFontColor === 'string' && this.options.gestureFontColor) {
+            return this.options.gestureFontColor;
+        }
+
+        return 'rgba(239, 239, 255, 0.9)';
+    }
+
+    get gestureBackgroundColor() {
+        if (typeof this.options.gestureBackgroundColor === 'string' && this.options.gestureBackgroundColor) {
+            return this.options.gestureBackgroundColor;
+        }
+
+        return 'rgba(0, 0, 32, 0.9)';
+    }
+
+    async setGestureColor(line, font, background) {
+        if (typeof line === 'string') {
+            this.options.gestureLineColor = line;
+        }
+        if (typeof font === 'string') {
+            this.options.gestureFontColor = font;
+        }
+        if (typeof background === 'string') {
+            this.options.gestureBackgroundColor = background;
+        }
+
+        await chrome.storage.local.set({ 'options': this.options });
+    }
+
     getGestureAction(gesture) {
-        const i = this.options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
-        if (i !== -1) {
-            return this.options.gestureSettings[i].action;
+        if (this.options.gestureSettings && (typeof this.options.gestureSettings.findIndex === 'function')) {
+            const i = this.options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
+            if (i !== -1) {
+                return this.options.gestureSettings[i].action;
+            }
         }
         return undefined;
     }
@@ -305,6 +400,11 @@ class ExtensionOption {
             gesture: gesture,
             action: action
         };
+
+        if (Object.prototype.toString.call(this.options.gestureSettings) !== '[object Array]') {
+            this.options.gestureSettings = [];
+        }
+
         const i = this.options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
         if (i !== -1) {
             this.options.gestureSettings[i] = newGesture;
@@ -323,5 +423,24 @@ class ExtensionOption {
 
             await chrome.storage.local.set({ 'options': this.options });
         }
+    }
+
+    async setCustomUrlSettings(customUrlSettings) {
+        this.options.customUrlSettings = customUrlSettings;
+
+        await chrome.storage.local.set({ 'options': this.options });
+    }
+
+    getCustomUrlSetting(id) {
+        if (this.options.customUrlSettings && (typeof this.options.customUrlSettings.find === 'function')) {
+            return this.options.customUrlSettings.find(elem => elem.id === id);
+        }
+        return undefined;
+    }
+
+    async setOptions(options) {
+        this.options = options;
+
+        await chrome.storage.local.set({ 'options': this.options });
     }
 }

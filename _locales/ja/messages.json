@@ -59,6 +59,9 @@
     "reloadtabhard": {
         "message": "再読み込み（キャッシュ無視）"
     },
+    "reloadtaball": {
+        "message": "すべてのタブを再読み込み"
+    },
     "gotolefttab": {
         "message": "左のタブに移動"
     },
@@ -152,8 +155,17 @@
     "openlinkinnwewindowandactivate": {
         "message": "リンクを新しいウィンドウで開いてアクティブにする"
     },
+    "opencustomurl": {
+        "message": "カスタムURLを開く"
+    },
     "messageCopied": {
         "message": "コピーしました。"
+    },
+    "messageCustomUrlHelp": {
+        "message": "カスタムURLを開くには、マウスをドラッグしてテキストを選択した後、マウスジェスチャーを行います。"
+    },
+    "messageCustomUrlSettingNotFound": {
+        "message": "カスタムURLの設定が見つかりません。"
     },
     "strBookmarkDialogTitleAdd": {
         "message": "ブックマークを追加"  
@@ -215,6 +227,60 @@
     "optionsPageTableHeadAction": {
         "message": "動作"
     },
+    "optionsPageTitleCustomURL": {
+        "message": "カスタムURL"
+    },
+    "optionsCustomUrlDescription1": {
+        "message": "マウスジェスチャーの「動作」に「カスタムURL」を追加します。"
+    },
+    "optionsCustomUrlDescription2": {
+        "message": "「カスタムURL」を実行すると設定したURLを開きます。URLの{}はマウスジェスチャーを実行する直前に選択した文字列に置換されます。"
+    },
+    "optionsPageTableHeadCustomUrlId": {
+        "message": "ID"
+    },
+    "optionsPageTableHeadCustomUrlUrl": {
+        "message": "URL"
+    },
+    "optionsPageTableHeadCustomUrlOpenInNewTab": {
+        "message": "新しいタブで開く"
+    },
+    "optionsCustomUrlErrorMessageIdMustBeSpecified": {
+        "message": "IDは指定必須です。"
+    },
+    "optionsCustomUrlErrorMessageIdMustBeUnique": {
+        "message": "IDは重複不可です。"
+    },
+    "messageSucceededInSave": {
+        "message": "保存しました。"
+    },
+    "optionsPageTitleColor": {
+        "message": "マウスジェスチャーの色"
+    },
+    "optionsLineColor": {
+        "message": "線"
+    },
+    "optionsFontColor": {
+        "message": "フォント"
+    },
+    "optionsBackgroundColor": {
+        "message": "背景"
+    },
+    "optionsPageTitleExportImport": {
+        "message": "エクスポート・インポート"
+    },
+    "optionsPageTitleExport": {
+        "message": "エクスポート"
+    },
+    "optionsPageTitleImport": {
+        "message": "エクスポート"
+    },
+    "optionsCopyOptionsToClipboard": {
+        "message": "全設定をクリップボードにコピー"
+    },
+    "importErrorMessgeOptionsMustBeObject": {
+        "message": "オプションの型はobjectでなければなりません。"
+    },
     "optionsPageTitleHint": {
         "message": "ヒント"
     },
@@ -235,6 +301,9 @@
     },
     "optionsAdd": {
         "message": "追加"
+    },
+    "optionsSave": {
+        "message": "保存"
     },
     "optionsReset": {
         "message": "デフォルト設定に戻す"

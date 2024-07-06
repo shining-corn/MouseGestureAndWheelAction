@@ -1,5 +1,6 @@
 class OptionGestureElements {
-    constructor(gestureDescription) {
+    constructor(options, gestureDescription) {
+        this.options = options;
         this.previousPoint = undefined;
         this.arrows = '';
         this.parentElement = undefined;
@@ -7,21 +8,21 @@ class OptionGestureElements {
     }
 
     createElements(description) {
-        this.conainerElement = document.createElement('div');
-        this.conainerElement.style.width = '100vw';
-        this.conainerElement.style.height = '100vh';
-        this.conainerElement.style.position = 'fixed';
-        this.conainerElement.style.left = '0px';
-        this.conainerElement.style.top = '0px';
-        this.conainerElement.style.zIndex = 16777270;
-        this.conainerElement.style.margin = '0px';
-        this.conainerElement.style.padding = '0px';
-        this.conainerElement.style.border = 'none';
-        this.conainerElement.style.color = 'rgba(239, 239, 255, 0.9)';
-        this.conainerElement.style.backgroundColor = 'rgba(0, 0, 32, 0.9)';
+        this.containerElement = document.createElement('div');
+        this.containerElement.style.width = '100vw';
+        this.containerElement.style.height = '100vh';
+        this.containerElement.style.position = 'fixed';
+        this.containerElement.style.left = '0px';
+        this.containerElement.style.top = '0px';
+        this.containerElement.style.zIndex = 16777270;
+        this.containerElement.style.margin = '0px';
+        this.containerElement.style.padding = '0px';
+        this.containerElement.style.border = 'none';
+        this.containerElement.style.color = this.options.gestureFontColor;
+        this.containerElement.style.backgroundColor = this.options.gestureBackgroundColor;
 
         this.centerBox = document.createElement('div');
-        this.conainerElement.appendChild(this.centerBox);
+        this.containerElement.appendChild(this.centerBox);
         this.centerBox.style.top = '0';
         this.centerBox.style.bottom = '0';
         this.centerBox.style.left = '0';
@@ -65,7 +66,7 @@ class OptionGestureElements {
         this.arrowsElement.style.userSelect = 'none';
 
         this.canvasElement = document.createElement('canvas');
-        this.conainerElement.appendChild(this.canvasElement);
+        this.containerElement.appendChild(this.canvasElement);
         this.canvasElement.style.zIndex = 16777271;
         this.canvasElement.width = document.documentElement.clientWidth;
         this.canvasElement.height = document.documentElement.clientHeight;
@@ -73,13 +74,13 @@ class OptionGestureElements {
     }
 
     start(parentElement) {
-        parentElement.appendChild(this.conainerElement);
+        parentElement.appendChild(this.containerElement);
         this.parentElement = parentElement;
     }
 
     end() {
-        if (this.conainerElement) {
-            this.parentElement.removeChild(this.conainerElement);
+        if (this.containerElement) {
+            this.parentElement.removeChild(this.containerElement);
         }
     }
 
@@ -87,7 +88,7 @@ class OptionGestureElements {
         if (this.previousPoint) {
             const ctx = this.canvasElement.getContext('2d');
             ctx.lineWidth = 4;
-            ctx.strokeStyle = '#408040';
+            ctx.strokeStyle = this.options.gestureLineColor;
             ctx.beginPath();
             ctx.moveTo(this.previousPoint.x, this.previousPoint.y);
             ctx.lineTo(point.x, point.y);
@@ -122,7 +123,7 @@ class MouseGestureController {
 
     start(options) {
         this.options = options;
-        this.elements = new OptionGestureElements(chrome.i18n.getMessage('optionsAddMouseGestureDescription'));
+        this.elements = new OptionGestureElements(options, chrome.i18n.getMessage('optionsAddMouseGestureDescription'));
         this.elements.start(document.body);
 
         window.addEventListener('contextmenu', this.on.contextmenu, false);
@@ -205,7 +206,7 @@ class MouseGestureController {
                 generatedGestureElement.innerText = arrows;
                 const selectActionElement = document.getElementById('select-action');
                 selectActionElement.innerText = '';
-                appendGestureActionOptonsToSelectElement(selectActionElement, action);
+                appendGestureActionOptionsToSelectElement(this.options, selectActionElement, action);
                 translate(selectActionElement);
 
                 document.getElementById('select-action-add')
@@ -228,21 +229,7 @@ class MouseGestureController {
     }
 }
 
-function translate(element) {
-    const targets = element.querySelectorAll('[data-i18n]');
-    for (const target of targets) {
-        if (target.dataset.i18n) {
-            if (target.dataset.i18n) {
-                target.innerText = chrome.i18n.getMessage(target.dataset.i18n);
-            }
-            else {
-                console.log("message not found: ", target);
-            }
-        }
-    }
-}
-
-function appendGestureActionOptonsToSelectElement(selectElement, selectedOption) {
+function appendGestureActionOptionsToSelectElement(options, selectElement, selectedOption) {
     const actions = [''].concat(Object.keys(getGestureActions()));
     for (const action of actions) {
         const optionElement = document.createElement('option');
@@ -253,9 +240,39 @@ function appendGestureActionOptonsToSelectElement(selectElement, selectedOption)
         }
         selectElement.appendChild(optionElement);
     }
+
+    // Custom URL
+    if (Object.prototype.toString.call(options.customUrlSettings) === '[object Array]') {
+        for (const customUrl of options.customUrlSettings) {
+            const optionElement = document.createElement('option');
+            optionElement.value = `customurl:${customUrl.id}`;
+            optionElement.innerText = `${chrome.i18n.getMessage('openCustomUrl')}:${customUrl.id}`;
+            if (selectedOption === optionElement.value) {
+                optionElement.selected = true;
+            }
+            selectElement.appendChild(optionElement);
+        }
+    }
 }
 
 function render(options) {
+    renderResetButton(options);
+    renderWheelAction(options);
+    renderMouseGesture(options);
+    renderCustomUrl(options);
+    renderColor(options);
+    renderImportExport(options);
+}
+
+function renderResetButton(options) {
+    const resetButtonElement = document.getElementById('reset-button');
+    resetButtonElement.addEventListener('click', (async () => {
+        await chrome.storage.local.remove('options');
+        window.location.reload();
+    }));
+}
+
+function renderWheelAction(options) {
     const enabledWheelActionElement = document.getElementById('enabled-wheel-action');
     enabledWheelActionElement.checked = options.enabledWheelAction;
     enabledWheelActionElement.addEventListener('click', () => {
@@ -268,22 +285,23 @@ function render(options) {
     });
 
     const selectRightClickWheelUpElement = document.getElementById('select-right-click-wheel-up');
-    appendGestureActionOptonsToSelectElement(selectRightClickWheelUpElement, options.rightButtonAndWheelUp);
+    appendGestureActionOptionsToSelectElement(options, selectRightClickWheelUpElement, options.rightButtonAndWheelUp);
     selectRightClickWheelUpElement.addEventListener('change', () => {
         (async () => {
             await options.changeRightClickWheelUpAction(selectRightClickWheelUpElement.value);
         })();
     });
 
-    const selectRightClickWheelDownElement = document.getElementById
-        ('select-right-click-wheel-down')
-    appendGestureActionOptonsToSelectElement(selectRightClickWheelDownElement, options.rightButtonAndWheelDown);
+    const selectRightClickWheelDownElement = document.getElementById('select-right-click-wheel-down');
+    appendGestureActionOptionsToSelectElement(options, selectRightClickWheelDownElement, options.rightButtonAndWheelDown);
     selectRightClickWheelDownElement.addEventListener('change', () => {
         (async () => {
             await options.changeRightClickWheelDownAction(selectRightClickWheelDownElement.value);
         })();
     });
+}
 
+function renderMouseGesture(options) {
     const enabledMouseGestureElement = document.getElementById('enabled-mouse-gesture');
     enabledMouseGestureElement.checked = options.enabledMouseGesture;
     enabledMouseGestureElement.addEventListener('click', () => {
@@ -297,38 +315,40 @@ function render(options) {
 
     const gestureTableBodyElement = document.getElementById('gestures');
 
-    for (const gestureSetting of options.gestureSettings) {
-        const rowElement = document.createElement('tr');
+    if (Object.prototype.toString.call(options.gestureSettings) === '[object Array]') {
+        for (const gestureSetting of options.gestureSettings) {
+            const rowElement = document.createElement('tr');
 
-        const jestureColumnElement = document.createElement('td');
-        jestureColumnElement.innerText = gestureSetting.gesture;
-        jestureColumnElement.style.fontFamily = 'BIZ UDPGothic';
+            const jestureColumnElement = document.createElement('td');
+            jestureColumnElement.innerText = gestureSetting.gesture;
+            jestureColumnElement.style.fontFamily = 'BIZ UDPGothic';
 
-        const actionColumnElement = document.createElement('td');
-        const selectActionElement = document.createElement('select');
-        actionColumnElement.appendChild(selectActionElement);
-        appendGestureActionOptonsToSelectElement(selectActionElement, gestureSetting.action);
-        selectActionElement.addEventListener('change', () => {
-            (async () => {
-                await options.upsertGesture(gestureSetting.gesture, selectActionElement.value);
-            })();
-        });
+            const actionColumnElement = document.createElement('td');
+            const selectActionElement = document.createElement('select');
+            actionColumnElement.appendChild(selectActionElement);
+            appendGestureActionOptionsToSelectElement(options, selectActionElement, gestureSetting.action);
+            selectActionElement.addEventListener('change', () => {
+                (async () => {
+                    await options.upsertGesture(gestureSetting.gesture, selectActionElement.value);
+                })();
+            });
 
-        const operationColumnElement = document.createElement('td');
-        const deleteButtonElement = document.createElement('button');
-        operationColumnElement.appendChild(deleteButtonElement);
-        deleteButtonElement.dataset.i18n = 'strDelete';
-        deleteButtonElement.addEventListener('click', () => {
-            (async () => {
-                await options.removeGesture(gestureSetting.gesture);
-                gestureTableBodyElement.removeChild(rowElement);
-            })();
-        });
+            const operationColumnElement = document.createElement('td');
+            const deleteButtonElement = document.createElement('button');
+            operationColumnElement.appendChild(deleteButtonElement);
+            deleteButtonElement.dataset.i18n = 'strDelete';
+            deleteButtonElement.addEventListener('click', () => {
+                (async () => {
+                    await options.removeGesture(gestureSetting.gesture);
+                    gestureTableBodyElement.removeChild(rowElement);
+                })();
+            });
 
-        gestureTableBodyElement.appendChild(rowElement);
-        rowElement.appendChild(jestureColumnElement);
-        rowElement.appendChild(actionColumnElement);
-        rowElement.appendChild(operationColumnElement);
+            gestureTableBodyElement.appendChild(rowElement);
+            rowElement.appendChild(jestureColumnElement);
+            rowElement.appendChild(actionColumnElement);
+            rowElement.appendChild(operationColumnElement);
+        }
     }
 
     const addRowElement = document.createElement('tr');
@@ -339,20 +359,224 @@ function render(options) {
         (new MouseGestureController()).start(options);
     });
 
-    gestureTableBodyElement.appendChild(addRowElement);
-    addRowElement.appendChild(addColumnElement);
     addColumnElement.appendChild(addButtonElement);
+    addRowElement.appendChild(addColumnElement);
+    gestureTableBodyElement.appendChild(addRowElement);
+}
 
-    const resetButtonElement = document.getElementById('reset-button');
-    resetButtonElement.addEventListener('click', (async () => {
-        await chrome.storage.local.remove('options');
+function renderCustomUrl(options) {
+    const customUrlOptionsElement = document.getElementById('customUrlOptions');
+
+    if (Object.prototype.toString.call(options.customUrlSettings) === '[object Array]') {
+        for (const setting of options.customUrlSettings) {
+            const rowElement = document.createElement('tr');
+
+            const idColumnElement = document.createElement('td');
+            const idInputElement = document.createElement('input');
+            idInputElement.value = setting.id;
+            idInputElement.size = 12;
+            idColumnElement.appendChild(idInputElement);
+
+            const urlColumnElement = document.createElement('td');
+            const urlInputElement = document.createElement('input');
+            urlInputElement.value = setting.customUrl;
+            urlInputElement.size = 48;
+            urlColumnElement.appendChild(urlInputElement);
+
+            const openInNewTabColumnElement = document.createElement('td');
+            const openInNewTabInputElement = document.createElement('input');
+            openInNewTabInputElement.type = 'checkbox';
+            openInNewTabInputElement.checked = setting.openInNewTab;
+            openInNewTabColumnElement.appendChild(openInNewTabInputElement);
+
+            const operationColumnElement = document.createElement('td');
+            const deleteButtonElement = document.createElement('button');
+            operationColumnElement.appendChild(deleteButtonElement);
+            deleteButtonElement.dataset.i18n = 'strDelete';
+            deleteButtonElement.addEventListener('click', () => {
+                (async () => {
+                    customUrlOptionsElement.removeChild(rowElement);
+                })();
+            });
+
+            customUrlOptionsElement.appendChild(rowElement);
+            rowElement.appendChild(idColumnElement);
+            rowElement.appendChild(urlColumnElement);
+            rowElement.appendChild(openInNewTabColumnElement);
+            rowElement.appendChild(operationColumnElement);
+        }
+    }
+
+    const customUrlOptionsControlsElement = document.getElementById('customUrlOptionsControls');
+
+    const addButtonElement = document.createElement('button');
+    addButtonElement.dataset.i18n = 'optionsAdd';
+    addButtonElement.addEventListener('click', () => {
+        const rowElement = document.createElement('tr');
+
+        const idColumnElement = document.createElement('td');
+        const idInputElement = document.createElement('input');
+        idInputElement.size = 12;
+        idColumnElement.appendChild(idInputElement);
+
+        const urlColumnElement = document.createElement('td');
+        const urlInputElement = document.createElement('input');
+        urlInputElement.size = 48;
+        urlColumnElement.appendChild(urlInputElement);
+
+        const openInNewTabColumnElement = document.createElement('td');
+        const openInNewTabInputElement = document.createElement('input');
+        openInNewTabInputElement.type = 'checkbox';
+        openInNewTabInputElement.checked = true;
+        openInNewTabColumnElement.appendChild(openInNewTabInputElement);
+
+        const operationColumnElement = document.createElement('td');
+        const deleteButtonElement = document.createElement('button');
+        operationColumnElement.appendChild(deleteButtonElement);
+        deleteButtonElement.dataset.i18n = 'strDelete';
+        deleteButtonElement.addEventListener('click', () => {
+            (async () => {
+                customUrlOptionsElement.removeChild(rowElement);
+            })();
+        });
+
+        customUrlOptionsElement.appendChild(rowElement);
+        rowElement.appendChild(idColumnElement);
+        rowElement.appendChild(urlColumnElement);
+        rowElement.appendChild(openInNewTabColumnElement);
+        rowElement.appendChild(operationColumnElement);
+
+        translate(customUrlOptions);
+    });
+
+    customUrlOptionsControlsElement.appendChild(addButtonElement);
+
+    const saveButtonElement = document.createElement('button');
+    saveButtonElement.dataset.i18n = 'optionsSave';
+    saveButtonElement.style.margin = '1em';
+    saveButtonElement.addEventListener('click', () => {
+        saveCustomUrl(options);
+    });
+    customUrlOptionsControlsElement.appendChild(saveButtonElement);
+}
+
+function saveCustomUrl(options) {
+    const customUrlSettings = [];
+    const rowElements = document.querySelectorAll('#customUrlOptions > *')
+
+    for (const row of rowElements) {
+        const id = row.children[0].children[0].value;
+        const customUrl = row.children[1].children[0].value;
+        const checked = row.children[2].children[0].checked;
+
+        // 未入力の行は無視
+        if (id.length === 0 && customUrl.length === 0) {
+            continue;
+        }
+
+        // IDは1文字以上でなければならない
+        if (id.length === 0) {
+            window.alert(chrome.i18n.getMessage('optionsCustomUrlErrorMessageIdMustBeSpecified'));
+            row.children[0].children[0].focus();
+            return;
+        }
+
+        // IDは重複不可
+        if (customUrlSettings.filter((option) => option.id === id).length !== 0) {
+            window.alert(chrome.i18n.getMessage('optionsCustomUrlErrorMessageIdMustBeUnique'));
+            row.children[0].children[0].focus();
+            return;
+        }
+
+        customUrlSettings.push({
+            id: id,
+            customUrl: customUrl,
+            openInNewTab: checked,
+        });
+    }
+
+    (async () => {
+        await options.setCustomUrlSettings(customUrlSettings);
+        window.alert(chrome.i18n.getMessage('messageSucceededInSave'));
         window.location.reload();
-    }));
+    })();
+}
+
+function renderColor(options) {
+    const lineColorElement = document.getElementById('color-line');
+    lineColorElement.value = options.gestureLineColor;
+
+    const fontColorElement = document.getElementById('color-font');
+    fontColorElement.value = options.gestureFontColor;
+
+    const backgroundColorElement = document.getElementById('color-background');
+    backgroundColorElement.value = options.gestureBackgroundColor;
+
+    const saveButtonElement = document.getElementById('color-save');
+    saveButtonElement.addEventListener('click', () => {
+        (async () => {
+            const line = lineColorElement.value;
+            const font = fontColorElement.value;
+            const background = backgroundColorElement.value;
+
+            await options.setGestureColor(line, font, background);
+
+            window.alert(chrome.i18n.getMessage('messageSucceededInSave'));
+            window.location.reload();
+        })();
+    });
+
+}
+
+function renderImportExport(options) {
+    // export button
+    const copyToClipboardButtonElement = document.getElementById('import-export-copy-to-clipboard');
+    copyToClipboardButtonElement.addEventListener('click', () => {
+        navigator.clipboard.writeText(JSON.stringify(options.options));
+        alert(chrome.i18n.getMessage('messageCopied'));
+    });
+
+    const saveButtonElement = document.getElementById('import-export-save');
+    saveButtonElement.addEventListener('click', () => {
+        (async () => {
+            const textareaElement = document.getElementById('import-export-textarea');
+            try {
+                const newOptions = JSON.parse(textareaElement.value);
+
+                if (Object.prototype.toString.call(newOptions) === '[object Object]') {
+                    await options.setOptions(newOptions);
+                    window.alert(chrome.i18n.getMessage('messageSucceededInSave'));
+                    window.location.reload();
+                }
+                else {
+                    window.alert(chrome.i18n.getMessage('importErrorMessgeOptionsMustBeObject'));
+                }
+            }
+            catch (error) {
+                window.alert(error);
+            }
+        })();
+    });
+}
+
+function translate(element) {
+    const targets = element.querySelectorAll('[data-i18n]');
+    for (const target of targets) {
+        if (target.dataset.i18n) {
+            if (target.dataset.i18n) {
+                target.innerText = chrome.i18n.getMessage(target.dataset.i18n);
+            }
+            else {
+                console.log('message not found: ', target);
+            }
+        }
+    }
 }
 
 (async () => {
     let options = new ExtensionOption();
     await options.loadFromStrageLocal();
+    await options.versionUp();
     render(options);
     translate(document.body);
 })();
