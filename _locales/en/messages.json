@@ -293,6 +293,9 @@
     "optionsHintHorizontalScroll": {
         "message": "Rotate the mouse wheel while holding down the Shift key to scroll horizontally."
     },
+    "hideHintPermanently": {
+        "message": "Hide hints permanently"
+    },
     "optionsAddMouseGestureDescription": {
         "message": "Move the mouse or left click while holding down the right mouse button"
     },

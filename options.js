@@ -262,6 +262,7 @@ function render(options) {
     renderCustomUrl(options);
     renderColor(options);
     renderImportExport(options);
+    renderHints(options);
 }
 
 function renderResetButton(options) {
@@ -556,6 +557,20 @@ function renderImportExport(options) {
                 window.alert(error);
             }
         })();
+    });
+}
+
+function renderHints(options) {
+    const hintElement = document.getElementById('hint');
+    if (options.hideHintPermanently) {
+        hintElement.style.display = 'none';
+    }
+
+    const hideHintElement = document.getElementById('hideHintPermanently');
+    hideHintElement.addEventListener('click', (event) => {
+        options.setHideHintPermanently(true);
+        hintElement.style.display = 'none';
+        event.preventDefault();
     });
 }
 

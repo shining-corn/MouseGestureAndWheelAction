@@ -351,6 +351,10 @@ class ExtensionOption {
         return 'rgba(0, 0, 32, 0.9)';
     }
 
+    get hideHintPermanently() {
+        return this.options.hideHintPermanently;
+    }
+
     async setGestureColor(line, font, background) {
         if (typeof line === 'string') {
             this.options.gestureLineColor = line;
@@ -440,6 +444,12 @@ class ExtensionOption {
 
     async setOptions(options) {
         this.options = options;
+
+        await chrome.storage.local.set({ 'options': this.options });
+    }
+
+    async setHideHintPermanently(hide) {
+        this.options.hideHintPermanently = hide;
 
         await chrome.storage.local.set({ 'options': this.options });
     }
