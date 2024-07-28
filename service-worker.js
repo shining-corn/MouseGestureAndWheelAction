@@ -118,7 +118,7 @@ class MouseGestureService {
                         (async () => {
                             const allTabs = await chrome.tabs.query({ currentWindow: true });
                             const i = allTabs.findIndex((element) => element.id === sender.tab.id);
-                            if (i) {
+                            if (i !== -1) {
                                 for (const tab of allTabs) {
                                     if (tab.index < allTabs[i].index) {
                                         chrome.tabs.remove(tab.id);
@@ -131,7 +131,7 @@ class MouseGestureService {
                         (async () => {
                             const allTabs = await chrome.tabs.query({ currentWindow: true });
                             const i = allTabs.findIndex((element) => element.id === sender.tab.id);
-                            if (i) {
+                            if (i !== -1) {
                                 for (const tab of allTabs) {
                                     if (tab.index > allTabs[i].index) {
                                         chrome.tabs.remove(tab.id);
@@ -144,7 +144,7 @@ class MouseGestureService {
                         (async () => {
                             const allTabs = await chrome.tabs.query({ currentWindow: true });
                             const i = allTabs.findIndex((element) => element.id === sender.tab.id);
-                            if (i) {
+                            if (i !== -1) {
                                 for (const tab of allTabs) {
                                     if (tab.index !== allTabs[i].index) {
                                         chrome.tabs.remove(tab.id);
