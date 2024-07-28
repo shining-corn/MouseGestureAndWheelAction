@@ -291,7 +291,7 @@
         "message": "マウスの中央ボタン（ホイール）でリンクをクリックするとリンク先を新しいタブで開く"
     },
     "hideHintPermanently": {
-        "message": "ヒントを永続的に非表示"
+        "message": "ヒントを永続的に非表示にする"
     },
     "optionsHintHorizontalScroll": {
         "message": "shiftキーを押しながらマウスホイールを回転させると横スクロール"
