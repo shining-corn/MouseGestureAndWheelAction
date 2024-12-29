@@ -218,6 +218,9 @@
     "optionsEnableMouseGesture": {
         "message": "マウスジェスチャーを使用する"
     },
+    "optionsRightDoubleClickToContextMenu": {
+        "message": "右ダブルクリックでコンテキストメニューを表示するように変更する"
+    },
     "optionsMouseGestureHelp": {
         "message": "マウスの右ボタンを押しながら「ジェスチャー」のとおりに動かすと、「動作」を行います。"
     },

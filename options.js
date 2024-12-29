@@ -314,6 +314,12 @@ function renderMouseGesture(options) {
         options.changeEnabledMouseGesture(enabledMouseGestureElement.checked);
     });
 
+    const rightDoubleClickToContextMenuElement = document.getElementById('right-double-click-to-context-menu');
+    rightDoubleClickToContextMenuElement.checked = options.rightDoubleClickToContextMenu;
+    rightDoubleClickToContextMenuElement.addEventListener('click', async () => {
+        await options.changeRightDoubleClickToContextMenu(rightDoubleClickToContextMenuElement.checked);
+    });
+
     const gestureTableBodyElement = document.getElementById('gestures');
 
     if (Object.prototype.toString.call(options.gestureSettings) === '[object Array]') {
