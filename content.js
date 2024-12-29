@@ -301,6 +301,7 @@ class MouseGestureClient {
         this.hasGestureDrawn = false;
         this.gestureElement = new GestureElements(options);
         this.url = undefined;
+        this.rightClickCount = 0;
     }
 
     start() {
@@ -362,6 +363,10 @@ class MouseGestureClient {
                 }
 
                 if (event.buttons === 2) {  // right button only
+                    if (this.handleContextMenu().shouldStop) {
+                        return;
+                    }
+
                     this.previousPoint = { x: event.clientX, y: event.clientY };
 
                     // get url if event.target is a link
@@ -502,6 +507,30 @@ class MouseGestureClient {
         else {
             this.gestureElement.drawLine(point);
         }
+    }
+
+    /**
+     * Processing for macOS/Linux to display context menu when right button is pressed.
+     * Right double-click to display context menu.
+     * @returns Whether the mouse gesture process should be interrupted
+     */
+    handleContextMenu() {
+        if (this.options.rightDoubleClickToContextMenu) {
+            this.rightClickCount++;
+            if (this.rightClickCount === 1) {
+                global.shouldPreventContextMenu = true;
+                this.rightClickTimeout = setTimeout(() => {
+                    this.rightClickCount = 0;
+                }, 500);
+            }
+            else if (this.rightClickCount === 2) {
+                clearTimeout(this.rightClickTimeout);
+                this.rightClickCount = 0;
+                global.shouldPreventContextMenu = false;
+                return { shouldStop: true };
+            }
+        }
+        return { shouldStop: false };
     }
 }
 

@@ -218,6 +218,9 @@
     "optionsEnableMouseGesture": {
         "message": "Enabled mouse gesture"
     },
+    "optionsRightDoubleClickToContextMenu": {
+        "message": "Change to open context menu on right double-click"
+    },
     "optionsMouseGestureHelp": {
         "message": "Move the mouse as per the \"Gesture\" while holding down the right mouse button to execute the \"Action\"."
     },

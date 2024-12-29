@@ -311,6 +311,10 @@ class ExtensionOption {
         return this.options.enabledMouseGesture;
     }
 
+    get rightDoubleClickToContextMenu() {
+        return this.options.rightDoubleClickToContextMenu;
+    }
+
     get rightButtonAndWheelUp() {
         return this.options.rightButtonAndWheelUp;
     }
@@ -386,6 +390,11 @@ class ExtensionOption {
 
     async changeEnabledMouseGesture(enabled) {
         this.options.enabledMouseGesture = enabled;
+        await chrome.storage.local.set({ 'options': this.options });
+    }
+
+    async changeRightDoubleClickToContextMenu(enabled) {
+        this.options.rightDoubleClickToContextMenu = enabled;
         await chrome.storage.local.set({ 'options': this.options });
     }
 
