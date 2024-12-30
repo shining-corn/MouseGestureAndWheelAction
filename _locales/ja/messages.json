@@ -155,6 +155,18 @@
     "openlinkinnwewindowandactivate": {
         "message": "リンクを新しいウィンドウで開いてアクティブにする"
     },
+    "openimageinnewtab": {
+        "message": "画像を新しいタブで開く"
+    },
+    "openimageinnewtabandactivate": {
+        "message": "画像を新しいタブで開いてアクティブにする"
+    },
+    "openimageinnewwindow": {
+        "message": "画像を新しいウィンドウで開く"
+    },
+    "openimageinnewwindowandactivate": {
+        "message": "画像を新しいウィンドウで開いてアクティブにする"
+    },
     "opencustomurl": {
         "message": "カスタムURLを開く"
     },

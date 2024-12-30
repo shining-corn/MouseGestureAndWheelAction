@@ -202,6 +202,26 @@ function getGestureActions() {
                 sendMessage({ action: 'openlinkinnwewindowandactivate', url: option.url });
             }
         },
+        openimageinnewtab: (option) => {
+            if (option.src) {
+                sendMessage({ action: 'openlinkinnwetab', url: option.src });
+            }
+        },
+        openimageinnewtabandactivate: (option) => {
+            if (option.src) {
+                sendMessage({ action: 'openlinkinnwetabandactivate', url: option.src });
+            }
+        },
+        openimageinnewwindow: (option) => {
+            if (option.src) {
+                sendMessage({ action: 'openlinkinnwewindow', url: option.src });
+            }
+        },
+        openimageinnewwindowandactivate: (option) => {
+            if (option.src) {
+                sendMessage({ action: 'openlinkinnwewindowandactivate', url: option.src });
+            }
+        },
         disableextension: () => {
             window.postMessage({ extensionId: chrome.runtime.id, type: 'disable-mousegesture' }, '*');
         }

@@ -213,7 +213,7 @@ class ShowArrowsElements {
                     this.addArrow(event.data.arrow);
                     break;
                 case 'done-gesture':
-                    this.done(event.data.url);
+                    this.done(event.data);
                     break;
                 case 'reset-gesture':
                     this.reset();
@@ -250,7 +250,7 @@ class ShowArrowsElements {
         }
     }
 
-    done(url) {
+    done(option) {
         const action = this.options.getGestureAction(this.arrows);
         if (action) {
             if (action.startsWith('customurl:')) {
@@ -276,7 +276,7 @@ class ShowArrowsElements {
                 }
             }
             else {
-                getGestureActions()[action]({ url: url });
+                getGestureActions()[action]({ url: option.url, src: option.src });
             }
         }
 
@@ -301,6 +301,7 @@ class MouseGestureClient {
         this.hasGestureDrawn = false;
         this.gestureElement = new GestureElements(options);
         this.url = undefined;
+        this.src = undefined;
         this.rightClickCount = 0;
     }
 
@@ -369,12 +370,17 @@ class MouseGestureClient {
 
                     this.previousPoint = { x: event.clientX, y: event.clientY };
 
-                    // get url if event.target is a link
+                    // get url if event.target is a link or image
                     this.url = undefined;
+                    this.src = undefined;
                     let elem = event.target;
                     while (elem) {
                         if (elem.href) {
                             this.url = elem.href;
+                            break;
+                        }
+                        else if (elem.src) {
+                            this.src = elem.src;
                             break;
                         }
 
@@ -433,12 +439,14 @@ class MouseGestureClient {
                     getRootWindow().postMessage({
                         extensionId: chrome.runtime.id,
                         type: 'done-gesture',
-                        url: this.url
+                        url: this.url,
+                        src: this.src,
                     }, '*');
                     this.doneGesture();
                 }
 
                 this.url = undefined;
+                this.src = undefined;
             }
         }, {
             capture: true  // WEBサイト上の他のスクリプトのstopImmediatePropagation()への対処

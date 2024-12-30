@@ -155,6 +155,18 @@
     "openlinkinnwewindowandactivate": {
         "message": "Open link in new window and activate"
     },
+    "openimageinnewtab": {
+        "message": "Open image in new tab"
+    },
+    "openimageinnewtabandactivate": {
+        "message": "Open image in new tab and activate"
+    },
+    "openimageinnewwindow": {
+        "message": "Open image in new window"
+    },
+    "openimageinnewwindowandactivate": {
+        "message": "Open image in new window and activate"
+    },
     "opencustomurl": {
         "message": "Open custom URL"
     },
