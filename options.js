@@ -257,11 +257,11 @@ function appendGestureActionOptionsToSelectElement(options, selectElement, selec
 
 function render(options) {
     renderResetButton(options);
-    renderWheelAction(options);
-    renderMouseGesture(options);
-    renderCustomUrl(options);
-    renderColor(options);
-    renderImportExport(options);
+    renderWheelActionOptions(options);
+    renderMouseGestureOptions(options);
+    renderCustomUrlOptions(options);
+    renderColorOptions(options);
+    renderImportExportOptions(options);
     renderHints(options);
 }
 
@@ -273,7 +273,7 @@ function renderResetButton(options) {
     }));
 }
 
-function renderWheelAction(options) {
+function renderWheelActionOptions(options) {
     const enabledWheelActionElement = document.getElementById('enabled-wheel-action');
     enabledWheelActionElement.checked = options.enabledWheelAction;
     enabledWheelActionElement.addEventListener('click', () => {
@@ -302,7 +302,7 @@ function renderWheelAction(options) {
     });
 }
 
-function renderMouseGesture(options) {
+function renderMouseGestureOptions(options) {
     const enabledMouseGestureElement = document.getElementById('enabled-mouse-gesture');
     enabledMouseGestureElement.checked = options.enabledMouseGesture;
     enabledMouseGestureElement.addEventListener('click', () => {
@@ -371,7 +371,7 @@ function renderMouseGesture(options) {
     gestureTableBodyElement.appendChild(addRowElement);
 }
 
-function renderCustomUrl(options) {
+function renderCustomUrlOptions(options) {
     const customUrlOptionsElement = document.getElementById('customUrlOptions');
 
     if (Object.prototype.toString.call(options.customUrlSettings) === '[object Array]') {
@@ -509,15 +509,36 @@ function saveCustomUrl(options) {
     })();
 }
 
-function renderColor(options) {
+function renderColorOptions(options) {
     const lineColorElement = document.getElementById('color-line');
     lineColorElement.value = options.gestureLineColor;
+    lineColorElement.disabled = options.hideGestureLine;
+
+    const hideGestureLineElement = document.getElementById('hide-gesture-line');
+    hideGestureLineElement.checked = options.hideGestureLine;
+    hideGestureLineElement.addEventListener('change', () => {
+        lineColorElement.disabled = hideGestureLineElement.checked;
+    });
 
     const fontColorElement = document.getElementById('color-font');
     fontColorElement.value = options.gestureFontColor;
+    fontColorElement.disabled = options.hideGestureText;
+
+    const hideGestureTextElement = document.getElementById('hide-gesture-text');
+    hideGestureTextElement.checked = options.hideGestureText;
+    hideGestureTextElement.addEventListener('change', () => {
+        fontColorElement.disabled = hideGestureTextElement.checked;
+    });
 
     const backgroundColorElement = document.getElementById('color-background');
     backgroundColorElement.value = options.gestureBackgroundColor;
+    backgroundColorElement.disabled = options.hideGestureBackground;
+
+    const hideGestureBackgroundElement = document.getElementById('hide-gesture-background');
+    hideGestureBackgroundElement.checked = options.hideGestureBackground;
+    hideGestureBackgroundElement.addEventListener('change', () => {
+        backgroundColorElement.disabled = hideGestureBackgroundElement.checked;
+    });
 
     const saveButtonElement = document.getElementById('color-save');
     saveButtonElement.addEventListener('click', () => {
@@ -525,8 +546,11 @@ function renderColor(options) {
             const line = lineColorElement.value;
             const font = fontColorElement.value;
             const background = backgroundColorElement.value;
+            const hideGestureLine = hideGestureLineElement.checked;
+            const hideGestureText = hideGestureTextElement.checked;
+            const hideGestureBackground = hideGestureBackgroundElement.checked;
 
-            await options.setGestureColor(line, font, background);
+            await options.setGestureColor(line, hideGestureLine, font, hideGestureText, background, hideGestureBackground);
 
             window.alert(chrome.i18n.getMessage('messageSucceededInSave'));
             window.location.reload();
@@ -535,7 +559,7 @@ function renderColor(options) {
 
 }
 
-function renderImportExport(options) {
+function renderImportExportOptions(options) {
     // export button
     const copyToClipboardButtonElement = document.getElementById('import-export-copy-to-clipboard');
     copyToClipboardButtonElement.addEventListener('click', () => {

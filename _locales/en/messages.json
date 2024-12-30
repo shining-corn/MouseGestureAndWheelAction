@@ -281,6 +281,9 @@
     "optionsBackgroundColor": {
         "message": "BACKGROUND"
     },
+    "optionsHide": {
+        "message": "Hide"
+    },
     "optionsPageTitleExportImport": {
         "message": "Export/Import"
     },

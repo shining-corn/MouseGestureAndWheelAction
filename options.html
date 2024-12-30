@@ -148,12 +148,27 @@
         <h2 data-i18n="optionsPageTitleColor" style="display:inline;"></h2>
       </summary>
       <p>
-        <span data-i18n="optionsLineColor" style="display:block; width: 8em;"></span><input id="color-line"><br>
-        <span data-i18n="optionsFontColor" style="display:block; width: 8em;"></span><input id="color-font"><br>
-        <span data-i18n="optionsBackgroundColor" style="display:block; width: 8em;"></span><input
-          id="color-background"><br>
-        <br>
-        <button id="color-save"><span data-i18n="optionsSave"></span></button>
+      <div style="display: flex">
+        <div style="width: 8em;"><span data-i18n="optionsLineColor"></span></div>
+        <div><input id="color-line"></div>
+        <div style="margin-left: 1em;"><label><input type="checkbox" id="hide-gesture-line"><span
+              data-i18n="optionsHide"></span></label></div>
+      </div>
+      <div style="display: flex">
+        <div style="width: 8em;"><span data-i18n="optionsFontColor" style="display:block; width: 8em;"></span></div>
+        <div><input id="color-font"></div>
+        <div style="margin-left: 1em;"><label><input type="checkbox" id="hide-gesture-text"><span
+              data-i18n="optionsHide"></span></label></div>
+      </div>
+      <div style="display: flex">
+        <div style="width: 8em;"><span data-i18n="optionsBackgroundColor" style="display:block; width: 8em;"></span>
+        </div>
+        <div><input id="color-background"></div>
+        <div style="margin-left: 1em;"><label><input type="checkbox" id="hide-gesture-background"><span
+              data-i18n="optionsHide"></span></label></div>
+      </div>
+      <br>
+      <button id="color-save"><span data-i18n="optionsSave"></span></button>
       </p>
     </details>
 

@@ -128,7 +128,12 @@ class GestureElements {
         if (this.previousPoint) {
             const ctx = this.canvasElement.getContext('2d');
             ctx.lineWidth = 4;
-            ctx.strokeStyle = this.options.gestureLineColor;
+            if (this.options.hideGestureLine) {
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0)';
+            }
+            else {
+                ctx.strokeStyle = this.options.gestureLineColor;
+            }
             ctx.beginPath();
             ctx.moveTo(this.previousPoint.x, this.previousPoint.y);
             ctx.lineTo(point.x, point.y);
@@ -178,7 +183,12 @@ class ShowArrowsElements {
         this.actionNameArea.style.fontSize = '24px';
         this.actionNameArea.style.lineHeight = '1';
         this.actionNameArea.style.fontFamily = 'BIZ UDPGothic';
-        this.actionNameArea.style.color = this.options.gestureFontColor;
+        if (this.options.hideGestureText) {
+            this.actionNameArea.style.color = 'rgba(0, 0, 0, 0)';
+        }
+        else {
+            this.actionNameArea.style.color = this.options.gestureFontColor;
+        }
         this.actionNameArea.style.backgroundColor = this.options.gestureBackgroundColor;
         this.actionNameArea.style.display = 'none';
         this.actionNameArea.style.pointerEvents = 'none';
@@ -195,7 +205,12 @@ class ShowArrowsElements {
         this.arrowArea.style.fontSize = '64px';
         this.arrowArea.style.lineHeight = '1';
         this.arrowArea.style.fontFamily = 'monospace';
-        this.arrowArea.style.color = this.options.gestureFontColor;
+        if (this.options.hideGestureText) {
+            this.arrowArea.style.color = 'rgba(0, 0, 0, 0)';
+        }
+        else {
+            this.arrowArea.style.color = this.options.gestureFontColor;
+        }
         this.arrowArea.style.backgroundColor = this.options.gestureBackgroundColor;
         this.arrowArea.style.maxWidth = 'calc(100vw - 64px)';
         this.arrowArea.style.width = 'fit-content';
@@ -224,10 +239,20 @@ class ShowArrowsElements {
 
     addArrow(arrow) {
         if (this.arrows.length === 0) {
-            this.actionNameArea.style.color = this.options.gestureFontColor;
-            this.actionNameArea.style.backgroundColor = this.options.gestureBackgroundColor;
-            this.arrowArea.style.color = this.options.gestureFontColor;
-            this.arrowArea.style.backgroundColor = this.options.gestureBackgroundColor;
+            if (this.options.hideGestureText) {
+                this.actionNameArea.style.color = 'rgba(0, 0, 0, 0)';
+            }
+            else {
+                this.actionNameArea.style.color = this.options.gestureFontColor;
+            }
+            if (this.options.hideGestureBackground) {
+                this.actionNameArea.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+            }
+            else {
+                this.actionNameArea.style.backgroundColor = this.options.gestureBackgroundColor;
+            }
+            this.arrowArea.style.color = this.actionNameArea.style.color;
+            this.arrowArea.style.backgroundColor = this.actionNameArea.style.backgroundColor;
             document.body.appendChild(this.backgroundElement);
         }
         this.arrows += arrow;

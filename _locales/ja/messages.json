@@ -281,6 +281,9 @@
     "optionsBackgroundColor": {
         "message": "背景"
     },
+    "optionsHide": {
+        "message": "非表示"
+    },
     "optionsPageTitleExportImport": {
         "message": "エクスポート・インポート"
     },

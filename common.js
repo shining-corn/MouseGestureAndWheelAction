@@ -359,12 +359,20 @@ class ExtensionOption {
         return '#408040';
     }
 
+    get hideGestureLine() {
+        return this.options.hideGestureLine || false;
+    }
+
     get gestureFontColor() {
         if (typeof this.options.gestureFontColor === 'string' && this.options.gestureFontColor) {
             return this.options.gestureFontColor;
         }
 
         return 'rgba(239, 239, 255, 0.9)';
+    }
+
+    get hideGestureText() {
+        return this.options.hideGestureText || false;
     }
 
     get gestureBackgroundColor() {
@@ -375,20 +383,29 @@ class ExtensionOption {
         return 'rgba(0, 0, 32, 0.9)';
     }
 
+    get hideGestureBackground() {
+        return this.options.hideGestureBackground || false;
+    }
+
     get hideHintPermanently() {
         return this.options.hideHintPermanently;
     }
 
-    async setGestureColor(line, font, background) {
+    async setGestureColor(line, hideGestureLine, font, hideGestureText, background, hideGestureBackground) {
         if (typeof line === 'string') {
             this.options.gestureLineColor = line;
         }
+        this.options.hideGestureLine = hideGestureLine;
+
         if (typeof font === 'string') {
             this.options.gestureFontColor = font;
         }
+        this.options.hideGestureText = hideGestureText;
+
         if (typeof background === 'string') {
             this.options.gestureBackgroundColor = background;
         }
+        this.options.hideGestureBackground = hideGestureBackground;
 
         await chrome.storage.local.set({ 'options': this.options });
     }
