@@ -262,6 +262,7 @@ function render(options) {
     renderCustomUrlOptions(options);
     renderColorOptions(options);
     renderImportExportOptions(options);
+    renderDisableExtensionOptions(options);
     renderHints(options);
 }
 
@@ -453,7 +454,7 @@ function renderCustomUrlOptions(options) {
         rowElement.appendChild(openInNewTabColumnElement);
         rowElement.appendChild(operationColumnElement);
 
-        translate(customUrlOptions);
+        translate(customUrlOptionsElement);
     });
 
     customUrlOptionsControlsElement.appendChild(addButtonElement);
@@ -588,6 +589,198 @@ function renderImportExportOptions(options) {
             }
         })();
     });
+}
+
+function renderDisableExtensionOptions(options) {
+    const disableExtensionOptionsElement = document.getElementById('disableExtensionOptions');
+
+    let disableExtensionSettings = options.disableExtensionSettings;
+    if ((Object.prototype.toString.call(disableExtensionSettings) !== '[object Array]') || (disableExtensionSettings.length === 0)) {
+        disableExtensionSettings = [{ method: 'prefixMatch', value: '' }];
+    }
+
+    for (const setting of disableExtensionSettings) {
+        const rowElement = document.createElement('tr');
+
+        const valueColumnElement = document.createElement('td');
+        const valueInputElement = document.createElement('input');
+        valueInputElement.value = setting.value;
+        valueInputElement.size = 48;
+        valueColumnElement.appendChild(valueInputElement);
+
+        const methodColumnElement = document.createElement('td');
+        const methodSelectElement = document.createElement('select');
+        methodSelectElement.addEventListener('change', (event) => {
+            switch (event.target.value) {
+                case 'regexp':
+                    valueInputElement.placeholder = 'https://example.com/.*';
+                    break;
+                case 'include':
+                    valueInputElement.placeholder = 'example.com';
+                    break;
+                default:
+                    valueInputElement.placeholder = 'https://example.com/';
+                    break;
+            }
+        });
+        methodColumnElement.appendChild(methodSelectElement);
+
+        const prefixMatchOptionElement = document.createElement('option');
+        prefixMatchOptionElement.value = 'prefixMatch';
+        prefixMatchOptionElement.dataset.i18n = 'optionsDisableExtensionMethodPrefixMatch';
+        if ((setting.method === prefixMatchOptionElement.value) || !setting.method) {
+            prefixMatchOptionElement.selected = true;
+            valueInputElement.placeholder = 'https://example.com/';
+        }
+        methodSelectElement.appendChild(prefixMatchOptionElement);
+
+        const includeOptionElement = document.createElement('option');
+        includeOptionElement.value = 'include';
+        includeOptionElement.dataset.i18n = 'optionsDisableExtensionMethodInclude';
+        if ((setting.method === includeOptionElement.value) || !setting.method) {
+            includeOptionElement.selected = true;
+            valueInputElement.placeholder = 'example.com';
+        }
+        methodSelectElement.appendChild(includeOptionElement);
+
+        const RegularExpressionOptionElement = document.createElement('option');
+        RegularExpressionOptionElement.value = 'regexp';
+        RegularExpressionOptionElement.dataset.i18n = 'optionsDisableExtensionMethodRegexp';
+        if (setting.method === RegularExpressionOptionElement.value) {
+            RegularExpressionOptionElement.selected = true;
+            valueInputElement.placeholder = 'https://example.com/.*';
+        }
+        methodSelectElement.appendChild(RegularExpressionOptionElement);
+
+        const operationColumnElement = document.createElement('td');
+        const deleteButtonElement = document.createElement('button');
+        operationColumnElement.appendChild(deleteButtonElement);
+        deleteButtonElement.dataset.i18n = 'strDelete';
+        deleteButtonElement.addEventListener('click', () => {
+            (async () => {
+                disableExtensionOptionsElement.removeChild(rowElement);
+            })();
+        });
+
+        disableExtensionOptionsElement.appendChild(rowElement);
+        rowElement.appendChild(methodColumnElement);
+        rowElement.appendChild(valueColumnElement);
+        rowElement.appendChild(operationColumnElement);
+    }
+
+    const disableExtensionOptionsControlsElement = document.getElementById('disableExtensionOptionsControls');
+
+    const addButtonElement = document.createElement('button');
+    addButtonElement.dataset.i18n = 'optionsAdd';
+    addButtonElement.addEventListener('click', () => {
+        const rowElement = document.createElement('tr');
+
+        const methodColumnElement = document.createElement('td');
+        const methodSelectElement = document.createElement('select');
+
+        const valueColumnElement = document.createElement('td');
+        const valueInputElement = document.createElement('input');
+        valueInputElement.size = 48;
+        valueColumnElement.appendChild(valueInputElement);
+
+        methodColumnElement.appendChild(methodSelectElement);
+        methodSelectElement.addEventListener('change', (event) => {
+            switch (event.target.value) {
+                case 'regexp':
+                    valueInputElement.placeholder = 'https://example.com/.*';
+                    break;
+                case 'include':
+                    valueInputElement.placeholder = 'example.com';
+                    break;
+                default:
+                    valueInputElement.placeholder = 'https://example.com/';
+                    break;
+            }
+        });
+
+        const prefixMatchOptionElement = document.createElement('option');
+        prefixMatchOptionElement.value = 'prefixMatch';
+        prefixMatchOptionElement.dataset.i18n = 'optionsDisableExtensionMethodPrefixMatch';
+        prefixMatchOptionElement.selected = true;
+        valueInputElement.placeholder = 'https://example.com/';
+        methodSelectElement.appendChild(prefixMatchOptionElement);
+
+        const includeOptionElement = document.createElement('option');
+        includeOptionElement.value = 'include';
+        includeOptionElement.dataset.i18n = 'optionsDisableExtensionMethodInclude';
+        methodSelectElement.appendChild(includeOptionElement);
+
+        const RegularExpressionOptionElement = document.createElement('option');
+        RegularExpressionOptionElement.value = 'regexp';
+        RegularExpressionOptionElement.dataset.i18n = 'optionsDisableExtensionMethodRegexp';
+        methodSelectElement.appendChild(RegularExpressionOptionElement);
+
+        const operationColumnElement = document.createElement('td');
+        const deleteButtonElement = document.createElement('button');
+        operationColumnElement.appendChild(deleteButtonElement);
+        deleteButtonElement.dataset.i18n = 'strDelete';
+        deleteButtonElement.addEventListener('click', () => {
+            (async () => {
+                disableExtensionOptionsElement.removeChild(rowElement);
+            })();
+        });
+
+        disableExtensionOptionsElement.appendChild(rowElement);
+        rowElement.appendChild(methodColumnElement);
+        rowElement.appendChild(valueColumnElement);
+        rowElement.appendChild(operationColumnElement);
+
+        translate(disableExtensionOptionsElement);
+    });
+
+    disableExtensionOptionsControlsElement.appendChild(addButtonElement);
+
+    const saveButtonElement = document.createElement('button');
+    saveButtonElement.dataset.i18n = 'optionsSave';
+    saveButtonElement.style.margin = '1em';
+    saveButtonElement.addEventListener('click', () => {
+        saveDisableExtension(options);
+    });
+    disableExtensionOptionsControlsElement.appendChild(saveButtonElement);
+}
+
+function saveDisableExtension(options) {
+    const disableExtensionSettings = [];
+    const rowElements = document.querySelectorAll('#disableExtensionOptions > *')
+
+    for (const row of rowElements) {
+        const method = row.children[0].children[0].value;
+        const value = row.children[1].children[0].value;
+
+        // 未入力の行は無視
+        if (value.length === 0) {
+            continue;
+        }
+
+        // 正規表現が不正な場合はエラー
+        if (method === 'regexp') {
+            try {
+                new RegExp(value);
+            }
+            catch (e) {
+                window.alert(`${chrome.i18n.getMessage('optionsDisbleExtensionErrorMessageInvalidRegExp')}\n${e}`);
+                row.children[1].children[0].focus();
+                row.children[1].children[0].setSelectionRange(0, value.length);
+                return;
+            }
+        }
+
+        disableExtensionSettings.push({
+            method: method,
+            value: value,
+        });
+    }
+
+    (async () => {
+        await options.setDisableExtensionSettings(disableExtensionSettings);
+        window.alert(chrome.i18n.getMessage('messageSucceededInSave'));
+        window.location.reload();
+    })();
 }
 
 function renderHints(options) {

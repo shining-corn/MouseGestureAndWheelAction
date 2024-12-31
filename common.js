@@ -308,7 +308,7 @@ class ExtensionOption {
                     },
                 ];
             }
-            
+
             if (typeof this.options.gestureLineColor === 'undefined') {
                 this.options.gestureLineColor = '#408040';
             }
@@ -349,6 +349,10 @@ class ExtensionOption {
 
     get customUrlSettings() {
         return this.options.customUrlSettings;
+    }
+
+    get disableExtensionSettings() {
+        return this.options.disableExtensionSettings;
     }
 
     get gestureLineColor() {
@@ -486,6 +490,12 @@ class ExtensionOption {
             return this.options.customUrlSettings.find(elem => elem.id === id);
         }
         return undefined;
+    }
+
+    async setDisableExtensionSettings(disableExtensionSettings) {
+        this.options.disableExtensionSettings = disableExtensionSettings;
+
+        await chrome.storage.local.set({ 'options': this.options });
     }
 
     async setOptions(options) {
