@@ -331,6 +331,8 @@ class MouseGestureClient {
     }
 
     start() {
+        this.disableExtensionByUrlCondition();
+
         document.addEventListener("selectionchange", () => {
             const text = window.getSelection().toString();
             if (text) {
@@ -564,6 +566,38 @@ class MouseGestureClient {
             }
         }
         return { shouldStop: false };
+    }
+
+    disableExtensionByUrlCondition() {
+        if ((Object.prototype.toString.call(this.options.disableExtensionSettings) !== '[object Array]') || (this.options.disableExtensionSettings.length === 0)) {
+            return;
+        }
+
+        for (const setting of this.options.disableExtensionSettings) {
+            switch (setting.method) {
+                case 'prefixMatch':
+                    if (document.location.href.indexOf(setting.value) === 0) {
+                        this.enabled = false;
+                        return;
+                    }
+                    break;
+                case 'include':
+                    if (document.location.href.indexOf(setting.value) !== -1) {
+                        this.enabled = false;
+                        return;
+                    }
+                    break;
+                case 'regexp':
+                    const match = document.location.href.match(`/${setting.value}/`);
+                    if (match && match.length) {
+                        this.enabled = false;
+                        return;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }
 

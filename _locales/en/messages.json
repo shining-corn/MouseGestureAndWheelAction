@@ -299,6 +299,30 @@
     "importErrorMessgeOptionsMustBeObject": {
         "message": "The type of the option must be object."
     },
+    "optionsPageTitleDisableExtension": {
+        "message": "Disable Extension"
+    },
+    "optionsDisbleExtensionDescription": {
+        "message": "Disable this extension on web pages that match the following conditions."
+    },
+    "optionsPageTableHeadDisableExtensionOperator": {
+        "message": "Comparison method"
+    },
+    "optionsPageTableHeadDisableExtensionOperand": {
+        "message": "Value"
+    },
+    "optionsDisableExtensionMethodPrefixMatch": {
+        "message": "Prefix Match"
+    },
+    "optionsDisableExtensionMethodInclude": {
+        "message": "Include"
+    },
+    "optionsDisableExtensionMethodRegexp": {
+        "message": "Regular Expression"
+    },
+    "optionsDisbleExtensionErrorMessageInvalidRegExp": {
+        "message": "Invalid regular expression."
+    },
     "optionsPageTitleHint": {
         "message": "Hint"
     },

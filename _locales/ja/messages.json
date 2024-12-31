@@ -299,6 +299,30 @@
     "importErrorMessgeOptionsMustBeObject": {
         "message": "オプションの型はobjectでなければなりません。"
     },
+    "optionsPageTitleDisableExtension": {
+        "message": "拡張機能の無効化"
+    },
+    "optionsDisbleExtensionDescription": {
+        "message": "以下の条件に一致するWEBページでこの拡張機能を無効化します。"
+    },
+    "optionsPageTableHeadDisableExtensionOperator": {
+        "message": "比較方法"
+    },
+    "optionsPageTableHeadDisableExtensionOperand": {
+        "message": "値"
+    },
+    "optionsDisableExtensionMethodPrefixMatch": {
+        "message": "前方一致"
+    },
+    "optionsDisableExtensionMethodInclude": {
+        "message": "含む"
+    },
+    "optionsDisableExtensionMethodRegexp": {
+        "message": "正規表現"
+    },
+    "optionsDisbleExtensionErrorMessageInvalidRegExp": {
+        "message": "正規表現の値が不正です。"
+    },
     "optionsPageTitleHint": {
         "message": "ヒント"
     },
