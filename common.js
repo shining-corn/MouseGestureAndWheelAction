@@ -131,9 +131,6 @@ function getGestureActions() {
         gotonexttab: () => {
             sendMessage({ action: 'gotonexttab' });
         },
-        openoptionspage: () => {
-            sendMessage({ action: 'openoptionspage' });
-        },
         addbookmark: () => {
             sendMessage({ action: 'addbookmark', bookmark: { title: document.title, url: document.location.href } });
         },
@@ -232,6 +229,9 @@ function getGestureActions() {
             if (option.src) {
                 sendMessage({ action: 'openlinkinnwewindowandactivate', url: option.src });
             }
+        },
+        openoptionspage: () => {
+            sendMessage({ action: 'openoptionspage' });
         },
         disableextension: () => {
             window.postMessage({ extensionId: chrome.runtime.id, type: 'disable-mousegesture' }, '*');
