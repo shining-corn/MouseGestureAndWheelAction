@@ -308,8 +308,11 @@
     "optionsPageTitleDisableExtension": {
         "message": "Disable Extension"
     },
-    "optionsDisbleExtensionDescription": {
+    "optionsDisbleExtensionDescription1": {
         "message": "Disable this extension on web pages that match the following conditions."
+    },
+    "optionsDisbleExtensionDescription2": {
+        "message": "For web pages that were open before this setting is made, the setting will be applied after the page is refreshed."
     },
     "optionsPageTableHeadDisableExtensionOperator": {
         "message": "Comparison method"
