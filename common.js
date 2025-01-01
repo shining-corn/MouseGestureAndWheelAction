@@ -1,7 +1,12 @@
 function sendMessage(request) {
     (async () => {
         request.extensionId = chrome.runtime.id;
-        await chrome.runtime.sendMessage(request);
+        try {
+            await chrome.runtime.sendMessage(request);
+        }
+        catch (e) {
+            console.log(e);
+        }
     })();
 }
 
@@ -119,6 +124,12 @@ function getGestureActions() {
         },
         gotomostrighttab: (bywheel) => {
             sendMessage({ action: 'gotomostrighttab', bywheel: bywheel });
+        },
+        gotoprevioustab: () => {
+            sendMessage({ action: 'gotoprevioustab' });
+        },
+        gotonexttab: () => {
+            sendMessage({ action: 'gotonexttab' });
         },
         openoptionspage: () => {
             sendMessage({ action: 'openoptionspage' });

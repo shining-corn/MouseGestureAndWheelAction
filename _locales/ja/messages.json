@@ -80,6 +80,12 @@
     "gotomostrighttab": {
         "message": "右端のタブに移動"
     },
+    "gotoprevioustab": {
+        "message": "前のタブに戻る"
+    },
+    "gotonexttab": {
+        "message": "次のタブに進む"
+    },
     "openoptionspage": {
         "message": "オプションを開く"
     },
