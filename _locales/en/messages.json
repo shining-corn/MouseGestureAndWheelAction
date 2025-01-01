@@ -80,6 +80,12 @@
     "gotomostrighttab": {
         "message": "Go to the rightmost tab"
     },
+    "gotoprevioustab": {
+        "message": "Go to previous tab"
+    },
+    "gotonexttab": {
+        "message": "Go to next tab"
+    },
     "openoptionspage": {
         "message": "Open options"
     },

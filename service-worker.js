@@ -72,9 +72,12 @@ class MouseGestureService {
     constructor() {
         this.previousWindowState = [];
         this.lastCreatedGroupId = undefined;
+        this.tabActivateHistory = {};
     }
 
     start() {
+        this.processTabHistory();
+
         chrome.runtime.onMessage.addListener(
             (request, sender) => {
                 if (!request || request.extensionId !== chrome.runtime.id) {
@@ -211,6 +214,57 @@ class MouseGestureService {
                             const allTabs = await chrome.tabs.query({ currentWindow: true });
                             activateMostRightTab(allTabs, request.bywheel);
                         })();
+                        break;
+                    case 'gotoprevioustab':
+                        {
+                            const data = this.tabActivateHistory[sender.tab.windowId];
+                            if (data && data.history.length > 0) {
+                                if (data.index === -1) {
+                                    data.index = data.history.length - 1;
+                                }
+
+                                if (data.index !== 0) {
+                                    data.index--;
+                                }
+
+                                if (sender.tab.id !== data.history[data.index]) {
+                                    chrome.tabs.update(data.history[data.index], { active: true });
+                                    data.shouldPreventAddHistory = true;
+                                    sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: data.history[data.index] }]);
+                                }
+                                else {
+                                    sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: sender.tab.id }]);
+                                }
+                            }
+                            else {
+                                sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: sender.tab.id }]);
+                            }
+                        }
+                        break;
+                    case 'gotonexttab':
+                        {
+                            const data = this.tabActivateHistory[sender.tab.windowId];
+                            if (data && data.history.length > 0) {
+                                if (data.index === -1) {
+                                    data.index = data.history.length - 1;
+                                }
+
+                                if (data.index < data.history.length - 1) {
+                                    data.index++;
+                                }
+
+                                if (sender.tab.id !== data.history[data.index]) {
+                                    chrome.tabs.update(data.history[data.index], { active: true });
+                                    data.shouldPreventAddHistory = true;
+                                }
+                                else {
+                                    sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: sender.tab.id }]);
+                                }
+                            }
+                            else {
+                                sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: sender.tab.id }]);
+                            }
+                        }
                         break;
                     case 'openoptionspage':
                         chrome.runtime.openOptionsPage();
@@ -446,6 +500,58 @@ class MouseGestureService {
                 }
             }
         );
+    }
+
+    processTabHistory() {
+        chrome.tabs.onActivated.addListener((activeInfo) => {
+            if (!this.tabActivateHistory[activeInfo.windowId]) {
+                this.tabActivateHistory[activeInfo.windowId] = {
+                    history: [],
+                    index: -1,
+                    shouldPreventAddHistory: false,
+                };
+            }
+
+            const data = this.tabActivateHistory[activeInfo.windowId];
+            if (data.shouldPreventAddHistory) {
+                data.shouldPreventAddHistory = false;
+            }
+            else if ((data.history.length === 0) || (data.history[data.history.length - 1] !== activeInfo.tabId)) {
+                while (data.length >= 4096) {    // 4096: max history length
+                    this.tabActivateHistory[activeInfo.windowId].history.shift();
+                }
+                this.tabActivateHistory[activeInfo.windowId].history.push(activeInfo.tabId);
+
+                data.index = -1;
+            }
+        });
+
+        chrome.tabs.onDetached.addListener((tabId, detachInfo) => {
+            if (this.tabActivateHistory[detachInfo.oldWindowId]) {
+                this.tabActivateHistory[detachInfo.oldWindowId].history = this.tabActivateHistory[detachInfo.oldWindowId].history.filter((elem) => elem !== tabId);
+
+                this.tabActivateHistory[detachInfo.oldWindowId].history = this.tabActivateHistory[detachInfo.oldWindowId].history.filter((elem, i, array) => i === 0 || elem !== array[i - 1]);
+
+                if (this.tabActivateHistory[detachInfo.oldWindowId].history.length === 0) {
+                    delete this.tabActivateHistory[detachInfo.oldWindowId];
+                }
+            }
+        });
+
+        chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
+            if (removeInfo.isWindowClosing) {
+                delete this.tabActivateHistory[removeInfo.windowId];
+            }
+            else if (this.tabActivateHistory[removeInfo.windowId]) {
+                this.tabActivateHistory[removeInfo.windowId].history = this.tabActivateHistory[removeInfo.windowId].history.filter((elem) => elem !== tabId);
+
+                this.tabActivateHistory[detachInfo.oldWindowId].history = this.tabActivateHistory[detachInfo.oldWindowId].history.filter((elem, i, array) => i === 0 || elem !== array[i - 1]);
+
+                if (this.tabActivateHistory[removeInfo.windowId].history.length === 0) {
+                    delete this.tabActivateHistory[removeInfo.windowId];
+                }
+            }
+        });
     }
 }
 
