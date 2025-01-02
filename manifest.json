@@ -1,6 +1,6 @@
 {
     "name": "Mouse Gesture and Wheel Action",
-    "version": "1.4.1",
+    "version": "1.5.0",
     "manifest_version": 3,
     "description": "__MSG_extensionDescription__",
     "default_locale": "en",
