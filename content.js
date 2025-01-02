@@ -420,6 +420,8 @@ class MouseGestureClient {
         });
 
         window.addEventListener('mousemove', (event) => {
+            this.rightClickCount = 0;   // 素早くマウスジェスチャーを繰り返したときに右ダブルクリックと判定しないようにリセットする
+
             const MINIMUM_DISTANCE = 16;
 
             if ((event.buttons & 2) === 2 && this.previousPoint) {
