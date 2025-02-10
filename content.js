@@ -28,6 +28,36 @@ function createCenteringElement() {
     return element;
 }
 
+function processAction(options, action, data) {
+    if (action) {
+        if (action.startsWith('customurl:')) {
+            const text = global.selectedText;
+            if (text) {
+                const id = action.substring(10);
+                const setting = options.getCustomUrlSetting(id);
+                if (setting) {
+                    const url = setting.customUrl.replace(/\{\}/ig, encodeURI(text));
+                    if (setting.openInNewTab) {
+                        sendMessage({ action: 'openlinkinnwetabandactivate', url: url });
+                    }
+                    else {
+                        window.location.href = url;
+                    }
+                }
+                else {
+                    window.alert(`${chrome.i18n.getMessage('messageCustomUrlSettingNotFound')} (ID: ${id} )`);
+                }
+            }
+            else {
+                window.alert(chrome.i18n.getMessage('messageCustomUrlHelp'));
+            }
+        }
+        else {
+            getGestureActions()[action]({ url: data.url, src: data.src });
+        }
+    }
+}
+
 // IFRAME間で共有する変数
 const global = new class {
     constructor() {
@@ -228,10 +258,10 @@ class ShowArrowsElements {
                     this.addArrow(event.data.arrow);
                     break;
                 case 'done-gesture':
-                    this.done(event.data);
+                    this.doneMouseGesture(event.data);
                     break;
                 case 'reset-gesture':
-                    this.reset();
+                    this.resetMouseGesture();
                     break;
             }
         });
@@ -275,40 +305,12 @@ class ShowArrowsElements {
         }
     }
 
-    done(option) {
-        const action = this.options.getGestureAction(this.arrows);
-        if (action) {
-            if (action.startsWith('customurl:')) {
-                const text = global.selectedText;
-                if (text) {
-                    const id = action.substring(10);
-                    const setting = this.options.getCustomUrlSetting(id);
-                    if (setting) {
-                        const url = setting.customUrl.replace(/\{\}/ig, encodeURI(text));
-                        if (setting.openInNewTab) {
-                            sendMessage({ action: 'openlinkinnwetabandactivate', url: url });
-                        }
-                        else {
-                            window.location.href = url;
-                        }
-                    }
-                    else {
-                        window.alert(`${chrome.i18n.getMessage('messageCustomUrlSettingNotFound')} (ID: ${id} )`);
-                    }
-                }
-                else {
-                    window.alert(chrome.i18n.getMessage('messageCustomUrlHelp'));
-                }
-            }
-            else {
-                getGestureActions()[action]({ url: option.url, src: option.src });
-            }
-        }
-
-        this.reset();
+    doneMouseGesture(data) {
+        processAction(this.options, this.options.getGestureAction(this.arrows), data);
+        this.resetMouseGesture();
     }
 
-    reset() {
+    resetMouseGesture() {
         if (this.arrows) {
             this.arrows = '';
             this.arrowArea.innerText = this.arrows;
@@ -328,6 +330,8 @@ class MouseGestureClient {
         this.url = undefined;
         this.src = undefined;
         this.rightClickCount = 0;
+        this.onMouseGesture = false;
+        this.rockerGestureMode = undefined;
     }
 
     start() {
@@ -340,15 +344,25 @@ class MouseGestureClient {
             }
         });
 
+        window.addEventListener('blur', () => {
+            global.shouldPreventContextMenu = false;    // ロッカージェスチャーでタブ移動したとき用
+        })
+
         window.addEventListener('wheel', (event) => {
-            if (this.enabled && this.options.enabledWheelAction && ((event.buttons & 2) === 2)) {
+            if (!this.enabled) {
+                return;
+            }
+
+            const isWheelAction = () => this.options.enabledWheelAction && ((event.buttons & 2) === 2) && !this.onMouseGesture && !this.rockerGestureMode;
+
+            if (isWheelAction()) {
                 event.preventDefault();
                 global.shouldPreventContextMenu = true;
             }
 
             (async () => {
-                if (this.enabled && this.options.enabledWheelAction && ((event.buttons & 2) === 2)) {
-                    if (this.options.rightButtonAndWheelUp && this.options.rightButtonAndWheelUp.indexOf && this.options.rightButtonAndWheelUp.indexOf('goto') === 0) {
+                if (isWheelAction()) {
+                    if (this.options.rightButtonAndWheelUp && this.options.rightButtonAndWheelUp.startsWith && this.options.rightButtonAndWheelUp.startsWith('goto')) {
                         // 連続でタブ移動する場合、フラグを解除する。
                         global.shouldPreventContextMenu = false;
                     }
@@ -365,16 +379,33 @@ class MouseGestureClient {
                             action(true);
                         }
                     }
-                }
 
-                // マウスジェスチャー中の場合はそれをキャンセルする
-                this.resetGesture();
+                    // マウスジェスチャー中の場合はそれをキャンセルする
+                    this.resetGesture();
+                }
             })();
         }, { capture: true, passive: false });
 
         window.addEventListener('mousedown', (event) => {
-            if (this.enabled && this.options.enabledMouseGesture) {
+            if (!this.enabled) {
+                return;
+            }
+
+            // ロッカージェスチャー開始
+            if (event.buttons === 3 && !this.onMouseGesture) {
+                global.shouldPreventContextMenu = true;
+                if (event.button === 0 && this.options.rockerGestureRightLeft) {
+                    this.rockerGestureMode = 'right-left';
+                }
+                else if (event.button === 2 && this.options.rockerGestureLeftRight) {
+                    this.rockerGestureMode = 'left-right';
+                }
+            }
+
+            // マウスジェスチャー
+            if (this.options.enabledMouseGesture && !this.rockerGestureMode) {
                 if (((event.buttons & 1) !== 0) && this.previousPoint) {
+                    this.onMouseGesture = true;
                     getRootWindow().postMessage(
                         {
                             extensionId: chrome.runtime.id,
@@ -420,11 +451,15 @@ class MouseGestureClient {
         });
 
         window.addEventListener('mousemove', (event) => {
+            if (!this.enabled) {
+                return;
+            }
+
             this.rightClickCount = 0;   // 素早くマウスジェスチャーを繰り返したときに右ダブルクリックと判定しないようにリセットする
 
             const MINIMUM_DISTANCE = 16;
 
-            if ((event.buttons & 2) === 2 && this.previousPoint) {
+            if ((event.buttons & 2) === 2 && this.previousPoint && !this.rockerGestureMode) {
                 const diffX = event.clientX - this.previousPoint.x;
                 const diffY = event.clientY - this.previousPoint.y;
                 const distanceSquare = diffX * diffX + diffY * diffY;
@@ -446,6 +481,7 @@ class MouseGestureClient {
 
                     const direction = computeDirection(diffX, diffY);
                     if (direction && direction !== this.previousDirection) {
+                        this.onMouseGesture = true;
                         getRootWindow().postMessage(
                             {
                                 extensionId: chrome.runtime.id,
@@ -463,6 +499,55 @@ class MouseGestureClient {
         });
 
         window.addEventListener('mouseup', (event) => {
+            if (!this.enabled) {
+                return;
+            }
+
+            if (this.rockerGestureMode) {
+                let command = '';
+                if (this.rockerGestureMode === 'right-left' && event.button === 0 && this.options.rockerGestureRightLeft) {
+                    command = this.options.rockerGestureRightLeft;
+                }
+                else if (this.rockerGestureMode === 'left-right' && event.button === 2 && this.options.rockerGestureLeftRight) {
+                    command = this.options.rockerGestureLeftRight;
+                }
+
+                if (command) {
+                    // get url if event.target is a link or image
+                    let url = undefined;
+                    let src = undefined;
+                    let elem = event.target;
+                    while (elem) {
+                        if (elem.href) {
+                            url = elem.href;
+                            break;
+                        }
+                        else if (elem.src) {
+                            src = elem.src;
+                            break;
+                        }
+
+                        elem = elem.parentNode;
+                    }
+
+                    if (command.startsWith('goto')) {
+                        this.rockerGestureMode = undefined;
+                        this.resetGesture();
+                    }
+
+                    processAction(this.options, command, { url, src });
+                }
+            }
+
+            // reset RockerGesture state
+            if (event.buttons === 0) {
+                this.rockerGestureMode = undefined;
+                if (event.button === 0) {
+                    global.shouldPreventContextMenu = false;
+                }
+            }
+
+            // マウスジェスチャー
             if (event.button === 2) {
                 if (this.previousPoint) {
                     getRootWindow().postMessage({
@@ -476,6 +561,7 @@ class MouseGestureClient {
 
                 this.url = undefined;
                 this.src = undefined;
+                this.onMouseGesture = false;
             }
         }, {
             capture: true  // WEBサイト上の他のスクリプトのstopImmediatePropagation()への対処
@@ -528,6 +614,7 @@ class MouseGestureClient {
     }
 
     resetGesture() {
+        this.onMouseGesture = false;
         if (this.previousPoint) {
             this.doneGesture();
             global.shouldPreventContextMenu = false;
