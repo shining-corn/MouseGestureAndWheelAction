@@ -107,23 +107,23 @@ function getGestureActions() {
         reloadtaball: () => {
             sendMessage({ action: 'reloadtaball' });
         },
-        gotolefttab: (bywheel) => {
-            sendMessage({ action: 'gotolefttab', bywheel: bywheel });
+        gotolefttab: (shouldPreventContextMenu) => {
+            sendMessage({ action: 'gotolefttab', shouldPreventContextMenu: shouldPreventContextMenu });
         },
-        gotorighttab: (bywheel) => {
-            sendMessage({ action: 'gotorighttab', bywheel: bywheel });
+        gotorighttab: (shouldPreventContextMenu) => {
+            sendMessage({ action: 'gotorighttab', shouldPreventContextMenu: shouldPreventContextMenu });
         },
-        gotolefttabwithloop: (bywheel) => {
-            sendMessage({ action: 'gotolefttabwithloop', bywheel: bywheel });
+        gotolefttabwithloop: (shouldPreventContextMenu) => {
+            sendMessage({ action: 'gotolefttabwithloop', shouldPreventContextMenu: shouldPreventContextMenu });
         },
-        gotorighttabwithloop: (bywheel) => {
-            sendMessage({ action: 'gotorighttabwithloop', bywheel: bywheel });
+        gotorighttabwithloop: (shouldPreventContextMenu) => {
+            sendMessage({ action: 'gotorighttabwithloop', shouldPreventContextMenu: shouldPreventContextMenu });
         },
-        gotomostlefttab: (bywheel) => {
-            sendMessage({ action: 'gotomostlefttab', bywheel: bywheel });
+        gotomostlefttab: (shouldPreventContextMenu) => {
+            sendMessage({ action: 'gotomostlefttab', shouldPreventContextMenu: shouldPreventContextMenu });
         },
-        gotomostrighttab: (bywheel) => {
-            sendMessage({ action: 'gotomostrighttab', bywheel: bywheel });
+        gotomostrighttab: (shouldPreventContextMenu) => {
+            sendMessage({ action: 'gotomostrighttab', shouldPreventContextMenu: shouldPreventContextMenu });
         },
         gotoprevioustab: () => {
             sendMessage({ action: 'gotoprevioustab' });
@@ -258,9 +258,10 @@ class ExtensionOption {
         else {
             this.options = {
                 enabledWheelAction: true,
-                enabledMouseGesture: true,
                 rightButtonAndWheelUp: 'gotolefttab',
                 rightButtonAndWheelDown: 'gotorighttab',
+
+                enabledMouseGesture: true,
                 gestureSettings: [
                     { gesture: 'Click ', action: 'openlinkinnwetabandactivate' },
                     { gesture: '←', action: 'back' },
@@ -281,6 +282,7 @@ class ExtensionOption {
                     { gesture: '←↓', action: 'deletebookmark' },
                     { gesture: '←→', action: 'mutetabtoggle' },
                 ],
+
                 customUrlSettings: [
                     {
                         id: 'Google',
@@ -293,6 +295,7 @@ class ExtensionOption {
                         openInNewTab: true,
                     },
                 ],
+
                 gestureLineColor: '#408040',
                 gestureFontColor: 'rgba(239, 239, 255, 0.9)',
                 gestureBackgroundColor: 'rgba(0, 0, 32, 0.9)',
@@ -356,6 +359,14 @@ class ExtensionOption {
 
     get gestureSettings() {
         return this.options.gestureSettings;
+    }
+
+    get rockerGestureLeftRight() {
+        return this.options.rockerGestureLeftRight;
+    }
+
+    get rockerGestureRightLeft() {
+        return this.options.rockerGestureRightLeft;
     }
 
     get customUrlSettings() {
@@ -426,6 +437,16 @@ class ExtensionOption {
     }
 
     getGestureAction(gesture) {
+        // rocker gesture
+        if (this.options.rockerGestureLeftRight && gesture === 'RClick ') {
+            return this.options.rockerGestureLeftRight;
+        }
+        if (this.options.rockerGestureRightLeft && gesture === 'Click ') {
+            // gestureSettingsよりrockerGestureRightLeftを優先
+            return this.options.rockerGestureRightLeft;
+        }
+
+        // mouse gesture
         if (this.options.gestureSettings && (typeof this.options.gestureSettings.findIndex === 'function')) {
             const i = this.options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
             if (i !== -1) {
@@ -435,11 +456,6 @@ class ExtensionOption {
         return undefined;
     }
 
-    async changeEnabledWheelAction(enabled) {
-        this.options.enabledWheelAction = enabled;
-        await chrome.storage.local.set({ 'options': this.options });
-    }
-
     async changeEnabledMouseGesture(enabled) {
         this.options.enabledMouseGesture = enabled;
         await chrome.storage.local.set({ 'options': this.options });
@@ -447,6 +463,11 @@ class ExtensionOption {
 
     async changeRightDoubleClickToContextMenu(enabled) {
         this.options.rightDoubleClickToContextMenu = enabled;
+        await chrome.storage.local.set({ 'options': this.options });
+    }
+
+    async changeEnabledWheelAction(enabled) {
+        this.options.enabledWheelAction = enabled;
         await chrome.storage.local.set({ 'options': this.options });
     }
 
@@ -488,6 +509,16 @@ class ExtensionOption {
 
             await chrome.storage.local.set({ 'options': this.options });
         }
+    }
+
+    async changeRockerGestureLeftRight(action) {
+        this.options.rockerGestureLeftRight = action;
+        await chrome.storage.local.set({ 'options': this.options });
+    }
+
+    async changeRockerGestureRightLeft(action) {
+        this.options.rockerGestureRightLeft = action;
+        await chrome.storage.local.set({ 'options': this.options });
     }
 
     async setCustomUrlSettings(customUrlSettings) {

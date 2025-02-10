@@ -248,6 +248,18 @@
     "optionsPageTableHeadAction": {
         "message": "Action"
     },
+    "optionsPageTitleRockerGesture": {
+        "message": "Rocker Gesture"
+    },
+    "optionsRockerGestureDescription1": {
+        "message": "If \"Hold down the left mouse button and right click (←)\" is set to a setting other than \"None\" the mouse gesture \"Click\" will not work."
+    },
+    "optionsRockerGestureLeftRight": {
+        "message": "Hold down the right mouse button and left click (→)"
+    },
+    "optionsRockerGestureRightLeft": {
+        "message": "Hold down the left mouse button and right click (←)"
+    },
     "optionsPageTitleCustomURL": {
         "message": "Custom URL"
     },

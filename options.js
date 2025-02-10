@@ -259,6 +259,7 @@ function render(options) {
     renderResetButton(options);
     renderWheelActionOptions(options);
     renderMouseGestureOptions(options);
+    renderRockerGestureOptions(options);
     renderCustomUrlOptions(options);
     renderColorOptions(options);
     renderImportExportOptions(options);
@@ -370,6 +371,24 @@ function renderMouseGestureOptions(options) {
     addColumnElement.appendChild(addButtonElement);
     addRowElement.appendChild(addColumnElement);
     gestureTableBodyElement.appendChild(addRowElement);
+}
+
+function renderRockerGestureOptions(options) {
+    const selectRockerGestureLeftRightElement = document.getElementById('select-rocker-gesture-left-right');
+    appendGestureActionOptionsToSelectElement(options, selectRockerGestureLeftRightElement, options.rockerGestureLeftRight);
+    selectRockerGestureLeftRightElement.addEventListener('change', () => {
+        (async () => {
+            await options.changeRockerGestureLeftRight(selectRockerGestureLeftRightElement.value);
+        })();
+    });
+
+    const selectRockerGestureRightLeftElement = document.getElementById('select-rocker-gesture-right-left');
+    appendGestureActionOptionsToSelectElement(options, selectRockerGestureRightLeftElement, options.rockerGestureRightLeft);
+    selectRockerGestureRightLeftElement.addEventListener('change', () => {
+        (async () => {
+            await options.changeRockerGestureRightLeft(selectRockerGestureRightLeftElement.value);
+        })();
+    });
 }
 
 function renderCustomUrlOptions(options) {
