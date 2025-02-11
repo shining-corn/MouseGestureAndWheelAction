@@ -32,9 +32,11 @@ function processAction(options, action, data) {
     if (action) {
         if (action.startsWith('customurl:')) {
             const text = global.selectedText;
-            if (text) {
-                const id = action.substring(10);
-                const setting = options.getCustomUrlSetting(id);
+            const id = action.substring(10);
+            const setting = options.getCustomUrlSetting(id);
+            const hasPlaceholder = setting && setting.customUrl.indexOf('{}') !== -1;
+
+            if (text || !hasPlaceholder) {
                 if (setting) {
                     const url = setting.customUrl.replace(/\{\}/ig, encodeURI(text));
                     if (setting.openInNewTab) {
