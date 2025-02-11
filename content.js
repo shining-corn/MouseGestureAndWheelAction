@@ -407,6 +407,9 @@ class MouseGestureClient {
             // マウスジェスチャー
             if (this.options.enabledMouseGesture && !this.rockerGestureMode) {
                 if (((event.buttons & 1) !== 0) && this.previousPoint) {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+
                     this.onMouseGesture = true;
                     getRootWindow().postMessage(
                         {
@@ -418,9 +421,7 @@ class MouseGestureClient {
                     );
                     this.previousDirection = undefined;
                     this.previousPoint = { x: event.clientX, y: event.clientY };
-
                     global.shouldPreventContextMenu = true;
-                    event.preventDefault();
                 }
 
                 if (event.buttons === 2) {  // right button only
@@ -515,6 +516,9 @@ class MouseGestureClient {
                 }
 
                 if (command) {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+
                     // get url if event.target is a link or image
                     let url = undefined;
                     let src = undefined;
@@ -551,6 +555,9 @@ class MouseGestureClient {
 
             // マウスジェスチャー
             if (event.button === 2) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+
                 if (this.previousPoint) {
                     getRootWindow().postMessage({
                         extensionId: chrome.runtime.id,
@@ -587,7 +594,9 @@ class MouseGestureClient {
         });
 
         window.addEventListener('click', (event) => {
-            if ((event.button === 0) && this.previousPoint) {
+            if (((event.button === 0) && this.previousPoint) ||     // マウスジェスチャー中
+                ((event.button === 0) && (event.buttons === 2))      // ロッカージェスチャー中
+            ) {
                 event.preventDefault();
                 event.stopImmediatePropagation();
             }
