@@ -296,7 +296,7 @@ class ExtensionOption {
                     },
                 ],
 
-                gestureLineColor: '#408040',
+                gestureLineColor: 'rgba(128, 128, 255, 0.9)',
                 gestureFontColor: 'rgba(239, 239, 255, 0.9)',
                 gestureBackgroundColor: 'rgba(0, 0, 32, 0.9)',
             };
