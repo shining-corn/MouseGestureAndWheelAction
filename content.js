@@ -334,6 +334,7 @@ class MouseGestureClient {
         this.rightClickCount = 0;
         this.onMouseGesture = false;
         this.rockerGestureMode = undefined;
+        this.hasMouseLightButtonDowned = false;
     }
 
     start() {
@@ -348,7 +349,8 @@ class MouseGestureClient {
 
         window.addEventListener('blur', () => {
             global.shouldPreventContextMenu = false;    // ロッカージェスチャーでタブ移動したとき用
-        })
+            this.hasMouseLightButtonDowned = false;     // ロッカージェスチャーでマウス右ボタンを押したまま移動してきた場合にコンテキストメニューを抑制
+        });
 
         window.addEventListener('wheel', (event) => {
             if (!this.enabled) {
@@ -391,6 +393,11 @@ class MouseGestureClient {
         window.addEventListener('mousedown', (event) => {
             if (!this.enabled) {
                 return;
+            }
+
+            // ロッカージェスチャーでマウス右ボタンを押したまま移動してきた場合にコンテキストメニューを抑制
+            if (!this.options.rightDoubleClickToContextMenu) {
+                this.hasMouseLightButtonDowned = true;
             }
 
             // ロッカージェスチャー開始
@@ -506,6 +513,13 @@ class MouseGestureClient {
                 return;
             }
 
+            // ロッカージェスチャーでマウス右ボタンを押したまま移動してきた場合にコンテキストメニューを抑制
+            if (!this.hasMouseLightButtonDowned) {
+                this.hasMouseLightButtonDowned = false;
+                global.shouldPreventContextMenu = true;
+            }
+
+            // ロッカージェスチャー
             if (this.rockerGestureMode) {
                 let command = '';
                 if (this.rockerGestureMode === 'right-left' && event.button === 0 && this.options.rockerGestureRightLeft) {
@@ -539,6 +553,9 @@ class MouseGestureClient {
                     if (command.startsWith('goto')) {
                         this.rockerGestureMode = undefined;
                         this.resetGesture();
+                    }
+                    else if (command === 'back' || command === 'forward') {
+                        this.rockerGestureMode = undefined;
                     }
 
                     processAction(this.options, command, { url, src });
