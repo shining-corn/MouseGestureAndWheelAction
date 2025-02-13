@@ -1,6 +1,6 @@
 {
     "extensionDescription": {
-        "message": "Mouse gestures, right-click + wheel to control the browser."
+        "message": "Mouse gestures, right-click + wheel and rocker gesture to control the browser."
     },
     "back": {
         "message": "Go back"
