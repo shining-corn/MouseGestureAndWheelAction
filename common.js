@@ -110,20 +110,20 @@ function getGestureActions() {
         gotolefttab: (shouldPreventContextMenu) => {
             sendMessage({ action: 'gotolefttab', shouldPreventContextMenu: shouldPreventContextMenu });
         },
-        gotorighttab: (shouldPreventContextMenu) => {
-            sendMessage({ action: 'gotorighttab', shouldPreventContextMenu: shouldPreventContextMenu });
+        gotorighttab: (option) => {
+            sendMessage({ action: 'gotorighttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
-        gotolefttabwithloop: (shouldPreventContextMenu) => {
-            sendMessage({ action: 'gotolefttabwithloop', shouldPreventContextMenu: shouldPreventContextMenu });
+        gotolefttabwithloop: (option) => {
+            sendMessage({ action: 'gotolefttabwithloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
-        gotorighttabwithloop: (shouldPreventContextMenu) => {
-            sendMessage({ action: 'gotorighttabwithloop', shouldPreventContextMenu: shouldPreventContextMenu });
+        gotorighttabwithloop: (option) => {
+            sendMessage({ action: 'gotorighttabwithloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
-        gotomostlefttab: (shouldPreventContextMenu) => {
-            sendMessage({ action: 'gotomostlefttab', shouldPreventContextMenu: shouldPreventContextMenu });
+        gotomostlefttab: (option) => {
+            sendMessage({ action: 'gotomostlefttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
-        gotomostrighttab: (shouldPreventContextMenu) => {
-            sendMessage({ action: 'gotomostrighttab', shouldPreventContextMenu: shouldPreventContextMenu });
+        gotomostrighttab: (option) => {
+            sendMessage({ action: 'gotomostrighttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
         gotoprevioustab: () => {
             sendMessage({ action: 'gotoprevioustab' });

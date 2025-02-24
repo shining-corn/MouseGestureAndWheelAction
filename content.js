@@ -28,12 +28,12 @@ function createCenteringElement() {
     return element;
 }
 
-function processAction(options, action, data) {
+function processAction(extensionOptions, action, actionOption) {
     if (action) {
         if (action.startsWith('customurl:')) {
             const text = global.selectedText;
             const id = action.substring(10);
-            const setting = options.getCustomUrlSetting(id);
+            const setting = extensionOptions.getCustomUrlSetting(id);
             const hasPlaceholder = setting && setting.customUrl.indexOf('{}') !== -1;
 
             if (text || !hasPlaceholder) {
@@ -55,7 +55,7 @@ function processAction(options, action, data) {
             }
         }
         else {
-            getGestureActions()[action](data);
+            getGestureActions()[action](actionOption);
         }
     }
 }
@@ -370,17 +370,18 @@ class MouseGestureClient {
                         global.shouldPreventContextMenu = false;
                     }
 
+                    this.setActionOptionsFromElement(event.target);
+                    let action;
                     if (event.wheelDelta > 0) {
-                        const action = getGestureActions()[this.options.rightButtonAndWheelUp];
-                        if (typeof action === 'function') {
-                            action(true);
-                        }
+                        action = getGestureActions()[this.options.rightButtonAndWheelUp];
                     }
                     else {
-                        const action = getGestureActions()[this.options.rightButtonAndWheelDown];
-                        if (typeof action === 'function') {
-                            action(true);
-                        }
+                        action = getGestureActions()[this.options.rightButtonAndWheelDown];
+                    }
+                    if (typeof action === 'function') {
+                        const option = this.getActionOptions();
+                        option['shouldPreventContextMenu'] = true;
+                        action(option);
                     }
 
                     // マウスジェスチャー中の場合はそれをキャンセルする
@@ -404,11 +405,11 @@ class MouseGestureClient {
                 global.shouldPreventContextMenu = true;
                 if (event.button === 0 && this.options.rockerGestureRightLeft) {
                     this.rockerGestureMode = 'right-left';
-                    this.getInfoFromElement(event.target);
+                    this.setActionOptionsFromElement(event.target);
                 }
                 else if (event.button === 2 && this.options.rockerGestureLeftRight) {
                     this.rockerGestureMode = 'left-right';
-                    this.getInfoFromElement(event.target);
+                    this.setActionOptionsFromElement(event.target);
                 }
             }
 
@@ -439,7 +440,7 @@ class MouseGestureClient {
                     }
 
                     this.previousPoint = { x: event.clientX, y: event.clientY };
-                    this.getInfoFromElement(event.target);
+                    this.setActionOptionsFromElement(event.target);
                     this.target = event.target;
                 }
             }
@@ -528,7 +529,7 @@ class MouseGestureClient {
                         this.rockerGestureMode = undefined;
                     }
 
-                    processAction(this.options, command, { url: this.url, src: this.src, target: this.target });
+                    processAction(this.options, command, this.getActionOptions());
                 }
             }
 
@@ -547,9 +548,7 @@ class MouseGestureClient {
 
                 if (this.previousPoint) {
                     const command = this.options.getGestureAction(this.arrows);
-                    const data = { url: this.url, src: this.src, target: this.target };
-                    console.log(data);
-                    processAction(this.options, command, data);
+                    processAction(this.options, command, this.getActionOptions());
 
                     getRootWindow().postMessage({
                         extensionId: chrome.runtime.id,
@@ -635,7 +634,7 @@ class MouseGestureClient {
         }
     }
 
-    getInfoFromElement(element) {
+    setActionOptionsFromElement(element) {
         this.target = element;
 
         // get url and src attribute
@@ -653,6 +652,14 @@ class MouseGestureClient {
             }
 
             elem = elem.parentNode;
+        }
+    }
+
+    getActionOptions() {
+        return {
+            target: this.target,
+            url: this.url,
+            src: this.src,
         }
     }
 
