@@ -437,15 +437,6 @@ class ExtensionOption {
     }
 
     getGestureAction(gesture) {
-        // rocker gesture
-        if (this.options.rockerGestureLeftRight && gesture === 'RClick ') {
-            return this.options.rockerGestureLeftRight;
-        }
-        if (this.options.rockerGestureRightLeft && gesture === 'Click ') {
-            // gestureSettingsよりrockerGestureRightLeftを優先
-            return this.options.rockerGestureRightLeft;
-        }
-
         // mouse gesture
         if (this.options.gestureSettings && (typeof this.options.gestureSettings.findIndex === 'function')) {
             const i = this.options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
