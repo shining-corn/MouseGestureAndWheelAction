@@ -55,7 +55,7 @@ function processAction(options, action, data) {
             }
         }
         else {
-            getGestureActions()[action]({ url: data.url, src: data.src });
+            getGestureActions()[action](data);
         }
     }
 }
@@ -256,11 +256,8 @@ class ShowArrowsElements {
             }
 
             switch (event.data.type) {
-                case 'add-arrow':
-                    this.addArrow(event.data.arrow);
-                    break;
-                case 'done-gesture':
-                    this.doneMouseGesture(event.data);
+                case 'show-arrows':
+                    this.showArrows(event.data.arrows);
                     break;
                 case 'reset-gesture':
                     this.resetMouseGesture();
@@ -269,7 +266,7 @@ class ShowArrowsElements {
         });
     }
 
-    addArrow(arrow) {
+    showArrows(arrows) {
         if (this.arrows.length === 0) {
             if (this.options.hideGestureText) {
                 this.actionNameArea.style.color = 'rgba(0, 0, 0, 0)';
@@ -287,7 +284,7 @@ class ShowArrowsElements {
             this.arrowArea.style.backgroundColor = this.actionNameArea.style.backgroundColor;
             document.body.appendChild(this.backgroundElement);
         }
-        this.arrows += arrow;
+        this.arrows = arrows;
         this.arrowArea.innerText = this.arrows;
 
         const action = this.options.getGestureAction(this.arrows);
@@ -307,10 +304,10 @@ class ShowArrowsElements {
         }
     }
 
-    doneMouseGesture(data) {
-        processAction(this.options, this.options.getGestureAction(this.arrows), data);
-        this.resetMouseGesture();
-    }
+    // doneMouseGesture(data) {
+    //     processAction(this.options, this.options.getGestureAction(this.arrows), data);
+    //     this.resetMouseGesture();
+    // }
 
     resetMouseGesture() {
         if (this.arrows) {
@@ -329,8 +326,10 @@ class MouseGestureClient {
         this.previousDirection = undefined;
         this.hasGestureDrawn = false;
         this.gestureElement = new GestureElements(options);
+        this.arrows = '';
         this.url = undefined;
         this.src = undefined;
+        this.target = undefined;
         this.rightClickCount = 0;
         this.onMouseGesture = false;
         this.rockerGestureMode = undefined;
@@ -405,9 +404,11 @@ class MouseGestureClient {
                 global.shouldPreventContextMenu = true;
                 if (event.button === 0 && this.options.rockerGestureRightLeft) {
                     this.rockerGestureMode = 'right-left';
+                    this.getInfoFromElement(event.target);
                 }
                 else if (event.button === 2 && this.options.rockerGestureLeftRight) {
                     this.rockerGestureMode = 'left-right';
+                    this.getInfoFromElement(event.target);
                 }
             }
 
@@ -418,11 +419,12 @@ class MouseGestureClient {
                     event.stopImmediatePropagation();
 
                     this.onMouseGesture = true;
+                    this.arrows += 'Click ';
                     getRootWindow().postMessage(
                         {
                             extensionId: chrome.runtime.id,
-                            type: 'add-arrow',
-                            arrow: 'Click '
+                            type: 'show-arrows',
+                            arrows: this.arrows,
                         },
                         '*'
                     );
@@ -437,23 +439,8 @@ class MouseGestureClient {
                     }
 
                     this.previousPoint = { x: event.clientX, y: event.clientY };
-
-                    // get url if event.target is a link or image
-                    this.url = undefined;
-                    this.src = undefined;
-                    let elem = event.target;
-                    while (elem) {
-                        if (elem.href) {
-                            this.url = elem.href;
-                            break;
-                        }
-                        else if (elem.src) {
-                            this.src = elem.src;
-                            break;
-                        }
-
-                        elem = elem.parentNode;
-                    }
+                    this.getInfoFromElement(event.target);
+                    this.target = event.target;
                 }
             }
         }, {
@@ -492,11 +479,12 @@ class MouseGestureClient {
                     const direction = computeDirection(diffX, diffY);
                     if (direction && direction !== this.previousDirection) {
                         this.onMouseGesture = true;
+                        this.arrows += direction;
                         getRootWindow().postMessage(
                             {
                                 extensionId: chrome.runtime.id,
-                                type: 'add-arrow',
-                                arrow: direction
+                                type: 'show-arrows',
+                                arrows: this.arrows,
                             },
                             '*'
                         );
@@ -532,24 +520,6 @@ class MouseGestureClient {
                 if (command) {
                     event.preventDefault();
                     event.stopImmediatePropagation();
-
-                    // get url if event.target is a link or image
-                    let url = undefined;
-                    let src = undefined;
-                    let elem = event.target;
-                    while (elem) {
-                        if (elem.href) {
-                            url = elem.href;
-                            break;
-                        }
-                        else if (elem.src) {
-                            src = elem.src;
-                            break;
-                        }
-
-                        elem = elem.parentNode;
-                    }
-
                     if (command.startsWith('goto')) {
                         this.rockerGestureMode = undefined;
                         this.resetGesture();
@@ -558,7 +528,7 @@ class MouseGestureClient {
                         this.rockerGestureMode = undefined;
                     }
 
-                    processAction(this.options, command, { url, src });
+                    processAction(this.options, command, { url: this.url, src: this.src, target: this.target });
                 }
             }
 
@@ -576,11 +546,14 @@ class MouseGestureClient {
                 event.stopImmediatePropagation();
 
                 if (this.previousPoint) {
+                    const command = this.options.getGestureAction(this.arrows);
+                    const data = { url: this.url, src: this.src, target: this.target };
+                    console.log(data);
+                    processAction(this.options, command, data);
+
                     getRootWindow().postMessage({
                         extensionId: chrome.runtime.id,
-                        type: 'done-gesture',
-                        url: this.url,
-                        src: this.src,
+                        type: 'reset-gesture',
                     }, '*');
                     this.doneGesture();
                 }
@@ -639,6 +612,7 @@ class MouseGestureClient {
             this.gestureElement.reset();
             this.hasGestureDrawn = false;
         }
+        this.arrows = '';
     }
 
     resetGesture() {
@@ -658,6 +632,27 @@ class MouseGestureClient {
         }
         else {
             this.gestureElement.drawLine(point);
+        }
+    }
+
+    getInfoFromElement(element) {
+        this.target = element;
+
+        // get url and src attribute
+        this.url = undefined;
+        this.src = undefined;
+        let elem = element;
+        while (elem) {
+            if (elem.href) {
+                this.url = elem.href;
+                break;
+            }
+            else if (elem.src) {
+                this.src = elem.src;
+                break;
+            }
+
+            elem = elem.parentNode;
         }
     }
 
