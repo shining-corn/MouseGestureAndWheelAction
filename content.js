@@ -397,7 +397,7 @@ class MouseGestureClient {
 
             // ロッカージェスチャーでマウス右ボタンを押したまま移動してきた場合にコンテキストメニューを抑制
             if (!this.options.rightDoubleClickToContextMenu) {
-                this.hasMouseLightButtonDowned = true;
+                this.hasMouseLightButtonDowned = true;  // このフラグがfalseの場合にmouseup時にコンテキストメニューを抑制
             }
 
             // ロッカージェスチャー開始
@@ -411,6 +411,8 @@ class MouseGestureClient {
                     this.rockerGestureMode = 'left-right';
                     this.setActionOptionsFromElement(event.target);
                 }
+
+                this.previousPoint = undefined; // マウスジェスチャーをキャンセル
             }
 
             // マウスジェスチャー
@@ -531,6 +533,8 @@ class MouseGestureClient {
 
                     processAction(this.options, command, this.getActionOptions());
                 }
+
+                this.rockerGestureMode = undefined;
             }
 
             // reset RockerGesture state
