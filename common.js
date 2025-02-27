@@ -55,7 +55,7 @@ function getGestureActions() {
         scrollup: () => {
             window.scrollBy({ top: -0.9 * window.innerHeight, behavior: 'auto' });
         },
-        scrolldown: () => {
+        scrolldown: (data) => {
             window.scrollBy({ top: 0.9 * window.innerHeight, behavior: 'auto' });
         },
         scrollleft: () => {
@@ -70,6 +70,13 @@ function getGestureActions() {
         scrolltobottom: () => {
             const element = document.documentElement;
             window.scroll({ top: element.scrollHeight, behavior: 'auto' });
+        },
+        scrolltoleftmost: () => {
+            window.scroll({ left: 0, behavior: 'auto' });
+        },
+        scrolltorightmost: () => {
+            const element = document.documentElement;
+            window.scroll({ left: element.scrollWidth, behavior: 'auto' });
         },
         createtab: () => {
             sendMessage({ action: 'createtab' });

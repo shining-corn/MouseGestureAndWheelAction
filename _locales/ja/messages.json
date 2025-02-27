@@ -26,6 +26,12 @@
     "scrolltobottom": {
         "message": "一番下にスクロール"
     },
+    "scrolltoleftmost": {
+        "message": "一番左にスクロール"
+    },
+    "scrolltorightmost": {
+        "message": "一番右にスクロール"
+    },
     "createtab": {
         "message": "新しいタブ"
     },

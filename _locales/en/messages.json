@@ -26,6 +26,12 @@
     "scrolltobottom": {
         "message": "Scroll to bottom"
     },
+    "scrolltoleftmost": {
+        "message": "Scroll to the leftmost"
+    },
+    "scrolltorightmost": {
+        "message": "Scroll to the rightmost"
+    },
     "createtab": {
         "message": "New tab"
     },
