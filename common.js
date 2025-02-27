@@ -53,30 +53,118 @@ function getGestureActions() {
             window.history.go(1);
         },
         scrollup: () => {
-            window.scrollBy({ top: -0.9 * window.innerHeight, behavior: 'auto' });
+            if (isRootWindow()) {
+                window.scrollBy({ top: -0.9 * window.innerHeight, behavior: 'auto' });
+            }
+            else {
+                getRootWindow().postMessage({
+                    extensionId: chrome.runtime.id,
+                    type: 'execute-action',
+                    action: 'scrollup',
+                    option: undefined,
+                },
+                '*');
+            }
         },
-        scrolldown: (data) => {
-            window.scrollBy({ top: 0.9 * window.innerHeight, behavior: 'auto' });
+        scrolldown: () => {
+            if (isRootWindow()) {
+                window.scrollBy({ top: 0.9 * window.innerHeight, behavior: 'auto' });
+            }
+            else {
+                getRootWindow().postMessage({
+                    extensionId: chrome.runtime.id,
+                    type: 'execute-action',
+                    action: 'scrolldown',
+                    option: undefined,
+                },
+                '*');
+            }
         },
         scrollleft: () => {
-            window.scrollBy({ left: -0.9 * window.innerWidth, behavior: 'auto' });
+            if (isRootWindow()) {
+                window.scrollBy({ left: -0.9 * window.innerWidth, behavior: 'auto' });
+            }
+            else {
+                getRootWindow().postMessage({
+                    extensionId: chrome.runtime.id,
+                    type: 'execute-action',
+                    action: 'scrollleft',
+                    option: undefined,
+                },
+                '*');
+            }
         },
         scrollright: () => {
-            window.scrollBy({ left: 0.9 * window.innerWidth, behavior: 'auto' });
+            if (isRootWindow()) {
+                window.scrollBy({ left: 0.9 * window.innerWidth, behavior: 'auto' });
+            }
+            else {
+                getRootWindow().postMessage({
+                    extensionId: chrome.runtime.id,
+                    type: 'execute-action',
+                    action: 'scrollright',
+                    option: undefined,
+                },
+                '*');
+            }
         },
         scrolltotop: () => {
-            window.scroll({ top: 0, behavior: 'auto' });
+            if (isRootWindow()) {
+                window.scroll({ top: 0, behavior: 'auto' });
+            }
+            else {
+                getRootWindow().postMessage({
+                    extensionId: chrome.runtime.id,
+                    type: 'execute-action',
+                    action: 'scrolltotop',
+                    option: undefined,
+                },
+                '*');
+            }
         },
         scrolltobottom: () => {
-            const element = document.documentElement;
-            window.scroll({ top: element.scrollHeight, behavior: 'auto' });
+            if (isRootWindow()) {
+                const element = document.documentElement;
+                window.scroll({ top: element.scrollHeight, behavior: 'auto' });
+            }
+            else {
+                getRootWindow().postMessage({
+                    extensionId: chrome.runtime.id,
+                    type: 'execute-action',
+                    action: 'scrolltobottom',
+                    option: undefined,
+                },
+                '*');
+            }
         },
         scrolltoleftmost: () => {
-            window.scroll({ left: 0, behavior: 'auto' });
+            if (isRootWindow()) {
+                window.scroll({ left: 0, behavior: 'auto' });
+            }
+            else {
+                getRootWindow().postMessage({
+                    extensionId: chrome.runtime.id,
+                    type: 'execute-action',
+                    action: 'scrolltoleftmost',
+                    option: undefined,
+                },
+                '*');
+            }
         },
         scrolltorightmost: () => {
-            const element = document.documentElement;
-            window.scroll({ left: element.scrollWidth, behavior: 'auto' });
+            if (isRootWindow()) {
+                const element = document.documentElement;
+                window.scroll({ left: element.scrollWidth, behavior: 'auto' });
+            }
+            else {
+                getRootWindow().postMessage({
+                    extensionId: chrome.runtime.id,
+                    type: 'execute-action',
+                    action: 'scrolltorightmost',
+                    option: undefined,
+                },
+                '*');
+            }
         },
         createtab: () => {
             sendMessage({ action: 'createtab' });
@@ -166,12 +254,34 @@ function getGestureActions() {
             sendMessage({ action: 'fullscreenwindow' });
         },
         copyurl: () => {
-            navigator.clipboard.writeText(document.location.href).then(() => { });
-            alert(`${chrome.i18n.getMessage('messageCopied')}\n ${document.location.href}`);
+            if (isRootWindow()) {
+                navigator.clipboard.writeText(document.location.href).then(() => { });
+                alert(`${chrome.i18n.getMessage('messageCopied')}\n ${document.location.href}`);
+            }
+            else {
+                getRootWindow().postMessage({
+                    extensionId: chrome.runtime.id,
+                    type: 'execute-action',
+                    action: 'copyurl',
+                    option: undefined,
+                },
+                '*');
+            }
         },
         copytitle: () => {
-            navigator.clipboard.writeText(document.title).then(() => { });
-            alert(`${chrome.i18n.getMessage('messageCopied')}\n ${document.title}`);
+            if (isRootWindow()) {
+                navigator.clipboard.writeText(document.title).then(() => { });
+                alert(`${chrome.i18n.getMessage('messageCopied')}\n ${document.title}`);
+            }
+            else {
+                getRootWindow().postMessage({
+                    extensionId: chrome.runtime.id,
+                    type: 'execute-action',
+                    action: 'copytitle',
+                    option: undefined,
+                },
+                '*');
+            }
         },
         mutetab: () => {
             sendMessage({ action: 'mutetab' });

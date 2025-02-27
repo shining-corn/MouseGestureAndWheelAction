@@ -1026,5 +1026,18 @@ class BookMarkEditDialogElements {
     if (isRootWindow()) {
         new ShowArrowsElements(options);
         (new BookMarkEditDialogElements()).start();
+
+        // 子windowから送られてきたジェスチャーの実行要求を処理
+        window.addEventListener('message', (event) => {
+            if (event.data.extensionId !== chrome.runtime.id) {
+                return;
+            }
+
+            switch (event.data.type) {
+                case 'execute-action':
+                    getGestureActions()[event.data.action](event.data.option);
+                    break;
+            }
+        });
     }
 })();
