@@ -66,6 +66,7 @@ const global = new class {
         this.variables = {
             shouldPreventContextMenu: false,
             selectedText: undefined,
+            enabledExtension: true,
         };
 
         this.syncTargets = [];
@@ -124,6 +125,15 @@ const global = new class {
 
     get selectedText() {
         return this.variables.selectedText;
+    }
+
+    set enabledExtension(enabled) {
+        this.variables.enabledExtension = enabled;
+        this.sync();
+    }
+
+    get enabledExtension() {
+        return this.variables.enabledExtension;
     }
 }();
 
@@ -321,7 +331,6 @@ class ShowArrowsElements {
 class MouseGestureClient {
     constructor(options) {
         this.options = options;
-        this.enabled = true;
         this.previousPoint = undefined;
         this.previousDirection = undefined;
         this.hasGestureDrawn = false;
@@ -352,7 +361,7 @@ class MouseGestureClient {
         });
 
         window.addEventListener('wheel', (event) => {
-            if (!this.enabled) {
+            if (!global.enabledExtension) {
                 return;
             }
 
@@ -391,7 +400,7 @@ class MouseGestureClient {
         }, { capture: true, passive: false });
 
         window.addEventListener('mousedown', (event) => {
-            if (!this.enabled) {
+            if (!global.enabledExtension) {
                 return;
             }
 
@@ -451,7 +460,7 @@ class MouseGestureClient {
         });
 
         window.addEventListener('mousemove', (event) => {
-            if (!this.enabled) {
+            if (!global.enabledExtension) {
                 return;
             }
 
@@ -500,7 +509,7 @@ class MouseGestureClient {
         });
 
         window.addEventListener('mouseup', (event) => {
-            if (!this.enabled) {
+            if (!global.enabledExtension) {
                 return;
             }
 
@@ -599,7 +608,7 @@ class MouseGestureClient {
 
         window.addEventListener('message', (event) => {
             if (event.data.extensionId === chrome.runtime.id && event.data.type === 'disable-mousegesture') {
-                this.enabled = false;
+                global.enabledExtension = false;
             }
         });
     }
@@ -700,20 +709,20 @@ class MouseGestureClient {
             switch (setting.method) {
                 case 'prefixMatch':
                     if (document.location.href.indexOf(setting.value) === 0) {
-                        this.enabled = false;
+                        global.enabledExtension = false;
                         return;
                     }
                     break;
                 case 'include':
                     if (document.location.href.indexOf(setting.value) !== -1) {
-                        this.enabled = false;
+                        global.enabledExtension = false;
                         return;
                     }
                     break;
                 case 'regexp':
                     const match = document.location.href.match(`/${setting.value}/`);
                     if (match && match.length) {
-                        this.enabled = false;
+                        global.enabledExtension = false;
                         return;
                     }
                     break;
