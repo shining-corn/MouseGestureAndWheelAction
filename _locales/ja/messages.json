@@ -293,17 +293,23 @@
     "messageSucceededInSave": {
         "message": "保存しました。"
     },
-    "optionsPageTitleColor": {
-        "message": "マウスジェスチャーの色"
+    "optionsPageTitleAppearance": {
+        "message": "マウスジェスチャーの外観"
     },
     "optionsLineColor": {
-        "message": "線"
+        "message": "線の色"
     },
-    "optionsFontColor": {
-        "message": "フォント"
+    "optionsArrowColor": {
+        "message": "矢印の色"
+    },
+    "optionsTextColor": {
+        "message": "テキストの色"
     },
     "optionsBackgroundColor": {
-        "message": "背景"
+        "message": "背景の色"
+    },
+    "optionsFontSize": {
+        "message": "フォントサイズ"
     },
     "optionsHide": {
         "message": "非表示"

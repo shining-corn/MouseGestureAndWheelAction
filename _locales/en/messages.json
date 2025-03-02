@@ -293,17 +293,23 @@
     "messageSucceededInSave": {
         "message": "Settings have been saved."
     },
-    "optionsPageTitleColor": {
-        "message": "Mouse Gesture Color"
+    "optionsPageTitleAppearance": {
+        "message": "Mouse Gesture Appearance"
     },
     "optionsLineColor": {
-        "message": "LINE"
+        "message": "Line Color"
     },
-    "optionsFontColor": {
-        "message": "FONT"
+    "optionsArrowColor": {
+        "message": "Arrow Color"
+    },
+    "optionsTextColor": {
+        "message": "Text Color"
     },
     "optionsBackgroundColor": {
-        "message": "BACKGROUND"
+        "message": "Background Color"
+    },
+    "optionsFontSize": {
+        "message": "Font Size"
     },
     "optionsHide": {
         "message": "Hide"

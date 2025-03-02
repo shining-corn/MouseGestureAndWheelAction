@@ -222,15 +222,8 @@ class ShowArrowsElements {
         this.actionNameArea.style.margin = '0px';
         this.actionNameArea.style.border = 'none';
         this.actionNameArea.style.padding = '8px';
-        this.actionNameArea.style.fontSize = '24px';
         this.actionNameArea.style.lineHeight = '1';
         this.actionNameArea.style.fontFamily = 'BIZ UDPGothic';
-        if (this.options.hideGestureText) {
-            this.actionNameArea.style.color = 'rgba(0, 0, 0, 0)';
-        }
-        else {
-            this.actionNameArea.style.color = this.options.gestureFontColor;
-        }
         this.actionNameArea.style.backgroundColor = this.options.gestureBackgroundColor;
         this.actionNameArea.style.display = 'none';
         this.actionNameArea.style.pointerEvents = 'none';
@@ -244,15 +237,8 @@ class ShowArrowsElements {
         this.arrowArea.style.right = '0';
         this.arrowArea.style.margin = 'auto';
         this.arrowArea.style.border = 'none';
-        this.arrowArea.style.fontSize = '64px';
         this.arrowArea.style.lineHeight = '1';
         this.arrowArea.style.fontFamily = 'monospace';
-        if (this.options.hideGestureText) {
-            this.arrowArea.style.color = 'rgba(0, 0, 0, 0)';
-        }
-        else {
-            this.arrowArea.style.color = this.options.gestureFontColor;
-        }
         this.arrowArea.style.backgroundColor = this.options.gestureBackgroundColor;
         this.arrowArea.style.maxWidth = 'calc(100vw - 64px)';
         this.arrowArea.style.width = 'fit-content';
@@ -284,14 +270,32 @@ class ShowArrowsElements {
             else {
                 this.actionNameArea.style.color = this.options.gestureFontColor;
             }
-            if (this.options.hideGestureBackground) {
+
+            if (this.options.hideGestureBackground || this.options.hideGestureText) {
                 this.actionNameArea.style.backgroundColor = 'rgba(0, 0, 0, 0)';
             }
             else {
                 this.actionNameArea.style.backgroundColor = this.options.gestureBackgroundColor;
             }
-            this.arrowArea.style.color = this.actionNameArea.style.color;
-            this.arrowArea.style.backgroundColor = this.actionNameArea.style.backgroundColor;
+
+            this.actionNameArea.style.fontSize = `${this.options.gestureTextFontSize}px`;
+
+            if (this.options.hideGestureArrow) {
+                this.arrowArea.style.color = 'rgba(0, 0, 0, 0)';
+            }
+            else {
+                this.arrowArea.style.color = this.options.gestureArrowColor;
+            }
+
+            if (this.options.hideGestureBackground || this.options.hideGestureArrow) {
+                this.arrowArea.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+            }
+            else {
+                this.arrowArea.style.backgroundColor = this.options.backgroundColor;
+            }
+
+            this.arrowArea.style.fontSize = `${this.options.gestureArrowFontSize}px`;
+
             document.body.appendChild(this.backgroundElement);
         }
         this.arrows = arrows;

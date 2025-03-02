@@ -414,6 +414,7 @@ class ExtensionOption {
                 ],
 
                 gestureLineColor: 'rgba(128, 128, 255, 0.9)',
+                gestureArrowColor: 'rgba(239, 239, 255, 0.9)',
                 gestureFontColor: 'rgba(239, 239, 255, 0.9)',
                 gestureBackgroundColor: 'rgba(0, 0, 32, 0.9)',
             };
@@ -424,7 +425,7 @@ class ExtensionOption {
 
     async versionUp() {
         if (this.options) {
-            // v1.3.0 -> v1.4.0
+            // v1.3.0- -> v1.4.0
             if (typeof this.options.customUrlSettings === 'undefined') {
                 this.options.customUrlSettings = [
                     {
@@ -450,6 +451,12 @@ class ExtensionOption {
                 this.options.gestureBackgroundColor = 'rgba(0, 0, 32, 0.9)';
             }
 
+            // v1.7.0- -> v1.8.0
+            if (typeof this.options.gestureArrowColor === 'undefined') {
+                this.options.gestureArrowColor = this.options.gestureFontColor;
+            }
+
+            // save
             await chrome.storage.local.set({ options: this.options });
         }
     }
@@ -506,12 +513,38 @@ class ExtensionOption {
         return this.options.hideGestureLine || false;
     }
 
+    get gestureArrowColor() {
+        if (typeof this.options.gestureArrowColor === 'string' && this.options.gestureArrowColor) {
+            return this.options.gestureArrowColor;
+        }
+    }
+
+    get gestureArrowFontSize() {
+        if (typeof this.options.gestureArrowFontSize === 'number' && this.options.gestureArrowFontSize) {
+            return this.options.gestureArrowFontSize;
+        }
+
+        return 64;
+    }
+
+    get hideGestureArrow() {
+        return this.options.hideGestureArrow || false;
+    }
+
     get gestureFontColor() {
         if (typeof this.options.gestureFontColor === 'string' && this.options.gestureFontColor) {
             return this.options.gestureFontColor;
         }
 
         return 'rgba(239, 239, 255, 0.9)';
+    }
+
+    get gestureTextFontSize() {
+        if (typeof this.options.gestureTextFontSize === 'number' && this.options.gestureTextFontSize) {
+            return this.options.gestureTextFontSize;
+        }
+
+        return 24;
     }
 
     get hideGestureText() {
@@ -532,25 +565,6 @@ class ExtensionOption {
 
     get hideHintPermanently() {
         return this.options.hideHintPermanently;
-    }
-
-    async setGestureColor(line, hideGestureLine, font, hideGestureText, background, hideGestureBackground) {
-        if (typeof line === 'string') {
-            this.options.gestureLineColor = line;
-        }
-        this.options.hideGestureLine = hideGestureLine;
-
-        if (typeof font === 'string') {
-            this.options.gestureFontColor = font;
-        }
-        this.options.hideGestureText = hideGestureText;
-
-        if (typeof background === 'string') {
-            this.options.gestureBackgroundColor = background;
-        }
-        this.options.hideGestureBackground = hideGestureBackground;
-
-        await chrome.storage.local.set({ 'options': this.options });
     }
 
     getGestureAction(gesture) {
@@ -640,6 +654,24 @@ class ExtensionOption {
             return this.options.customUrlSettings.find(elem => elem.id === id);
         }
         return undefined;
+    }
+
+    async setGestureAppearance(lineColor, hideLine, arrowColor, arrowFontSize, hideArrow, textColor, textFontSize, hideText, backgroundColor, hideBackground) {
+        this.options.gestureLineColor = lineColor;
+        this.options.hideGestureLine = hideLine;
+
+        this.options.gestureArrowColor = arrowColor;
+        this.options.gestureArrowFontSize = arrowFontSize;
+        this.options.hideGestureArrow = hideArrow;
+
+        this.options.gestureFontColor = textColor;
+        this.options.gestureTextFontSize = textFontSize;
+        this.options.hideGestureText = hideText;
+
+        this.options.gestureBackgroundColor = backgroundColor;
+        this.options.hideGestureBackground = hideBackground;
+
+        await chrome.storage.local.set({ 'options': this.options });
     }
 
     async setDisableExtensionSettings(disableExtensionSettings) {
