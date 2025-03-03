@@ -412,11 +412,6 @@ class ExtensionOption {
                         openInNewTab: true,
                     },
                 ],
-
-                gestureLineColor: 'rgba(128, 128, 255, 0.9)',
-                gestureArrowColor: 'rgba(239, 239, 255, 0.9)',
-                gestureFontColor: 'rgba(239, 239, 255, 0.9)',
-                gestureBackgroundColor: 'rgba(0, 0, 32, 0.9)',
             };
 
             await chrome.storage.local.set({ options: this.options });
@@ -439,21 +434,6 @@ class ExtensionOption {
                         openInNewTab: true,
                     },
                 ];
-            }
-
-            if (typeof this.options.gestureLineColor === 'undefined') {
-                this.options.gestureLineColor = '#408040';
-            }
-            if (typeof this.options.gestureFontColor === 'undefined') {
-                this.options.gestureFontColor = 'rgba(239, 239, 255, 0.9)';
-            }
-            if (typeof this.options.gestureBackgroundColor === 'undefined') {
-                this.options.gestureBackgroundColor = 'rgba(0, 0, 32, 0.9)';
-            }
-
-            // v1.7.0- -> v1.8.0
-            if (typeof this.options.gestureArrowColor === 'undefined') {
-                this.options.gestureArrowColor = this.options.gestureFontColor;
             }
 
             // save
@@ -506,7 +486,7 @@ class ExtensionOption {
             return this.options.gestureLineColor;
         }
 
-        return '#408040';
+        return 'rgba(128, 128, 255, 0.9)';
     }
 
     get hideGestureLine() {
