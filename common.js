@@ -1,4 +1,4 @@
-function sendMessage(request) {
+function sendChromeMessage(request) {
     (async () => {
         request.extensionId = chrome.runtime.id;
         try {
@@ -63,7 +63,7 @@ function getGestureActions() {
                     action: 'scrollup',
                     option: undefined,
                 },
-                '*');
+                    '*');
             }
         },
         scrolldown: () => {
@@ -77,7 +77,7 @@ function getGestureActions() {
                     action: 'scrolldown',
                     option: undefined,
                 },
-                '*');
+                    '*');
             }
         },
         scrollleft: () => {
@@ -91,7 +91,7 @@ function getGestureActions() {
                     action: 'scrollleft',
                     option: undefined,
                 },
-                '*');
+                    '*');
             }
         },
         scrollright: () => {
@@ -105,7 +105,7 @@ function getGestureActions() {
                     action: 'scrollright',
                     option: undefined,
                 },
-                '*');
+                    '*');
             }
         },
         scrolltotop: () => {
@@ -119,7 +119,7 @@ function getGestureActions() {
                     action: 'scrolltotop',
                     option: undefined,
                 },
-                '*');
+                    '*');
             }
         },
         scrolltobottom: () => {
@@ -134,7 +134,7 @@ function getGestureActions() {
                     action: 'scrolltobottom',
                     option: undefined,
                 },
-                '*');
+                    '*');
             }
         },
         scrolltoleftmost: () => {
@@ -148,7 +148,7 @@ function getGestureActions() {
                     action: 'scrolltoleftmost',
                     option: undefined,
                 },
-                '*');
+                    '*');
             }
         },
         scrolltorightmost: () => {
@@ -163,95 +163,95 @@ function getGestureActions() {
                     action: 'scrolltorightmost',
                     option: undefined,
                 },
-                '*');
+                    '*');
             }
         },
         createtab: () => {
-            sendMessage({ action: 'createtab' });
+            sendChromeMessage({ action: 'createtab' });
         },
         addtabtogroup: () => {
-            sendMessage({ action: 'addtabtogroup' });
+            sendChromeMessage({ action: 'addtabtogroup' });
         },
         removetabfromgroup: () => {
-            sendMessage({ action: 'removetabfromgroup' });
+            sendChromeMessage({ action: 'removetabfromgroup' });
         },
         duplicatetab: () => {
-            sendMessage({ action: 'duplicatetab' });
+            sendChromeMessage({ action: 'duplicatetab' });
         },
         closetab: () => {
-            sendMessage({ action: 'closetab' });
+            sendChromeMessage({ action: 'closetab' });
         },
         closetableftall: () => {
-            sendMessage({ action: 'closetableftall' });
+            sendChromeMessage({ action: 'closetableftall' });
         },
         closetabrightall: () => {
-            sendMessage({ action: 'closetabrightall' });
+            sendChromeMessage({ action: 'closetabrightall' });
         },
         closetabotherall: () => {
-            sendMessage({ action: 'closetabotherall' });
+            sendChromeMessage({ action: 'closetabotherall' });
         },
         reopenclosedtab: () => {
-            sendMessage({ action: 'reopenclosedtab' });
+            sendChromeMessage({ action: 'reopenclosedtab' });
         },
         reloadtab: () => {
-            sendMessage({ action: 'reloadtab' });
+            sendChromeMessage({ action: 'reloadtab' });
         },
         reloadtabhard: () => {
-            sendMessage({ action: 'reloadtabhard' });
+            sendChromeMessage({ action: 'reloadtabhard' });
         },
         reloadtaball: () => {
-            sendMessage({ action: 'reloadtaball' });
+            sendChromeMessage({ action: 'reloadtaball' });
         },
         gotolefttab: (shouldPreventContextMenu) => {
-            sendMessage({ action: 'gotolefttab', shouldPreventContextMenu: shouldPreventContextMenu });
+            sendChromeMessage({ action: 'gotolefttab', shouldPreventContextMenu: shouldPreventContextMenu });
         },
         gotorighttab: (option) => {
-            sendMessage({ action: 'gotorighttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
+            sendChromeMessage({ action: 'gotorighttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
         gotolefttabwithloop: (option) => {
-            sendMessage({ action: 'gotolefttabwithloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
+            sendChromeMessage({ action: 'gotolefttabwithloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
         gotorighttabwithloop: (option) => {
-            sendMessage({ action: 'gotorighttabwithloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
+            sendChromeMessage({ action: 'gotorighttabwithloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
         gotomostlefttab: (option) => {
-            sendMessage({ action: 'gotomostlefttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
+            sendChromeMessage({ action: 'gotomostlefttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
         gotomostrighttab: (option) => {
-            sendMessage({ action: 'gotomostrighttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
+            sendChromeMessage({ action: 'gotomostrighttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
         gotoprevioustab: () => {
-            sendMessage({ action: 'gotoprevioustab' });
+            sendChromeMessage({ action: 'gotoprevioustab' });
         },
         gotonexttab: () => {
-            sendMessage({ action: 'gotonexttab' });
+            sendChromeMessage({ action: 'gotonexttab' });
         },
         addbookmark: () => {
-            sendMessage({ action: 'addbookmark', bookmark: { title: document.title, url: document.location.href } });
+            sendChromeMessage({ action: 'addbookmark', bookmark: { title: document.title, url: document.location.href } });
         },
         upsertbookmark: () => {
-            sendMessage({ action: 'upsertbookmark', bookmark: { title: document.title, url: document.location.href } });
+            sendChromeMessage({ action: 'upsertbookmark', bookmark: { title: document.title, url: document.location.href } });
         },
         deletebookmark: () => {
-            sendMessage({ action: 'deletebookmark', bookmark: { url: document.location.href } });
+            sendChromeMessage({ action: 'deletebookmark', bookmark: { url: document.location.href } });
         },
         createwindow: () => {
-            sendMessage({ action: 'createwindow' });
+            sendChromeMessage({ action: 'createwindow' });
         },
         closewindow: () => {
-            sendMessage({ action: 'closewindow' });
+            sendChromeMessage({ action: 'closewindow' });
         },
         closewindowall: () => {
-            sendMessage({ action: 'closewindowall' });
+            sendChromeMessage({ action: 'closewindowall' });
         },
         maximizewindow: () => {
-            sendMessage({ action: 'maximizewindow' });
+            sendChromeMessage({ action: 'maximizewindow' });
         },
         minimizewindow: () => {
-            sendMessage({ action: 'minimizewindow' });
+            sendChromeMessage({ action: 'minimizewindow' });
         },
         fullscreenwindow: () => {
-            sendMessage({ action: 'fullscreenwindow' });
+            sendChromeMessage({ action: 'fullscreenwindow' });
         },
         copyurl: () => {
             if (isRootWindow()) {
@@ -265,7 +265,7 @@ function getGestureActions() {
                     action: 'copyurl',
                     option: undefined,
                 },
-                '*');
+                    '*');
             }
         },
         copytitle: () => {
@@ -280,75 +280,75 @@ function getGestureActions() {
                     action: 'copytitle',
                     option: undefined,
                 },
-                '*');
+                    '*');
             }
         },
         mutetab: () => {
-            sendMessage({ action: 'mutetab' });
+            sendChromeMessage({ action: 'mutetab' });
         },
         unmutetab: () => {
-            sendMessage({ action: 'unmutetab' });
+            sendChromeMessage({ action: 'unmutetab' });
         },
         mutetabtoggle: () => {
-            sendMessage({ action: 'mutetabtoggle' });
+            sendChromeMessage({ action: 'mutetabtoggle' });
         },
         mutetaball: () => {
-            sendMessage({ action: 'mutetaball' });
+            sendChromeMessage({ action: 'mutetaball' });
         },
         unmutetaball: () => {
-            sendMessage({ action: 'unmutetaball' });
+            sendChromeMessage({ action: 'unmutetaball' });
         },
         zoomin: () => {
-            sendMessage({ action: 'zoomin' });
+            sendChromeMessage({ action: 'zoomin' });
         },
         zoomout: () => {
-            sendMessage({ action: 'zoomout' });
+            sendChromeMessage({ action: 'zoomout' });
         },
         zoomdefault: () => {
-            sendMessage({ action: 'zoomdefault' });
+            sendChromeMessage({ action: 'zoomdefault' });
         },
         openlinkinnwetab: (option) => {
             if (option.url) {
-                sendMessage({ action: 'openlinkinnwetab', url: option.url });
+                sendChromeMessage({ action: 'openlinkinnwetab', url: option.url });
             }
         },
         openlinkinnwetabandactivate: (option) => {
             if (option.url) {
-                sendMessage({ action: 'openlinkinnwetabandactivate', url: option.url });
+                sendChromeMessage({ action: 'openlinkinnwetabandactivate', url: option.url });
             }
         },
         openlinkinnwewindow: (option) => {
             if (option.url) {
-                sendMessage({ action: 'openlinkinnwewindow', url: option.url });
+                sendChromeMessage({ action: 'openlinkinnwewindow', url: option.url });
             }
         },
         openlinkinnwewindowandactivate: (option) => {
             if (option.url) {
-                sendMessage({ action: 'openlinkinnwewindowandactivate', url: option.url });
+                sendChromeMessage({ action: 'openlinkinnwewindowandactivate', url: option.url });
             }
         },
         openimageinnewtab: (option) => {
             if (option.src) {
-                sendMessage({ action: 'openlinkinnwetab', url: option.src });
+                sendChromeMessage({ action: 'openlinkinnwetab', url: option.src });
             }
         },
         openimageinnewtabandactivate: (option) => {
             if (option.src) {
-                sendMessage({ action: 'openlinkinnwetabandactivate', url: option.src });
+                sendChromeMessage({ action: 'openlinkinnwetabandactivate', url: option.src });
             }
         },
         openimageinnewwindow: (option) => {
             if (option.src) {
-                sendMessage({ action: 'openlinkinnwewindow', url: option.src });
+                sendChromeMessage({ action: 'openlinkinnwewindow', url: option.src });
             }
         },
         openimageinnewwindowandactivate: (option) => {
             if (option.src) {
-                sendMessage({ action: 'openlinkinnwewindowandactivate', url: option.src });
+                sendChromeMessage({ action: 'openlinkinnwewindowandactivate', url: option.src });
             }
         },
         openoptionspage: () => {
-            sendMessage({ action: 'openoptionspage' });
+            sendChromeMessage({ action: 'openoptionspage' });
         },
         disableextension: () => {
             window.postMessage({ extensionId: chrome.runtime.id, type: 'disable-mousegesture' }, '*');
@@ -441,44 +441,145 @@ class ExtensionOption {
         }
     }
 
-    get enabledWheelAction() {
-        return this.options.enabledWheelAction;
-    }
+    async setOptions(options) {
+        this.options = options;
 
-    get enabledMouseGesture() {
-        return this.options.enabledMouseGesture;
-    }
-
-    get rightDoubleClickToContextMenu() {
-        return this.options.rightDoubleClickToContextMenu;
-    }
-
-    get rightButtonAndWheelUp() {
-        return this.options.rightButtonAndWheelUp;
-    }
-
-    get rightButtonAndWheelDown() {
-        return this.options.rightButtonAndWheelDown;
+        await chrome.storage.local.set({ 'options': this.options });
     }
 
     get gestureSettings() {
         return this.options.gestureSettings;
     }
 
+    getGestureAction(gesture) {
+        // mouse gesture
+        if (this.options.gestureSettings && (typeof this.options.gestureSettings.findIndex === 'function')) {
+            const i = this.options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
+            if (i !== -1) {
+                return this.options.gestureSettings[i].action;
+            }
+        }
+        return undefined;
+    }
+
+    async upsertGesture(gesture, action) {
+        const newGesture = {
+            gesture: gesture,
+            action: action
+        };
+
+        if (Object.prototype.toString.call(this.options.gestureSettings) !== '[object Array]') {
+            this.options.gestureSettings = [];
+        }
+
+        const i = this.options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
+        if (i !== -1) {
+            this.options.gestureSettings[i] = newGesture;
+        }
+        else {
+            this.options.gestureSettings.push(newGesture);
+        }
+
+        await chrome.storage.local.set({ 'options': this.options });
+    }
+
+    async removeGesture(gesture) {
+        const i = this.options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
+        if (i !== -1) {
+            this.options.gestureSettings.splice(i, 1);
+
+            await chrome.storage.local.set({ 'options': this.options });
+        }
+    }
+
+    get enabledWheelAction() {
+        return this.options.enabledWheelAction;
+    }
+
+    async changeEnabledWheelAction(enabled) {
+        this.options.enabledWheelAction = enabled;
+        await chrome.storage.local.set({ 'options': this.options });
+    }
+
+    get enabledMouseGesture() {
+        return this.options.enabledMouseGesture;
+    }
+
+    async changeEnabledMouseGesture(enabled) {
+        this.options.enabledMouseGesture = enabled;
+        await chrome.storage.local.set({ 'options': this.options });
+    }
+
+    get rightDoubleClickToContextMenu() {
+        return this.options.rightDoubleClickToContextMenu;
+    }
+
+    async changeRightDoubleClickToContextMenu(enabled) {
+        this.options.rightDoubleClickToContextMenu = enabled;
+        await chrome.storage.local.set({ 'options': this.options });
+    }
+
+    get rightButtonAndWheelUp() {
+        return this.options.rightButtonAndWheelUp;
+    }
+
+    async changeRightClickWheelUpAction(action) {
+        this.options.rightButtonAndWheelUp = action;
+        await chrome.storage.local.set({ 'options': this.options });
+    }
+
+    get rightButtonAndWheelDown() {
+        return this.options.rightButtonAndWheelDown;
+    }
+
+    async changeRightClickWheelDownAction(action) {
+        this.options.rightButtonAndWheelDown = action;
+        await chrome.storage.local.set({ 'options': this.options });
+    }
+
     get rockerGestureLeftRight() {
         return this.options.rockerGestureLeftRight;
+    }
+
+    async changeRockerGestureLeftRight(action) {
+        this.options.rockerGestureLeftRight = action;
+        await chrome.storage.local.set({ 'options': this.options });
     }
 
     get rockerGestureRightLeft() {
         return this.options.rockerGestureRightLeft;
     }
 
+    async changeRockerGestureRightLeft(action) {
+        this.options.rockerGestureRightLeft = action;
+        await chrome.storage.local.set({ 'options': this.options });
+    }
+
     get customUrlSettings() {
         return this.options.customUrlSettings;
     }
 
+    getCustomUrlSetting(id) {
+        if (this.options.customUrlSettings && (typeof this.options.customUrlSettings.find === 'function')) {
+            return this.options.customUrlSettings.find(elem => elem.id === id);
+        }
+        return undefined;
+    }
+
+    async setCustomUrlSettings(customUrlSettings) {
+        this.options.customUrlSettings = customUrlSettings;
+
+        await chrome.storage.local.set({ 'options': this.options });
+    }
+
     get disableExtensionSettings() {
         return this.options.disableExtensionSettings;
+    }
+
+    async setDisableExtensionSettings(disableExtensionSettings) {
+        this.options.disableExtensionSettings = disableExtensionSettings;
+
+        await chrome.storage.local.set({ 'options': this.options });
     }
 
     get gestureLineColor() {
@@ -545,117 +646,6 @@ class ExtensionOption {
         return this.options.hideGestureBackground || false;
     }
 
-    get hideHintPermanently() {
-        return this.options.hideHintPermanently;
-    }
-    get mouseGestureStrokeLength() {
-        if (typeof this.options.mouseGestureStrokeLength === 'number' && this.options.mouseGestureStrokeLength) {
-            return this.options.mouseGestureStrokeLength;
-        }
-        
-        return 16;
-    }
-
-    getGestureAction(gesture) {
-        // mouse gesture
-        if (this.options.gestureSettings && (typeof this.options.gestureSettings.findIndex === 'function')) {
-            const i = this.options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
-            if (i !== -1) {
-                return this.options.gestureSettings[i].action;
-            }
-        }
-        return undefined;
-    }
-
-    getCustomUrlSetting(id) {
-        if (this.options.customUrlSettings && (typeof this.options.customUrlSettings.find === 'function')) {
-            return this.options.customUrlSettings.find(elem => elem.id === id);
-        }
-        return undefined;
-    }
-
-    async setOptions(options) {
-        this.options = options;
-
-        await chrome.storage.local.set({ 'options': this.options });
-    }
-
-    async changeEnabledWheelAction(enabled) {
-        this.options.enabledWheelAction = enabled;
-        await chrome.storage.local.set({ 'options': this.options });
-    }
-
-    async changeRightClickWheelUpAction(action) {
-        this.options.rightButtonAndWheelUp = action;
-        await chrome.storage.local.set({ 'options': this.options });
-    }
-
-    async changeRightClickWheelDownAction(action) {
-        this.options.rightButtonAndWheelDown = action;
-        await chrome.storage.local.set({ 'options': this.options });
-    }
-
-    async changeEnabledMouseGesture(enabled) {
-        this.options.enabledMouseGesture = enabled;
-        await chrome.storage.local.set({ 'options': this.options });
-    }
-
-    async changeRightDoubleClickToContextMenu(enabled) {
-        this.options.rightDoubleClickToContextMenu = enabled;
-        await chrome.storage.local.set({ 'options': this.options });
-    }
-
-    async setMouseGestureStrokeLength(length) {
-        this.options.mouseGestureStrokeLength = length;
-        await chrome.storage.local.set({ 'options': this.options });
-    }
-
-    async upsertGesture(gesture, action) {
-        const newGesture = {
-            gesture: gesture,
-            action: action
-        };
-
-        if (Object.prototype.toString.call(this.options.gestureSettings) !== '[object Array]') {
-            this.options.gestureSettings = [];
-        }
-
-        const i = this.options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
-        if (i !== -1) {
-            this.options.gestureSettings[i] = newGesture;
-        }
-        else {
-            this.options.gestureSettings.push(newGesture);
-        }
-
-        await chrome.storage.local.set({ 'options': this.options });
-    }
-
-    async removeGesture(gesture) {
-        const i = this.options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
-        if (i !== -1) {
-            this.options.gestureSettings.splice(i, 1);
-
-            await chrome.storage.local.set({ 'options': this.options });
-        }
-    }
-
-    async changeRockerGestureLeftRight(action) {
-        this.options.rockerGestureLeftRight = action;
-        await chrome.storage.local.set({ 'options': this.options });
-    }
-
-    async changeRockerGestureRightLeft(action) {
-        this.options.rockerGestureRightLeft = action;
-        await chrome.storage.local.set({ 'options': this.options });
-    }
-
-    async setCustomUrlSettings(customUrlSettings) {
-        this.options.customUrlSettings = customUrlSettings;
-
-        await chrome.storage.local.set({ 'options': this.options });
-    }
-
     async setGestureAppearance(lineColor, hideLine, arrowColor, arrowFontSize, hideArrow, textColor, textFontSize, hideText, backgroundColor, hideBackground) {
         this.options.gestureLineColor = lineColor;
         this.options.hideGestureLine = hideLine;
@@ -674,10 +664,21 @@ class ExtensionOption {
         await chrome.storage.local.set({ 'options': this.options });
     }
 
-    async setDisableExtensionSettings(disableExtensionSettings) {
-        this.options.disableExtensionSettings = disableExtensionSettings;
+    get mouseGestureStrokeLength() {
+        if (typeof this.options.mouseGestureStrokeLength === 'number' && this.options.mouseGestureStrokeLength) {
+            return this.options.mouseGestureStrokeLength;
+        }
 
+        return 16;
+    }
+
+    async setMouseGestureStrokeLength(length) {
+        this.options.mouseGestureStrokeLength = length;
         await chrome.storage.local.set({ 'options': this.options });
+    }
+
+    get hideHintPermanently() {
+        return this.options.hideHintPermanently;
     }
 
     async setHideHintPermanently(hide) {

@@ -40,7 +40,7 @@ function processAction(extensionOptions, action, actionOption) {
                 if (setting) {
                     const url = setting.customUrl.replace(/\{\}/ig, encodeURI(text));
                     if (setting.openInNewTab) {
-                        sendMessage({ action: 'openlinkinnwetabandactivate', url: url });
+                        sendChromeMessage({ action: 'openlinkinnwetabandactivate', url: url });
                     }
                     else {
                         window.location.href = url;
@@ -317,11 +317,6 @@ class ShowArrowsElements {
             this.arrowArea.style.marginTop = '35px';
         }
     }
-
-    // doneMouseGesture(data) {
-    //     processAction(this.options, this.options.getGestureAction(this.arrows), data);
-    //     this.resetMouseGesture();
-    // }
 
     resetMouseGesture() {
         if (this.arrows) {
@@ -998,7 +993,7 @@ class BookMarkEditDialogElements {
                 url: this.urlInputElement.value,
                 parentId: this.folderSelectElement.value
             };
-            sendMessage({ action: 'editbookmark', bookmark: newBookmark });
+            sendChromeMessage({ action: 'editbookmark', bookmark: newBookmark });
             this.reset();
             this.setDefaultBookmarkFolder(newBookmark.parentId);
         }
@@ -1013,7 +1008,7 @@ class BookMarkEditDialogElements {
 
     onDeleteBookmark(event) {
         event.preventDefault();
-        sendMessage({ action: 'deletebookmark', bookmark: { url: document.location.href } });
+        sendChromeMessage({ action: 'deletebookmark', bookmark: { url: document.location.href } });
         this.reset();
     }
 
