@@ -517,6 +517,8 @@ class ExtensionOption {
         if (typeof this.options.gestureArrowColor === 'string' && this.options.gestureArrowColor) {
             return this.options.gestureArrowColor;
         }
+
+        return 'rgba(239, 239, 255, 0.9)';
     }
 
     get gestureArrowFontSize() {
