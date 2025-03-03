@@ -102,9 +102,6 @@
       <label><input type="checkbox" id="enabled-mouse-gesture"><span
           data-i18n="optionsEnableMouseGesture"></span></label>
     </div>
-    <div>
-      <label><input type="checkbox" id="right-double-click-to-context-menu"><span data-i18n="optionsRightDoubleClickToContextMenu"></span></label>
-    </div>
 
     <div data-i18n="optionsMouseGestureHelp" style="margin-top: 1em"></div>
     <table id="mouse-gesture-table">
@@ -117,6 +114,16 @@
       </thead>
       <tbody id="gestures"></tbody>
     </table>
+
+    <h3 data-i18n="optionsPageTitleMouseGestureDetails"></h3>
+    <div>
+      <label><input type="checkbox" id="right-double-click-to-context-menu"><span data-i18n="optionsRightDoubleClickToContextMenu"></span></label>
+    </div>
+    <div>
+      <span data-i18n="optionsGestureStrokeLength"></span>
+      <input type="number" id="gesture-stroke-length" min="1" max="999" style="width: 2.5rem">
+      px
+    </div>
 
     <h2 data-i18n="optionsPageTitleRockerGesture"></h2>
     <table id="rocker-gesture-table">

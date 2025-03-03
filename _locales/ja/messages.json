@@ -242,9 +242,6 @@
     "optionsEnableMouseGesture": {
         "message": "マウスジェスチャーを使用する"
     },
-    "optionsRightDoubleClickToContextMenu": {
-        "message": "右ダブルクリックでコンテキストメニューを表示するように変更する"
-    },
     "optionsMouseGestureHelp": {
         "message": "マウスの右ボタンを押しながら「ジェスチャー」のとおりに動かすと「動作」を行います。"
     },
@@ -253,6 +250,15 @@
     },
     "optionsPageTableHeadAction": {
         "message": "動作"
+    },
+    "optionsPageTitleMouseGestureDetails": {
+        "message": "マウスジェスチャーの詳細設定"
+    },
+    "optionsRightDoubleClickToContextMenu": {
+        "message": "右ダブルクリックでコンテキストメニューを表示するように変更する"
+    },
+    "optionsGestureStrokeLength": {
+        "message": "ジェスチャーの１ストロークあたりの距離"
     },
     "optionsPageTitleRockerGesture": {
         "message": "ロッカージェスチャー"

@@ -566,6 +566,13 @@ class ExtensionOption {
     get hideHintPermanently() {
         return this.options.hideHintPermanently;
     }
+    get mouseGestureStrokeLength() {
+        if (typeof this.options.mouseGestureStrokeLength === 'number' && this.options.mouseGestureStrokeLength) {
+            return this.options.mouseGestureStrokeLength;
+        }
+        
+        return 16;
+    }
 
     getGestureAction(gesture) {
         // mouse gesture
@@ -578,13 +585,16 @@ class ExtensionOption {
         return undefined;
     }
 
-    async changeEnabledMouseGesture(enabled) {
-        this.options.enabledMouseGesture = enabled;
-        await chrome.storage.local.set({ 'options': this.options });
+    getCustomUrlSetting(id) {
+        if (this.options.customUrlSettings && (typeof this.options.customUrlSettings.find === 'function')) {
+            return this.options.customUrlSettings.find(elem => elem.id === id);
+        }
+        return undefined;
     }
 
-    async changeRightDoubleClickToContextMenu(enabled) {
-        this.options.rightDoubleClickToContextMenu = enabled;
+    async setOptions(options) {
+        this.options = options;
+
         await chrome.storage.local.set({ 'options': this.options });
     }
 
@@ -600,6 +610,21 @@ class ExtensionOption {
 
     async changeRightClickWheelDownAction(action) {
         this.options.rightButtonAndWheelDown = action;
+        await chrome.storage.local.set({ 'options': this.options });
+    }
+
+    async changeEnabledMouseGesture(enabled) {
+        this.options.enabledMouseGesture = enabled;
+        await chrome.storage.local.set({ 'options': this.options });
+    }
+
+    async changeRightDoubleClickToContextMenu(enabled) {
+        this.options.rightDoubleClickToContextMenu = enabled;
+        await chrome.storage.local.set({ 'options': this.options });
+    }
+
+    async setMouseGestureStrokeLength(length) {
+        this.options.mouseGestureStrokeLength = length;
         await chrome.storage.local.set({ 'options': this.options });
     }
 
@@ -649,13 +674,6 @@ class ExtensionOption {
         await chrome.storage.local.set({ 'options': this.options });
     }
 
-    getCustomUrlSetting(id) {
-        if (this.options.customUrlSettings && (typeof this.options.customUrlSettings.find === 'function')) {
-            return this.options.customUrlSettings.find(elem => elem.id === id);
-        }
-        return undefined;
-    }
-
     async setGestureAppearance(lineColor, hideLine, arrowColor, arrowFontSize, hideArrow, textColor, textFontSize, hideText, backgroundColor, hideBackground) {
         this.options.gestureLineColor = lineColor;
         this.options.hideGestureLine = hideLine;
@@ -676,12 +694,6 @@ class ExtensionOption {
 
     async setDisableExtensionSettings(disableExtensionSettings) {
         this.options.disableExtensionSettings = disableExtensionSettings;
-
-        await chrome.storage.local.set({ 'options': this.options });
-    }
-
-    async setOptions(options) {
-        this.options = options;
 
         await chrome.storage.local.set({ 'options': this.options });
     }

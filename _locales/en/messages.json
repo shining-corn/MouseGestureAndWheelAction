@@ -242,9 +242,6 @@
     "optionsEnableMouseGesture": {
         "message": "Enabled mouse gesture"
     },
-    "optionsRightDoubleClickToContextMenu": {
-        "message": "Change to open context menu on right double-click"
-    },
     "optionsMouseGestureHelp": {
         "message": "Move the mouse as per the \"Gesture\" while holding down the right mouse button to execute the \"Action\"."
     },
@@ -253,6 +250,15 @@
     },
     "optionsPageTableHeadAction": {
         "message": "Action"
+    },
+    "optionsPageTitleMouseGestureDetails": {
+        "message": "Mouse Gesture Details"
+    },
+    "optionsRightDoubleClickToContextMenu": {
+        "message": "Change to open context menu on right double-click"
+    },
+    "optionsGestureStrokeLength": {
+        "message": "Stroke Length"
     },
     "optionsPageTitleRockerGesture": {
         "message": "Rocker Gesture"

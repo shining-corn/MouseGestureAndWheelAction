@@ -163,7 +163,7 @@ class MouseGestureController {
     }
 
     onMouseMove(event) {
-        const MINIMUM_DISTANCE = 16;
+        const strokeLength = this.options.mouseGestureStrokeLength;
 
         if ((event.buttons & 2) === 2 && this.previousPoint) {
             const point = { x: event.clientX, y: event.clientY };
@@ -173,7 +173,7 @@ class MouseGestureController {
             const diffY = point.y - this.previousPoint.y;
             const distanceSquare = diffX * diffX + diffY * diffY;
 
-            if (MINIMUM_DISTANCE * MINIMUM_DISTANCE <= distanceSquare) {
+            if (strokeLength * strokeLength <= distanceSquare) {
                 this.previousPoint = point;
 
                 const direction = computeDirection(diffX, diffY);
@@ -316,12 +316,6 @@ function renderMouseGestureOptions(options) {
         options.changeEnabledMouseGesture(enabledMouseGestureElement.checked);
     });
 
-    const rightDoubleClickToContextMenuElement = document.getElementById('right-double-click-to-context-menu');
-    rightDoubleClickToContextMenuElement.checked = options.rightDoubleClickToContextMenu;
-    rightDoubleClickToContextMenuElement.addEventListener('click', async () => {
-        await options.changeRightDoubleClickToContextMenu(rightDoubleClickToContextMenuElement.checked);
-    });
-
     const gestureTableBodyElement = document.getElementById('gestures');
 
     if (Object.prototype.toString.call(options.gestureSettings) === '[object Array]') {
@@ -371,6 +365,24 @@ function renderMouseGestureOptions(options) {
     addColumnElement.appendChild(addButtonElement);
     addRowElement.appendChild(addColumnElement);
     gestureTableBodyElement.appendChild(addRowElement);
+
+    const rightDoubleClickToContextMenuElement = document.getElementById('right-double-click-to-context-menu');
+    rightDoubleClickToContextMenuElement.checked = options.rightDoubleClickToContextMenu;
+    rightDoubleClickToContextMenuElement.addEventListener('click', () => {
+        options.changeRightDoubleClickToContextMenu(rightDoubleClickToContextMenuElement.checked);
+    });
+
+    const mouseGestureStrokeLengthElement = document.getElementById('gesture-stroke-length');
+    mouseGestureStrokeLengthElement.value = options.mouseGestureStrokeLength;
+    mouseGestureStrokeLengthElement.addEventListener('change', async () => {
+        const strokeLength = parseInt(mouseGestureStrokeLengthElement.value);
+        if (strokeLength) {
+            options.setMouseGestureStrokeLength(strokeLength);
+        }
+    });
+    mouseGestureStrokeLengthElement.addEventListener('input', () => {
+        mouseGestureStrokeLengthElement.value = mouseGestureStrokeLengthElement.value.slice(0, 3);
+    });
 }
 
 function renderRockerGestureOptions(options) {

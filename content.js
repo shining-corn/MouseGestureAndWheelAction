@@ -470,7 +470,7 @@ class MouseGestureClient {
 
             this.rightClickCount = 0;   // 素早くマウスジェスチャーを繰り返したときに右ダブルクリックと判定しないようにリセットする
 
-            const MINIMUM_DISTANCE = 16;
+            const strokeLength = this.options.mouseGestureStrokeLength;
 
             if ((event.buttons & 2) === 2 && this.previousPoint && !this.rockerGestureMode) {
                 const diffX = event.clientX - this.previousPoint.x;
@@ -481,7 +481,7 @@ class MouseGestureClient {
                     this.drawGestureTrail({ x: event.clientX, y: event.clientY });
                 }
 
-                if (distanceSquare >= MINIMUM_DISTANCE * MINIMUM_DISTANCE) {
+                if (distanceSquare >= strokeLength * strokeLength) {
                     global.shouldPreventContextMenu = true;
 
                     const currentPoint = { x: event.clientX, y: event.clientY };
