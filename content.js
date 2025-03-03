@@ -555,10 +555,10 @@ class MouseGestureClient {
 
             // マウスジェスチャー
             if (event.button === 2) {
-                event.preventDefault();
-                event.stopImmediatePropagation();
-
                 if (this.previousPoint) {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+
                     const command = this.options.getGestureAction(this.arrows);
                     processAction(this.options, command, this.getActionOptions());
 

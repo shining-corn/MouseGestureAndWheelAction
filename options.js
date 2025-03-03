@@ -365,7 +365,7 @@ function renderMouseGestureOptions(options) {
     addColumnElement.appendChild(addButtonElement);
     addRowElement.appendChild(addColumnElement);
     gestureTableBodyElement.appendChild(addRowElement);
-
+    
     const rightDoubleClickToContextMenuElement = document.getElementById('right-double-click-to-context-menu');
     rightDoubleClickToContextMenuElement.checked = options.rightDoubleClickToContextMenu;
     rightDoubleClickToContextMenuElement.addEventListener('click', () => {
@@ -389,17 +389,13 @@ function renderRockerGestureOptions(options) {
     const selectRockerGestureLeftRightElement = document.getElementById('select-rocker-gesture-left-right');
     appendGestureActionOptionsToSelectElement(options, selectRockerGestureLeftRightElement, options.rockerGestureLeftRight);
     selectRockerGestureLeftRightElement.addEventListener('change', () => {
-        (async () => {
-            await options.changeRockerGestureLeftRight(selectRockerGestureLeftRightElement.value);
-        })();
+        options.changeRockerGestureLeftRight(selectRockerGestureLeftRightElement.value);
     });
 
     const selectRockerGestureRightLeftElement = document.getElementById('select-rocker-gesture-right-left');
     appendGestureActionOptionsToSelectElement(options, selectRockerGestureRightLeftElement, options.rockerGestureRightLeft);
     selectRockerGestureRightLeftElement.addEventListener('change', () => {
-        (async () => {
-            await options.changeRockerGestureRightLeft(selectRockerGestureRightLeftElement.value);
-        })();
+        options.changeRockerGestureRightLeft(selectRockerGestureRightLeftElement.value);
     });
 }
 
@@ -638,6 +634,7 @@ function renderImportExportOptions(options) {
 
                 if (Object.prototype.toString.call(newOptions) === '[object Object]') {
                     await options.setOptions(newOptions);
+                    await options.versionUp();
                     window.alert(chrome.i18n.getMessage('messageSucceededInSave'));
                     window.location.reload();
                 }
