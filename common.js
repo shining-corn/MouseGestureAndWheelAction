@@ -210,10 +210,32 @@ function scrollRightmostElement(element) {
 function getGestureActions() {
     return {
         back: () => {
-            window.history.go(-1);
+            if (isRootWindow()) {
+                window.history.go(-1);
+            }
+            else {
+                getRootWindow().postMessage({
+                    extensionId: chrome.runtime.id,
+                    type: 'execute-action',
+                    action: 'back',
+                    option: undefined,
+                },
+                    '*');
+            }
         },
         forward: () => {
-            window.history.go(1);
+            if (isRootWindow()) {
+                window.history.go(1);
+            }
+            else {
+                getRootWindow().postMessage({
+                    extensionId: chrome.runtime.id,
+                    type: 'execute-action',
+                    action: 'forward',
+                    option: undefined,
+                },
+                    '*');
+            }
         },
         scrollup: (option) => {
             if (isRootWindow()) {
