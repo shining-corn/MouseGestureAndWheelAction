@@ -592,46 +592,32 @@ class ExtensionOption {
                     { gesture: '←↓', action: 'deletebookmark' },
                     { gesture: '←→', action: 'mutetabtoggle' },
                 ],
-
-                customUrlSettings: [
-                    {
-                        id: 'Google',
-                        customUrl: 'https://google.com/search?q={}',
-                        openInNewTab: true,
-                    },
-                    {
-                        id: 'YouTube',
-                        customUrl: 'https://www.youtube.com/results?search_query={}',
-                        openInNewTab: true,
-                    },
-                ],
             };
 
             await chrome.storage.local.set({ options: this.options });
         }
     }
 
-    async versionUp() {
-        if (this.options) {
-            // v1.3.0- -> v1.4.0
-            if (typeof this.options.customUrlSettings === 'undefined') {
-                this.options.customUrlSettings = [
-                    {
-                        id: 'Google',
-                        customUrl: 'https://google.com/search?q={}',
-                        openInNewTab: true,
-                    },
-                    {
-                        id: 'YouTube',
-                        customUrl: 'https://www.youtube.com/results?search_query={}',
-                        openInNewTab: true,
-                    },
-                ];
-            }
-
-            // save
-            await chrome.storage.local.set({ options: this.options });
+    async createDefaultCustomUrlSettings() {
+        if (!this.options) {
+            return;
         }
+        if (typeof this.options.customUrlSettings === 'undefined') {
+            this.options.customUrlSettings = [
+                {
+                    id: 'Google',
+                    customUrl: 'https://google.com/search?q={}',
+                    openInNewTab: true,
+                },
+                {
+                    id: 'YouTube',
+                    customUrl: 'https://www.youtube.com/results?search_query={}',
+                    openInNewTab: true,
+                },
+            ];
+        }
+
+        await chrome.storage.local.set({ options: this.options });
     }
 
     async setOptions(options) {

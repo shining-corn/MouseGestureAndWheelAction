@@ -634,7 +634,7 @@ function renderImportExportOptions(options) {
 
                 if (Object.prototype.toString.call(newOptions) === '[object Object]') {
                     await options.setOptions(newOptions);
-                    await options.versionUp();
+                    await options.createDefaultCustomUrlSettings();
                     window.alert(chrome.i18n.getMessage('messageSucceededInSave'));
                     window.location.reload();
                 }
@@ -872,7 +872,7 @@ function translate(element) {
 (async () => {
     let options = new ExtensionOption();
     await options.loadFromStrageLocal();
-    await options.versionUp();
+    await options.createDefaultCustomUrlSettings();
     render(options);
     translate(document.body);
 })();
