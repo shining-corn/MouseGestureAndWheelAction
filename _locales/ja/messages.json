@@ -264,7 +264,7 @@
         "message": "ロッカージェスチャー"
     },
     "optionsRockerGestureDescription1": {
-        "message": "「マウスの右ボタンを押しながら左クリック (←)」を「なし」以外に設定した場合、マウスジェスチャーの「Click」は動作しなくなります。"
+        "message": "「マウスの右ボタンを押しながら左クリック (←)」を「なし」以外に設定した場合、「Click」から始まるマウスジェスチャーは動作しなくなります。"
     },
     "optionsRockerGestureLeftRight": {
         "message": "マウスの左ボタンを押しながら右クリック (→)"
