@@ -44,6 +44,169 @@ function computeDirection(x, y) {
     return undefined;
 }
 
+function canScrollX(element) {
+    if (typeof element.scrollWidth === 'undefined' || typeof element.clientWidth === 'undefined') {
+        return false;
+    }
+    if (element.scrollWidth <= element.clientWidth) {
+        return false;
+    }
+
+    if (element.tagName !== 'HTML') {
+        const style = window.getComputedStyle(element);
+        const overflow = style.overflowX || style.overflow;
+        if (overflow !== 'auto' && overflow !== 'scroll') {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function canScrollY(element) {
+    if (typeof element.scrollHeight === 'undefined' || typeof element.clientHeight === 'undefined') {
+        return false;
+    }
+
+    if (element.scrollHeight <= element.clientHeight) {
+        return false;
+    }
+
+    if (element.tagName !== 'HTML') {
+        const style = window.getComputedStyle(element);
+        const overflow = style?.overflowY || style?.overflow;
+        if (overflow !== 'auto' && overflow !== 'scroll' && overflow !== undefined) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * 指定されたHTMLElementかその上位のHTMLElementがスクロール可能であればスクロールする
+ * @param element スクロール対象の起点となるHTMLElement
+ * @returns スクロールしなかった場合はtrue、スクロールした場合はfalse
+ */
+function scrollUpElement(element) {
+    for (; element; element = element.parentNode) {
+        if (canScrollY(element) &&
+            (element.scrollTop !== 0)
+        ) {
+            element.scrollBy({ top: -element.clientHeight * 0.8, behavior: 'auto' });
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * 指定されたHTMLElementかその上位のHTMLElementがスクロール可能であればスクロールする
+ * @param element スクロール対象の起点となるHTMLElement
+ * @returns スクロールしなかった場合はtrue、スクロールした場合はfalse
+ */
+function scrollDownElement(element) {
+    for (; element; element = element.parentNode) {
+        if (canScrollY(element) &&
+            (Math.abs(element.scrollHeight - element.clientHeight - element.scrollTop) >= 1)
+        ) {
+            element.scrollBy({ top: element.clientHeight * 0.8, behavior: 'auto' });
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * 指定されたHTMLElementかその上位のHTMLElementがスクロール可能であればスクロールする
+ * @param element スクロール対象の起点となるHTMLElement
+ * @returns スクロールしなかった場合はtrue、スクロールした場合はfalse
+ */
+function scrollLeftElement(element) {
+    for (; element; element = element.parentNode) {
+        if (canScrollX(element) &&
+            (element.scrollLeft !== 0)
+        ) {
+            element.scrollBy({ left: -element.clientWidth * 0.8, behavior: 'auto' });
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * 指定されたHTMLElementかその上位のHTMLElementがスクロール可能であればスクロールする
+ * @param element スクロール対象の起点となるHTMLElement
+ * @returns スクロールしなかった場合はtrue、スクロールした場合はfalse
+ */
+function scrollRightElement(element) {
+    for (; element; element = element.parentNode) {
+        if (canScrollX(element) &&
+            (Math.abs(element.scrollWidth - element.clientWidth - element.scrollLeft) >= 1)
+        ) {
+            element.scrollBy({ left: element.clientWidth * 0.8, behavior: 'auto' });
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function scrollTopElement(element) {
+    for (; element; element = element.parentNode) {
+        if (canScrollY(element) &&
+            (element.scrollTop !== 0)
+        ) {
+            element.scroll({ top: 0, behavior: 'auto' });
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function scrollBottomElement(element) {
+    for (; element; element = element.parentNode) {
+        if (canScrollY(element) &&
+            (Math.abs(element.scrollHeight - element.clientHeight - element.scrollTop) >= 1)
+        ) {
+            element.scroll({ top: element.scrollHeight, behavior: 'auto' });
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function scrollLeftmostElement(element) {
+    for (; element; element = element.parentNode) {
+        if (canScrollX(element) &&
+            (element.scrollLeft !== 0)
+        ) {
+            element.scroll({ left: 0, behavior: 'auto' });
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function scrollRightmostElement(element) {
+    for (; element; element = element.parentNode) {
+        if (canScrollX(element) &&
+            (Math.abs(element.scrollWidth - element.clientWidth - element.scrollLeft) >= 1)
+        ) {
+            element.scroll({ left: element.scrollWidth, behavior: 'auto' });
+            return false;
+        }
+    }
+
+    return true;
+}
+
 function getGestureActions() {
     return {
         back: () => {
@@ -52,118 +215,148 @@ function getGestureActions() {
         forward: () => {
             window.history.go(1);
         },
-        scrollup: () => {
+        scrollup: (option) => {
             if (isRootWindow()) {
-                window.scrollBy({ top: -0.9 * window.innerHeight, behavior: 'auto' });
+                const element = option.target || document.documentElement;
+                scrollUpElement(element);
             }
             else {
-                getRootWindow().postMessage({
-                    extensionId: chrome.runtime.id,
-                    type: 'execute-action',
-                    action: 'scrollup',
-                    option: undefined,
-                },
-                    '*');
+                if (scrollUpElement(option.target)) {
+                    option.target = undefined;  // 別のwindowからliveなHTMLElementにはアクセスできないため削除
+                    getRootWindow().postMessage({
+                        extensionId: chrome.runtime.id,
+                        type: 'execute-action',
+                        action: 'scrollup',
+                        option: option,
+                    },
+                        '*');
+                }
             }
         },
-        scrolldown: () => {
+        scrolldown: (option) => {
             if (isRootWindow()) {
-                window.scrollBy({ top: 0.9 * window.innerHeight, behavior: 'auto' });
+                const element = option.target || document.documentElement;
+                scrollDownElement(element);
             }
             else {
-                getRootWindow().postMessage({
-                    extensionId: chrome.runtime.id,
-                    type: 'execute-action',
-                    action: 'scrolldown',
-                    option: undefined,
-                },
-                    '*');
+                if (scrollDownElement(option.target)) {
+                    option.target = undefined;  // 別のwindowからliveなHTMLElementにはアクセスできないため削除
+                    getRootWindow().postMessage({
+                        extensionId: chrome.runtime.id,
+                        type: 'execute-action',
+                        action: 'scrolldown',
+                        option: option,
+                    },
+                        '*');
+                }
             }
         },
-        scrollleft: () => {
+        scrollleft: (option) => {
             if (isRootWindow()) {
-                window.scrollBy({ left: -0.9 * window.innerWidth, behavior: 'auto' });
+                const element = option.target || document.documentElement;
+                scrollLeftElement(element);
             }
             else {
-                getRootWindow().postMessage({
-                    extensionId: chrome.runtime.id,
-                    type: 'execute-action',
-                    action: 'scrollleft',
-                    option: undefined,
-                },
-                    '*');
+                if (scrollLeftElement(option.target)) {
+                    option.target = undefined;  // 別のwindowからliveなHTMLElementにはアクセスできないため削除
+                    getRootWindow().postMessage({
+                        extensionId: chrome.runtime.id,
+                        type: 'execute-action',
+                        action: 'scrollleft',
+                        option: option,
+                    },
+                        '*');
+                }
             }
         },
-        scrollright: () => {
+        scrollright: (option) => {
             if (isRootWindow()) {
-                window.scrollBy({ left: 0.9 * window.innerWidth, behavior: 'auto' });
+                const element = option.target || document.documentElement;
+                scrollRightElement(element);
             }
             else {
-                getRootWindow().postMessage({
-                    extensionId: chrome.runtime.id,
-                    type: 'execute-action',
-                    action: 'scrollright',
-                    option: undefined,
-                },
-                    '*');
+                if (scrollRightElement(option.target)) {
+                    option.target = undefined;  // 別のwindowからliveなHTMLElementにはアクセスできないため削除
+                    getRootWindow().postMessage({
+                        extensionId: chrome.runtime.id,
+                        type: 'execute-action',
+                        action: 'scrollright',
+                        option: option,
+                    },
+                        '*');
+                }
             }
         },
-        scrolltotop: () => {
+        scrolltotop: (option) => {
             if (isRootWindow()) {
-                window.scroll({ top: 0, behavior: 'auto' });
+                const element = option.target || document.documentElement;
+                scrollTopElement(element);
             }
             else {
-                getRootWindow().postMessage({
-                    extensionId: chrome.runtime.id,
-                    type: 'execute-action',
-                    action: 'scrolltotop',
-                    option: undefined,
-                },
-                    '*');
+                if (scrollTopElement(option.target)) {
+                    option.target = undefined;  // 別のwindowからliveなHTMLElementにはアクセスできないため削除
+                    getRootWindow().postMessage({
+                        extensionId: chrome.runtime.id,
+                        type: 'execute-action',
+                        action: 'scrolltotop',
+                        option: option,
+                    },
+                        '*');
+                }
             }
         },
-        scrolltobottom: () => {
+        scrolltobottom: (option) => {
             if (isRootWindow()) {
-                const element = document.documentElement;
-                window.scroll({ top: element.scrollHeight, behavior: 'auto' });
+                const element = option.target || document.documentElement;
+                scrollBottomElement(element);
             }
             else {
-                getRootWindow().postMessage({
-                    extensionId: chrome.runtime.id,
-                    type: 'execute-action',
-                    action: 'scrolltobottom',
-                    option: undefined,
-                },
-                    '*');
+                if (scrollBottomElement(option.target)) {
+                    option.target = undefined;  // 別のwindowからliveなHTMLElementにはアクセスできないため削除
+                    getRootWindow().postMessage({
+                        extensionId: chrome.runtime.id,
+                        type: 'execute-action',
+                        action: 'scrolltobottom',
+                        option: option,
+                    },
+                        '*');
+                }
             }
         },
-        scrolltoleftmost: () => {
+        scrolltoleftmost: (option) => {
             if (isRootWindow()) {
-                window.scroll({ left: 0, behavior: 'auto' });
+                const element = option.target || document.documentElement;
+                scrollLeftmostElement(element);
             }
             else {
-                getRootWindow().postMessage({
-                    extensionId: chrome.runtime.id,
-                    type: 'execute-action',
-                    action: 'scrolltoleftmost',
-                    option: undefined,
-                },
-                    '*');
+                if (scrollLeftmostElement(option.target)) {
+                    option.target = undefined;  // 別のwindowからliveなHTMLElementにはアクセスできないため削除
+                    getRootWindow().postMessage({
+                        extensionId: chrome.runtime.id,
+                        type: 'execute-action',
+                        action: 'scrolltoleftmost',
+                        option: option,
+                    },
+                        '*');
+                }
             }
         },
-        scrolltorightmost: () => {
+        scrolltorightmost: (option) => {
             if (isRootWindow()) {
-                const element = document.documentElement;
-                window.scroll({ left: element.scrollWidth, behavior: 'auto' });
+                const element = option.target || document.documentElement;
+                scrollRightmostElement(element);
             }
             else {
-                getRootWindow().postMessage({
-                    extensionId: chrome.runtime.id,
-                    type: 'execute-action',
-                    action: 'scrolltorightmost',
-                    option: undefined,
-                },
-                    '*');
+                if (scrollRightmostElement(option.target)) {
+                    option.target = undefined;  // 別のwindowからliveなHTMLElementにはアクセスできないため削除
+                    getRootWindow().postMessage({
+                        extensionId: chrome.runtime.id,
+                        type: 'execute-action',
+                        action: 'scrolltorightmost',
+                        option: option,
+                    },
+                        '*');
+                }
             }
         },
         createtab: () => {
