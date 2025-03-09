@@ -554,8 +554,10 @@ class MouseGestureClient {
             // マウスジェスチャー
             if (event.button === 2) {
                 if (this.previousPoint) {
-                    event.preventDefault();
-                    event.stopImmediatePropagation();
+                    if (this.onMouseGesture) {
+                        event.preventDefault();
+                        event.stopImmediatePropagation();
+                    }
 
                     const command = this.options.getGestureAction(this.arrows);
                     processAction(this.options, command, this.getActionOptions());
@@ -593,7 +595,7 @@ class MouseGestureClient {
         });
 
         window.addEventListener('click', (event) => {
-            if (((event.button === 0) && this.previousPoint) ||     // マウスジェスチャー中
+            if (((event.button === 0) && this.onMouseGesture) ||     // マウスジェスチャー中
                 ((event.button === 0) && (event.buttons === 2))      // ロッカージェスチャー中
             ) {
                 event.preventDefault();
