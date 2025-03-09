@@ -419,8 +419,6 @@ class MouseGestureClient {
                     this.rockerGestureMode = 'left-right';
                     this.setActionOptionsFromElement(event.target);
                 }
-
-                this.previousPoint = undefined; // マウスジェスチャーをキャンセル
             }
 
             // マウスジェスチャー
