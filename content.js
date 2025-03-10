@@ -529,18 +529,12 @@ class MouseGestureClient {
                 if (command) {
                     event.preventDefault();
                     event.stopImmediatePropagation();
-                    if (command.startsWith('goto')) {
-                        this.rockerGestureMode = undefined;
-                        this.resetGesture();
-                    }
-                    else if (command === 'back' || command === 'forward') {
-                        this.rockerGestureMode = undefined;
-                    }
 
                     processAction(this.options, command, this.getActionOptions());
                 }
 
                 this.rockerGestureMode = undefined;
+                this.resetGesture();
             }
 
             // reset RockerGesture state
