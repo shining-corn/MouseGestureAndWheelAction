@@ -264,13 +264,13 @@
         "message": "Rocker Gesture"
     },
     "optionsRockerGestureDescription1": {
-        "message": "If \"Hold down the left mouse button and right click (←)\" is set to a setting other than \"None\" mouse gestures that begin with \"Click\" will not work."
+        "message": "If \"Hold down the right mouse button and left click (←)\" is set to a setting other than \"None\" mouse gestures that begin with \"Click\" will not work."
     },
     "optionsRockerGestureLeftRight": {
-        "message": "Hold down the right mouse button and left click (→)"
+        "message": "Hold down the left mouse button and right click (→)"
     },
     "optionsRockerGestureRightLeft": {
-        "message": "Hold down the left mouse button and right click (←)"
+        "message": "Hold down the right mouse button and left click (←)"
     },
     "optionsPageTitleCustomURL": {
         "message": "Custom URL"
