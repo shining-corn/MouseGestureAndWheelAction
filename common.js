@@ -52,12 +52,14 @@ function canScrollX(element) {
         return false;
     }
 
-    if (element.tagName !== 'HTML') {
-        const style = window.getComputedStyle(element);
-        const overflow = style.overflowX || style.overflow;
-        if (overflow !== 'auto' && overflow !== 'scroll') {
-            return false;
-        }
+    if (element.tagName === 'HTML') {
+        return false;
+    }
+
+    const style = window.getComputedStyle(element);
+    const overflow = style.overflowX || style.overflow;
+    if (overflow !== 'auto' && overflow !== 'scroll') {
+        return false;
     }
 
     return true;
@@ -72,12 +74,14 @@ function canScrollY(element) {
         return false;
     }
 
-    if (element.tagName !== 'HTML') {
-        const style = window.getComputedStyle(element);
-        const overflow = style?.overflowY || style?.overflow;
-        if (overflow !== 'auto' && overflow !== 'scroll' && overflow !== undefined) {
-            return false;
-        }
+    if (element.tagName === 'HTML') {
+        return false;
+    }
+
+    const style = window.getComputedStyle(element);
+    const overflow = style?.overflowY || style?.overflow;
+    if (overflow !== 'auto' && overflow !== 'scroll' && overflow !== undefined) {
+        return false;
     }
 
     return true;
@@ -240,7 +244,9 @@ function getGestureActions() {
         scrollup: (option) => {
             if (isRootWindow()) {
                 const element = option.target || document.documentElement;
-                scrollUpElement(element);
+                if (scrollUpElement(element)) {
+                    window.scrollBy({ top: -0.8 * window.innerHeight, behavior: 'auto' });
+                }
             }
             else {
                 if (scrollUpElement(option.target)) {
@@ -258,7 +264,9 @@ function getGestureActions() {
         scrolldown: (option) => {
             if (isRootWindow()) {
                 const element = option.target || document.documentElement;
-                scrollDownElement(element);
+                if (scrollDownElement(element)) {
+                    window.scrollBy({ top: 0.8 * window.innerHeight, behavior: 'auto' });
+                }
             }
             else {
                 if (scrollDownElement(option.target)) {
@@ -276,7 +284,9 @@ function getGestureActions() {
         scrollleft: (option) => {
             if (isRootWindow()) {
                 const element = option.target || document.documentElement;
-                scrollLeftElement(element);
+                if (scrollLeftElement(element)) {
+                    window.scrollBy({ left: -0.8 * window.innerWidth, behavior: 'auto' });
+                }
             }
             else {
                 if (scrollLeftElement(option.target)) {
@@ -294,7 +304,9 @@ function getGestureActions() {
         scrollright: (option) => {
             if (isRootWindow()) {
                 const element = option.target || document.documentElement;
-                scrollRightElement(element);
+                if (scrollRightElement(element)) {
+                    window.scrollBy({ left: 0.8 * window.innerWidth, behavior: 'auto' });
+                }
             }
             else {
                 if (scrollRightElement(option.target)) {
@@ -312,7 +324,9 @@ function getGestureActions() {
         scrolltotop: (option) => {
             if (isRootWindow()) {
                 const element = option.target || document.documentElement;
-                scrollTopElement(element);
+                if (scrollTopElement(element)) {
+                    window.scroll({ top: 0, behavior: 'auto' });
+                }
             }
             else {
                 if (scrollTopElement(option.target)) {
@@ -330,7 +344,9 @@ function getGestureActions() {
         scrolltobottom: (option) => {
             if (isRootWindow()) {
                 const element = option.target || document.documentElement;
-                scrollBottomElement(element);
+                if (scrollBottomElement(element)) {
+                    window.scroll({ top: document.documentElement.scrollHeight, behavior: 'auto' });
+                }
             }
             else {
                 if (scrollBottomElement(option.target)) {
@@ -348,7 +364,9 @@ function getGestureActions() {
         scrolltoleftmost: (option) => {
             if (isRootWindow()) {
                 const element = option.target || document.documentElement;
-                scrollLeftmostElement(element);
+                if (scrollLeftmostElement(element)) {
+                    window.scroll({ left: 0, behavior: 'auto' });
+                }
             }
             else {
                 if (scrollLeftmostElement(option.target)) {
@@ -366,7 +384,9 @@ function getGestureActions() {
         scrolltorightmost: (option) => {
             if (isRootWindow()) {
                 const element = option.target || document.documentElement;
-                scrollRightmostElement(element);
+                if (scrollRightmostElement(element)) {
+                    window.scroll({ left: document.documentElement.scrollWidth, behavior: 'auto' });
+                }
             }
             else {
                 if (scrollRightmostElement(option.target)) {
