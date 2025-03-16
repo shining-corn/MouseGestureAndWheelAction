@@ -308,10 +308,16 @@ function renderMouseGestureOptions(options) {
     const enabledMouseGestureElement = document.getElementById('enabled-mouse-gesture');
     enabledMouseGestureElement.checked = options.enabledMouseGesture;
     enabledMouseGestureElement.addEventListener('click', () => {
-        const selects = document.getElementById('mouse-gesture-table').querySelectorAll('select, button');
-        for (const element of selects) {
+        const gestureOptionElements = document.getElementById('mouse-gesture-table').querySelectorAll('select, button');
+        for (const element of gestureOptionElements) {
             element.disabled = !enabledMouseGestureElement.checked;
         }
+
+        const rightDoubleClickToContextMenuElement = document.getElementById('right-double-click-to-context-menu');
+        rightDoubleClickToContextMenuElement.disabled = !enabledMouseGestureElement.checked;
+
+        const mouseGestureStrokeLengthElement = document.getElementById('gesture-stroke-length');
+        mouseGestureStrokeLengthElement.disabled = !enabledMouseGestureElement.checked;
 
         options.changeEnabledMouseGesture(enabledMouseGestureElement.checked);
     });
@@ -365,15 +371,22 @@ function renderMouseGestureOptions(options) {
     addColumnElement.appendChild(addButtonElement);
     addRowElement.appendChild(addColumnElement);
     gestureTableBodyElement.appendChild(addRowElement);
-    
+
+    const gestureOptionElements = document.getElementById('mouse-gesture-table').querySelectorAll('select, button');
+    for (const element of gestureOptionElements) {
+        element.disabled = !enabledMouseGestureElement.checked;
+    }
+
     const rightDoubleClickToContextMenuElement = document.getElementById('right-double-click-to-context-menu');
     rightDoubleClickToContextMenuElement.checked = options.rightDoubleClickToContextMenu;
+    rightDoubleClickToContextMenuElement.disabled = !options.enabledMouseGesture;
     rightDoubleClickToContextMenuElement.addEventListener('click', () => {
         options.changeRightDoubleClickToContextMenu(rightDoubleClickToContextMenuElement.checked);
     });
 
     const mouseGestureStrokeLengthElement = document.getElementById('gesture-stroke-length');
     mouseGestureStrokeLengthElement.value = options.mouseGestureStrokeLength;
+    mouseGestureStrokeLengthElement.disabled = !options.enabledMouseGesture;
     mouseGestureStrokeLengthElement.addEventListener('change', async () => {
         const strokeLength = parseInt(mouseGestureStrokeLengthElement.value);
         if (strokeLength) {
