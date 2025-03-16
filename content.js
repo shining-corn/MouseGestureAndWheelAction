@@ -404,9 +404,7 @@ class MouseGestureClient {
             }
 
             // ロッカージェスチャーでマウス右ボタンを押したまま移動してきた場合にコンテキストメニューを抑制
-            if (!this.options.rightDoubleClickToContextMenu) {
-                this.hasMouseLightButtonDowned = true;  // このフラグがfalseの場合にmouseup時にコンテキストメニューを抑制
-            }
+            this.hasMouseLightButtonDowned = true;  // このフラグがfalseの場合にmouseup時にコンテキストメニューを抑制
 
             // ロッカージェスチャー開始
             if (event.buttons === 3 && !this.onMouseGesture) {
@@ -461,8 +459,6 @@ class MouseGestureClient {
                 return;
             }
 
-            this.rightClickCount = 0;   // 素早くマウスジェスチャーを繰り返したときに右ダブルクリックと判定しないようにリセットする
-
             const strokeLength = this.options.mouseGestureStrokeLength;
 
             if ((event.buttons & 2) === 2 && this.previousPoint && !this.rockerGestureMode) {
@@ -476,6 +472,8 @@ class MouseGestureClient {
 
                 if (distanceSquare >= strokeLength * strokeLength) {
                     global.shouldPreventContextMenu = true;
+                    
+                    this.rightClickCount = 0;   // 素早くマウスジェスチャーを繰り返したときに右ダブルクリックと判定しないようにリセットする
 
                     const currentPoint = { x: event.clientX, y: event.clientY };
                     if (!this.hasGestureDrawn) {
@@ -681,7 +679,7 @@ class MouseGestureClient {
                 global.shouldPreventContextMenu = true;
                 this.rightClickTimeout = setTimeout(() => {
                     this.rightClickCount = 0;
-                }, 500);
+                }, 750);
             }
             else if (this.rightClickCount === 2) {
                 clearTimeout(this.rightClickTimeout);
