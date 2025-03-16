@@ -221,7 +221,6 @@ class ShowArrowsElements {
         this.actionNameArea.style.height = 'fit-content';
         this.actionNameArea.style.margin = '0px';
         this.actionNameArea.style.border = 'none';
-        this.actionNameArea.style.padding = '8px';
         this.actionNameArea.style.lineHeight = '1';
         this.actionNameArea.style.fontFamily = 'BIZ UDPGothic';
         this.actionNameArea.style.backgroundColor = this.options.gestureBackgroundColor;
@@ -232,7 +231,6 @@ class ShowArrowsElements {
         this.centeringElement.appendChild(this.arrowArea);
         this.arrowArea.style.all = 'revert';
         this.arrowArea.style.fontWeight = 'bold';
-        this.arrowArea.style.padding = '24px';
         this.arrowArea.style.left = '0';
         this.arrowArea.style.right = '0';
         this.arrowArea.style.margin = 'auto';
@@ -279,6 +277,7 @@ class ShowArrowsElements {
             }
 
             this.actionNameArea.style.fontSize = `${this.options.gestureTextFontSize}px`;
+            this.actionNameArea.style.padding = `${Math.floor(this.options.gestureTextFontSize) / 3}px`;
 
             if (this.options.hideGestureArrow) {
                 this.arrowArea.style.color = 'rgba(0, 0, 0, 0)';
@@ -295,6 +294,7 @@ class ShowArrowsElements {
             }
 
             this.arrowArea.style.fontSize = `${this.options.gestureArrowFontSize}px`;
+            this.arrowArea.style.padding = `${Math.floor(this.options.gestureArrowFontSize / 8)}px`;
 
             document.body.appendChild(this.backgroundElement);
         }
