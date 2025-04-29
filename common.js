@@ -421,6 +421,9 @@ function getGestureActions() {
         duplicatetab: () => {
             sendChromeMessage({ action: 'duplicatetab' });
         },
+        pintab: () => {
+            sendChromeMessage({ action: 'pintab' });
+        },
         closetab: () => {
             sendChromeMessage({ action: 'closetab' });
         },

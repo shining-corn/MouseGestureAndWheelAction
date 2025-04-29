@@ -44,6 +44,9 @@
     "duplicatetab": {
         "message": "Duplicate tab"
     },
+    "pintab": {
+        "message": "Pin tab"
+    },
     "closetab": {
         "message": "Close tab"
     },

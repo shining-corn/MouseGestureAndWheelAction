@@ -103,33 +103,38 @@ class MouseGestureService {
                         })();
                         break;
                     case 'removetabfromgroup':
-                        chrome.tabs.ungroup(sender.tab.id);
-                        if (this.lastCreatedGroupId) {
-                            chrome.tabs.query({ groupId: this.lastCreatedGroupId }).then(
-                                (result) => {
-                                    if (result.length === 0) {
-                                        this.lastCreatedGroupId = undefined;
-                                    }
+                        (async () => {
+                            chrome.tabs.ungroup(sender.tab.id);
+                            if (this.lastCreatedGroupId) {
+                                const tabs = await chrome.tabs.query({ groupId: this.lastCreatedGroupId });
+                                if (tabs.length === 0) {
+                                    this.lastCreatedGroupId = undefined;
                                 }
-                            );
-                        }
+                            }
+                        })();
                         break;
                     case 'duplicatetab':
                         chrome.tabs.duplicate(sender.tab.id);
+                        break;
+                    case 'pintab':
+                        (async () => {
+                            const tab = await chrome.tabs.get(sender.tab.id);
+                            chrome.tabs.update(sender.tab.id, { pinned: !tab.pinned });
+                        })();
                         break;
                     case 'closetab':
                         chrome.tabs.remove(sender.tab.id);
                         break;
                     case 'closetableftall':
                         (async () => {
-                            const allTabs = await chrome.tabs.query({ currentWindow: true });
-                            const i = allTabs.findIndex((element) => element.id === sender.tab.id);
+                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const i = tabs.findIndex((element) => element.id === sender.tab.id);
                             if (i !== -1) {
-                                for (const tab of allTabs) {
+                                for (const tab of tabs) {
                                     if (tab.pinned) {
                                         continue;
                                     }
-                                    if (tab.index < allTabs[i].index) {
+                                    if (tab.index < tabs[i].index) {
                                         chrome.tabs.remove(tab.id);
                                     }
                                 }
@@ -138,14 +143,14 @@ class MouseGestureService {
                         break;
                     case 'closetabrightall':
                         (async () => {
-                            const allTabs = await chrome.tabs.query({ currentWindow: true });
-                            const i = allTabs.findIndex((element) => element.id === sender.tab.id);
+                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const i = tabs.findIndex((element) => element.id === sender.tab.id);
                             if (i !== -1) {
-                                for (const tab of allTabs) {
+                                for (const tab of tabs) {
                                     if (tab.pinned) {
                                         continue;
                                     }
-                                    if (tab.index > allTabs[i].index) {
+                                    if (tab.index > tabs[i].index) {
                                         chrome.tabs.remove(tab.id);
                                     }
                                 }
@@ -154,14 +159,14 @@ class MouseGestureService {
                         break;
                     case 'closetabotherall':
                         (async () => {
-                            const allTabs = await chrome.tabs.query({ currentWindow: true });
-                            const i = allTabs.findIndex((element) => element.id === sender.tab.id);
+                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const i = tabs.findIndex((element) => element.id === sender.tab.id);
                             if (i !== -1) {
-                                for (const tab of allTabs) {
+                                for (const tab of tabs) {
                                     if (tab.pinned) {
                                         continue;
                                     }
-                                    if (tab.index !== allTabs[i].index) {
+                                    if (tab.index !== tabs[i].index) {
                                         chrome.tabs.remove(tab.id);
                                     }
                                 }
@@ -185,46 +190,46 @@ class MouseGestureService {
                         break;
                     case 'reloadtaball':
                         (async () => {
-                            const allTabs = await chrome.tabs.query({ currentWindow: true });
-                            for (const tab of allTabs) {
+                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            for (const tab of tabs) {
                                 chrome.tabs.reload(tab.id);
                             }
                         })();
                         break;
                     case 'gotolefttab':
                         (async () => {
-                            const allTabs = await chrome.tabs.query({ currentWindow: true });
-                            activateTab(allTabs, sender.tab.id, -1, false, request.shouldPreventContextMenu);
+                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            activateTab(tabs, sender.tab.id, -1, false, request.shouldPreventContextMenu);
                         })();
                         break;
                     case 'gotorighttab':
                         (async () => {
-                            const allTabs = await chrome.tabs.query({ currentWindow: true });
-                            activateTab(allTabs, sender.tab.id, 1, false, request.shouldPreventContextMenu);
+                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            activateTab(tabs, sender.tab.id, 1, false, request.shouldPreventContextMenu);
                         })();
                         break;
                     case 'gotolefttabwithloop':
                         (async () => {
-                            const allTabs = await chrome.tabs.query({ currentWindow: true });
-                            activateTab(allTabs, sender.tab.id, -1, true, request.byshouldPreventContextMenuwheel);
+                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            activateTab(tabs, sender.tab.id, -1, true, request.byshouldPreventContextMenuwheel);
                         })();
                         break;
                     case 'gotorighttabwithloop':
                         (async () => {
-                            const allTabs = await chrome.tabs.query({ currentWindow: true });
-                            activateTab(allTabs, sender.tab.id, 1, true, request.shouldPreventContextMenu);
+                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            activateTab(tabs, sender.tab.id, 1, true, request.shouldPreventContextMenu);
                         })();
                         break;
                     case 'gotomostlefttab':
                         (async () => {
-                            const allTabs = await chrome.tabs.query({ currentWindow: true });
-                            activateMostLeftTab(allTabs, request.shouldPreventContextMenu);
+                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            activateMostLeftTab(tabs, request.shouldPreventContextMenu);
                         })();
                         break;
                     case 'gotomostrighttab':
                         (async () => {
-                            const allTabs = await chrome.tabs.query({ currentWindow: true });
-                            activateMostRightTab(allTabs, request.shouldPreventContextMenu);
+                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            activateMostRightTab(tabs, request.shouldPreventContextMenu);
                         })();
                         break;
                     case 'gotoprevioustab':
@@ -398,16 +403,16 @@ class MouseGestureService {
                         break;
                     case 'mutetaball':
                         (async () => {
-                            const allTabs = await chrome.tabs.query({});
-                            for (const tab of allTabs) {
+                            const tabs = await chrome.tabs.query({});
+                            for (const tab of tabs) {
                                 chrome.tabs.update(tab.id, { muted: true });
                             }
                         })();
                         break;
                     case 'unmutetaball':
                         (async () => {
-                            const allTabs = await chrome.tabs.query({});
-                            for (const tab of allTabs) {
+                            const tabs = await chrome.tabs.query({});
+                            for (const tab of tabs) {
                                 chrome.tabs.update(tab.id, { muted: false });
                             }
                         })();

@@ -44,6 +44,9 @@
     "duplicatetab": {
         "message": "タブを複製"
     },
+    "pintab": {
+        "message": "タブを固定"
+    },
     "closetab": {
         "message": "タブを閉じる"
     },
