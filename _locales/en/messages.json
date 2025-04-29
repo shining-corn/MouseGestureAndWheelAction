@@ -191,6 +191,9 @@
     "messageCustomUrlSettingNotFound": {
         "message": "Custom URL setting not found."
     },
+    "messageExtensionHasBeenUpdated": {
+        "message": "The extension has been updated and no longer works on this web page.\nPlease reload the web page."
+    },
     "strBookmarkDialogTitleAdd": {
         "message": "Add Bookmark"  
     },

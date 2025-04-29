@@ -1,12 +1,20 @@
+const messageExtensionHasBeenUpdated = chrome.i18n.getMessage('messageExtensionHasBeenUpdated');
+function checkHasExtensionBeenUpdated() {
+    try {
+        chrome.i18n.getMessage('messageExtensionHasBeenUpdated');
+    }
+    catch (e) {
+        window.alert(messageExtensionHasBeenUpdated);
+        return true;
+    }
+
+    return false;
+}
+
 function sendChromeMessage(request) {
     (async () => {
         request.extensionId = chrome.runtime.id;
-        try {
-            await chrome.runtime.sendMessage(request);
-        }
-        catch (e) {
-            console.log(e);
-        }
+        await chrome.runtime.sendMessage(request);
     })();
 }
 

@@ -367,6 +367,11 @@ class MouseGestureClient {
             const isWheelAction = () => this.options.enabledWheelAction && ((event.buttons & 2) === 2) && !this.onMouseGesture && !this.rockerGestureMode;
 
             if (isWheelAction()) {
+                if (checkHasExtensionBeenUpdated()) {
+                    this.resetGesture();
+                    return;
+                }
+
                 event.preventDefault();
                 global.shouldPreventContextMenu = true;
             }
@@ -422,6 +427,11 @@ class MouseGestureClient {
             // マウスジェスチャー
             if (this.options.enabledMouseGesture && !this.rockerGestureMode) {
                 if (((event.buttons & 1) !== 0) && this.previousPoint) {
+                    if (checkHasExtensionBeenUpdated()) {
+                        this.resetGesture();
+                        return;
+                    }
+
                     event.preventDefault();
                     event.stopImmediatePropagation();
 
@@ -466,13 +476,18 @@ class MouseGestureClient {
                 const diffY = event.clientY - this.previousPoint.y;
                 const distanceSquare = diffX * diffX + diffY * diffY;
 
+                if (checkHasExtensionBeenUpdated()) {
+                    this.resetGesture();
+                    return;
+                }
+
                 if (this.hasGestureDrawn) {
                     this.drawGestureTrail({ x: event.clientX, y: event.clientY });
                 }
 
                 if (distanceSquare >= strokeLength * strokeLength) {
                     global.shouldPreventContextMenu = true;
-                    
+
                     this.rightClickCount = 0;   // 素早くマウスジェスチャーを繰り返したときに右ダブルクリックと判定しないようにリセットする
 
                     const currentPoint = { x: event.clientX, y: event.clientY };
@@ -516,6 +531,11 @@ class MouseGestureClient {
 
             // ロッカージェスチャー
             if (this.rockerGestureMode) {
+                if (checkHasExtensionBeenUpdated()) {
+                    this.resetGesture();
+                    return;
+                }
+
                 let command = '';
                 if (this.rockerGestureMode === 'right-left' && event.button === 0 && this.options.rockerGestureRightLeft) {
                     command = this.options.rockerGestureRightLeft;
@@ -625,6 +645,15 @@ class MouseGestureClient {
             global.shouldPreventContextMenu = false;
             getRootWindow().postMessage({ extensionId: chrome.runtime.id, type: 'reset-gesture' }, `*`);
         }
+
+        this.arrows = '';
+        this.url = undefined;
+        this.src = undefined;
+        this.target = undefined;
+        this.rightClickCount = 0;
+        this.onMouseGesture = false;
+        this.rockerGestureMode = undefined;
+        this.hasMouseLightButtonDowned = false;
     }
 
     drawGestureTrail(point) {
