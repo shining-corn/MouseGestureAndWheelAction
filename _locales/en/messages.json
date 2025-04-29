@@ -89,8 +89,14 @@
     "gotoprevioustab": {
         "message": "Go to previous tab"
     },
+    "gotoprevioustabloop": {
+        "message": "Go to previous tab (loop)"
+    },
     "gotonexttab": {
         "message": "Go to next tab"
+    },
+    "gotonexttabloop": {
+        "message": "Go to next tab (loop)"
     },
     "openoptionspage": {
         "message": "Open options"
@@ -262,6 +268,9 @@
     },
     "optionsGestureStrokeLength": {
         "message": "Stroke Length"
+    },
+    "optionsPreviousTabHistorySize": {
+        "message": "History size of \"Go to previous tab\""
     },
     "optionsPageTitleRockerGesture": {
         "message": "Rocker Gesture"

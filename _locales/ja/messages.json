@@ -89,8 +89,14 @@
     "gotoprevioustab": {
         "message": "前のタブに戻る"
     },
+    "gotoprevioustabloop": {
+        "message": "前のタブに戻る（ループする）"
+    },
     "gotonexttab": {
         "message": "次のタブに進む"
+    },
+    "gotonexttabloop": {
+        "message": "次のタブに進む（ループする）"
     },
     "openoptionspage": {
         "message": "オプションを開く"
@@ -262,6 +268,9 @@
     },
     "optionsGestureStrokeLength": {
         "message": "ジェスチャーの１ストロークあたりの距離"
+    },
+    "optionsPreviousTabHistorySize": {
+        "message": "「前のタブに戻る」の履歴の最大数"
     },
     "optionsPageTitleRockerGesture": {
         "message": "ロッカージェスチャー"

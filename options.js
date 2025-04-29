@@ -198,7 +198,7 @@ class MouseGestureController {
         if ((event.button === 2) && this.previousPoint) {
             const arrows = this.elements.arrows;
             if (arrows !== '') {
-                const action = this.options.getGestureAction(arrows) || '';
+                const action = this.options.getGestureAction(arrows);
 
                 const backgroundElement = document.getElementById('background');
                 backgroundElement.style.visibility = 'visible';
@@ -319,6 +319,9 @@ function renderMouseGestureOptions(options) {
         const mouseGestureStrokeLengthElement = document.getElementById('gesture-stroke-length');
         mouseGestureStrokeLengthElement.disabled = !enabledMouseGestureElement.checked;
 
+        const previousTabHistorySizeElement = document.getElementById('previous-tab-hisotry-size');
+        previousTabHistorySizeElement.disabled = !enabledMouseGestureElement.checked;
+
         options.changeEnabledMouseGesture(enabledMouseGestureElement.checked);
     });
 
@@ -395,6 +398,19 @@ function renderMouseGestureOptions(options) {
     });
     mouseGestureStrokeLengthElement.addEventListener('input', () => {
         mouseGestureStrokeLengthElement.value = mouseGestureStrokeLengthElement.value.slice(0, 3);
+    });
+
+    const previousTabHistorySizeElement = document.getElementById('previous-tab-history-size');
+    previousTabHistorySizeElement.value = options.previousTabHistorySize;
+    previousTabHistorySizeElement.disabled = !options.enabledMouseGesture;
+    previousTabHistorySizeElement.addEventListener('change', async () => {
+        const size = parseInt(previousTabHistorySizeElement.value);
+        if (size) {
+            options.setPreviousTabHistorySize(size);
+        }
+    });
+    previousTabHistorySizeElement.addEventListener('input', () => {
+        previousTabHistorySizeElement.value = previousTabHistorySizeElement.value.slice(0, 4);
     });
 }
 

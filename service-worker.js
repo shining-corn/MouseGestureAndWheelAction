@@ -1,3 +1,5 @@
+importScripts('./common.js');
+
 function sendMessageToTabs(request, tabs) {
     request.extensionId = chrome.runtime.id;
     for (let tab of tabs) {
@@ -69,10 +71,11 @@ function activateMostRightTab(allTabs, shouldPreventContextMenu) {
 }
 
 class MouseGestureService {
-    constructor() {
+    constructor(options) {
+        this.options = options;
         this.previousWindowState = [];
         this.lastCreatedGroupId = undefined;
-        this.tabActivateHistory = {};
+        this.tabActivateHistoryContainer = {};
     }
 
     start() {
@@ -216,55 +219,16 @@ class MouseGestureService {
                         })();
                         break;
                     case 'gotoprevioustab':
-                        {
-                            const data = this.tabActivateHistory[sender.tab.windowId];
-                            if (data && data.history.length > 0) {
-                                if (data.index === -1) {
-                                    data.index = data.history.length - 1;
-                                }
-
-                                if (data.index !== 0) {
-                                    data.index--;
-                                }
-
-                                if (sender.tab.id !== data.history[data.index]) {
-                                    chrome.tabs.update(data.history[data.index], { active: true });
-                                    data.shouldPreventAddHistory = true;
-                                    sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: data.history[data.index] }]);
-                                }
-                                else {
-                                    sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: sender.tab.id }]);
-                                }
-                            }
-                            else {
-                                sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: sender.tab.id }]);
-                            }
-                        }
+                        this.goToPreviousTab(sender, false);
+                        break;
+                    case 'gotoprevioustabloop':
+                        this.goToPreviousTab(sender, true);
                         break;
                     case 'gotonexttab':
-                        {
-                            const data = this.tabActivateHistory[sender.tab.windowId];
-                            if (data && data.history.length > 0) {
-                                if (data.index === -1) {
-                                    data.index = data.history.length - 1;
-                                }
-
-                                if (data.index < data.history.length - 1) {
-                                    data.index++;
-                                }
-
-                                if (sender.tab.id !== data.history[data.index]) {
-                                    chrome.tabs.update(data.history[data.index], { active: true });
-                                    data.shouldPreventAddHistory = true;
-                                }
-                                else {
-                                    sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: sender.tab.id }]);
-                                }
-                            }
-                            else {
-                                sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: sender.tab.id }]);
-                            }
-                        }
+                        this.goToNextTab(sender, false);
+                        break;
+                    case 'gotonexttabloop':
+                        this.goToNextTab(sender, true);
                         break;
                     case 'openoptionspage':
                         chrome.runtime.openOptionsPage();
@@ -504,60 +468,125 @@ class MouseGestureService {
 
     processTabHistory() {
         chrome.tabs.onActivated.addListener((activeInfo) => {
-            if (!this.tabActivateHistory[activeInfo.windowId]) {
-                this.tabActivateHistory[activeInfo.windowId] = {
+            if (!this.tabActivateHistoryContainer[activeInfo.windowId]) {
+                this.tabActivateHistoryContainer[activeInfo.windowId] = {
                     history: [],
                     index: -1,
                     shouldPreventAddHistory: false,
                 };
             }
 
-            const data = this.tabActivateHistory[activeInfo.windowId];
-            if (data.shouldPreventAddHistory) {
-                data.shouldPreventAddHistory = false;
+            const container = this.tabActivateHistoryContainer[activeInfo.windowId];
+            if (container.shouldPreventAddHistory) {
+                container.shouldPreventAddHistory = false;
             }
-            else if ((data.history.length === 0) || (data.history[data.history.length - 1] !== activeInfo.tabId)) {
-                while (data.length >= 4096) {    // 4096: max history length
-                    this.tabActivateHistory[activeInfo.windowId].history.shift();
-                }
-                this.tabActivateHistory[activeInfo.windowId].history.push(activeInfo.tabId);
+            else if ((container.history.length === 0) || (container.history[container.history.length - 1] !== activeInfo.tabId)) {
+                container.history.push(activeInfo.tabId);
+                container.index = -1;
 
-                data.index = -1;
+                // Remove the oldest history if it exceeds the limit
+                const historySize = this.options.previousTabHistorySize;
+                container.history.splice(0, container.history.length - historySize);
             }
         });
 
         chrome.tabs.onDetached.addListener((tabId, detachInfo) => {
-            if (this.tabActivateHistory[detachInfo.oldWindowId]) {
-                this.tabActivateHistory[detachInfo.oldWindowId].history = this.tabActivateHistory[detachInfo.oldWindowId].history.filter((elem) => elem !== tabId);
+            if (this.tabActivateHistoryContainer[detachInfo.oldWindowId]) {
+                this.tabActivateHistoryContainer[detachInfo.oldWindowId].history = this.tabActivateHistoryContainer[detachInfo.oldWindowId].history.filter((elem) => elem !== tabId);
 
-                this.tabActivateHistory[detachInfo.oldWindowId].history = this.tabActivateHistory[detachInfo.oldWindowId].history.filter((elem, i, array) => i === 0 || elem !== array[i - 1]);
+                this.tabActivateHistoryContainer[detachInfo.oldWindowId].history = this.tabActivateHistoryContainer[detachInfo.oldWindowId].history.filter((elem, i, array) => i === 0 || elem !== array[i - 1]);
 
-                if (this.tabActivateHistory[detachInfo.oldWindowId].history.length === 0) {
-                    delete this.tabActivateHistory[detachInfo.oldWindowId];
+                if (this.tabActivateHistoryContainer[detachInfo.oldWindowId].history.length === 0) {
+                    delete this.tabActivateHistoryContainer[detachInfo.oldWindowId];
                 }
             }
         });
 
         chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
             if (removeInfo.isWindowClosing) {
-                delete this.tabActivateHistory[removeInfo.windowId];
+                delete this.tabActivateHistoryContainer[removeInfo.windowId];
             }
-            else if (this.tabActivateHistory[removeInfo.windowId]) {
-                this.tabActivateHistory[removeInfo.windowId].history = this.tabActivateHistory[removeInfo.windowId].history.filter((elem) => elem !== tabId);
+            else if (this.tabActivateHistoryContainer[removeInfo.windowId]) {
+                this.tabActivateHistoryContainer[removeInfo.windowId].history = this.tabActivateHistoryContainer[removeInfo.windowId].history.filter((elem) => elem !== tabId);
 
-                this.tabActivateHistory[detachInfo.oldWindowId].history = this.tabActivateHistory[detachInfo.oldWindowId].history.filter((elem, i, array) => i === 0 || elem !== array[i - 1]);
-
-                if (this.tabActivateHistory[removeInfo.windowId].history.length === 0) {
-                    delete this.tabActivateHistory[removeInfo.windowId];
+                this.tabActivateHistoryContainer[removeInfo.windowId].history = this.tabActivateHistoryContainer[removeInfo.windowId].history.filter((elem, i, array) => i === 0 || elem !== array[i - 1]);
+                if (this.tabActivateHistoryContainer[removeInfo.windowId].history.length === 0) {
+                    delete this.tabActivateHistoryContainer[removeInfo.windowId];
                 }
             }
         });
     }
+
+    goToPreviousTab(sender, shouldLoop) {
+        const container = this.tabActivateHistoryContainer[sender.tab.windowId];
+        if (container && container.history.length > 0) {
+            if (container.index === -1) {
+                container.index = container.history.length - 1;
+            }
+
+            container.index--;
+            if (container.index < 0) {
+                if (shouldLoop) {
+                    container.index = container.history.length - 1;
+                }
+                else {
+                    container.index = 0;
+                }
+            }
+
+            if (sender.tab.id !== container.history[container.index]) {
+                chrome.tabs.update(container.history[container.index], { active: true });
+                container.shouldPreventAddHistory = true;
+                sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: container.history[container.index] }]);
+            }
+            else {
+                sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: sender.tab.id }]);
+            }
+        }
+        else {
+            sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: sender.tab.id }]);
+        }
+    }
+
+    goToNextTab(sender, shouldLoop) {
+        const container = this.tabActivateHistoryContainer[sender.tab.windowId];
+        if (container && container.history.length > 0) {
+            if (container.index === -1) {
+                container.index = container.history.length - 1;
+            }
+
+            container.index++;
+            if (container.index >= container.history.length) {
+                if (shouldLoop) {
+                    container.index = 0;
+                }
+                else {
+                    container.index = container.history.length - 1;
+                }
+            }
+
+            if (sender.tab.id !== container.history[container.index]) {
+                chrome.tabs.update(container.history[container.index], { active: true });
+                container.shouldPreventAddHistory = true;
+            }
+            else {
+                sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: sender.tab.id }]);
+            }
+        }
+        else {
+            sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: sender.tab.id }]);
+        }
+    }
 }
 
-chrome.runtime.onInstalled.addListener((details) => {
-    if (details.reason === 'install') {
-        chrome.runtime.openOptionsPage();
-    }
-});
-(new MouseGestureService()).start();
+(() => {
+    chrome.runtime.onInstalled.addListener((details) => {
+        if (details.reason === 'install') {
+            chrome.runtime.openOptionsPage();
+        }
+    });
+
+    let options = new ExtensionOption();
+    (async () => { await options.loadFromStrageLocal(); })();
+    (new MouseGestureService(options)).start(); // これをasync関数の中で実行するとcontent.jsのchrome.runtime.sendMessage()が稀に'Could not establish connection. Receiving end does not exist.'エラーを起こすので、即時関数で実行する。
+})();
