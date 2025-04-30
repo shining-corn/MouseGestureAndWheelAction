@@ -17,6 +17,7 @@
                 "file://*/*"
             ],
             "js": [
+                "InterIframeVariables.js",
                 "common.js",
                 "content.js"
             ],
