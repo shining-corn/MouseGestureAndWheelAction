@@ -201,7 +201,7 @@
         "message": "Custom URL setting not found."
     },
     "messageExtensionHasBeenUpdated": {
-        "message": "The extension has been updated and no longer works on this web page.\nPlease reload the web page."
+        "message": "Because the extension has been updated, mouse gestures no longer work on this screen.\nPlease reload the web page."
     },
     "strBookmarkDialogTitleAdd": {
         "message": "Add Bookmark"  

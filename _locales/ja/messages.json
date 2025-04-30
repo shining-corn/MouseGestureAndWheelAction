@@ -201,7 +201,7 @@
         "message": "カスタムURLの設定が見つかりません。"
     },
     "messageExtensionHasBeenUpdated": {
-        "message": "拡張機能がバージョンアップされたため、この画面では動作しなくなりました。\n画面をリロードしてください。"
+        "message": "拡張機能がバージョンアップされたため、この画面ではマウスジェスチャーが動作しなくなりました。\n画面をリロードしてください。"
     },
     "strBookmarkDialogTitleAdd": {
         "message": "ブックマークを追加"  
