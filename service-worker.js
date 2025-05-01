@@ -13,9 +13,6 @@ function activateTab(allTabs, srcTabId, delta, loop, shouldPreventContextMenu) {
     let i = allTabs.findIndex((tab) => tab.id === srcTabId);
 
     if (i === -1) {
-        if (shouldPreventContextMenu) {
-            sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: srcTabId }]);
-        }
         return false;
     }
     if (delta === -1 && i === 0) {
@@ -23,9 +20,6 @@ function activateTab(allTabs, srcTabId, delta, loop, shouldPreventContextMenu) {
             i = allTabs.length;
         }
         else {
-            if (shouldPreventContextMenu) {
-                sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: srcTabId }]);
-            }
             return false;
         }
     }
@@ -34,9 +28,6 @@ function activateTab(allTabs, srcTabId, delta, loop, shouldPreventContextMenu) {
             i = -1;
         }
         else {
-            if (shouldPreventContextMenu) {
-                sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: srcTabId }]);
-            }
             return false;
         }
     }
@@ -233,16 +224,16 @@ class MouseGestureService {
                         })();
                         break;
                     case 'gotoprevioustab':
-                        this.goToPreviousTab(sender, false);
+                        this.goToPreviousTab(sender, false, request.shouldPreventContextMenu);
                         break;
                     case 'gotoprevioustabloop':
-                        this.goToPreviousTab(sender, true);
+                        this.goToPreviousTab(sender, true, request.shouldPreventContextMenu);
                         break;
                     case 'gotonexttab':
-                        this.goToNextTab(sender, false);
+                        this.goToNextTab(sender, false, request.shouldPreventContextMenu);
                         break;
                     case 'gotonexttabloop':
-                        this.goToNextTab(sender, true);
+                        this.goToNextTab(sender, true, request.shouldPreventContextMenu);
                         break;
                     case 'openoptionspage':
                         chrome.runtime.openOptionsPage();
@@ -531,7 +522,7 @@ class MouseGestureService {
         });
     }
 
-    goToPreviousTab(sender, shouldLoop) {
+    goToPreviousTab(sender, shouldLoop, shouldPreventContextMenu) {
         const container = this.tabActivateHistoryContainer[sender.tab.windowId];
         if (container && container.history.length > 0) {
             if (container.index === -1) {
@@ -549,20 +540,16 @@ class MouseGestureService {
             }
 
             if (sender.tab.id !== container.history[container.index]) {
+                if (shouldPreventContextMenu) {
+                    sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: container.history[container.index] }]);
+                }
                 chrome.tabs.update(container.history[container.index], { active: true });
                 container.shouldPreventAddHistory = true;
-                sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: container.history[container.index] }]);
             }
-            else {
-                sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: sender.tab.id }]);
-            }
-        }
-        else {
-            sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: sender.tab.id }]);
         }
     }
 
-    goToNextTab(sender, shouldLoop) {
+    goToNextTab(sender, shouldLoop, shouldPreventContextMenu) {
         const container = this.tabActivateHistoryContainer[sender.tab.windowId];
         if (container && container.history.length > 0) {
             if (container.index === -1) {
@@ -580,15 +567,12 @@ class MouseGestureService {
             }
 
             if (sender.tab.id !== container.history[container.index]) {
+                if (shouldPreventContextMenu) {
+                    sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: container.history[container.index] }]);
+                }
                 chrome.tabs.update(container.history[container.index], { active: true });
                 container.shouldPreventAddHistory = true;
             }
-            else {
-                sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: sender.tab.id }]);
-            }
-        }
-        else {
-            sendMessageToTabs({ type: 'prevent-contextmenu' }, [{ id: sender.tab.id }]);
         }
     }
 }

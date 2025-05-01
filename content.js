@@ -46,7 +46,7 @@ class MouseGestureClient {
         this.rightClickCount = 0;
         this.onMouseGesture = false;
         this.rockerGestureMode = undefined;
-        this.hasMouseLightButtonDowned = false;
+        this.isRightButtonPressed = false;
     }
 
     start() {
@@ -60,8 +60,8 @@ class MouseGestureClient {
         });
 
         window.addEventListener('blur', () => {
-            global.shouldPreventContextMenu = false;    // ロッカージェスチャーでタブ移動したとき用
-            this.hasMouseLightButtonDowned = false;     // ロッカージェスチャーでマウス右ボタンを押したまま移動してきた場合にコンテキストメニューを抑制
+            global.shouldPreventContextMenu = false;    // タブから離れるときにコンテキストメニューの抑制を解除
+            this.isRightButtonPressed = false;
         });
 
         window.addEventListener('wheel', (event) => {
@@ -79,15 +79,12 @@ class MouseGestureClient {
 
                 event.preventDefault();
                 global.shouldPreventContextMenu = true;
+
+                this.resetGesture();    // マウスジェスチャー中の場合はそれをキャンセルする
             }
 
             (async () => {
                 if (isWheelAction()) {
-                    if (this.options.rightButtonAndWheelUp && this.options.rightButtonAndWheelUp.startsWith && this.options.rightButtonAndWheelUp.startsWith('goto')) {
-                        // 連続でタブ移動する場合、フラグを解除する。
-                        global.shouldPreventContextMenu = false;
-                    }
-
                     this.setActionOptionsFromElement(event.target);
                     let action;
                     if (event.wheelDelta > 0) {
@@ -98,7 +95,6 @@ class MouseGestureClient {
                     }
                     if (typeof action === 'function') {
                         const option = this.getActionOptions();
-                        option['shouldPreventContextMenu'] = true;
                         action(option);
                     }
 
@@ -113,8 +109,9 @@ class MouseGestureClient {
                 return;
             }
 
-            // ロッカージェスチャーでマウス右ボタンを押したまま移動してきた場合にコンテキストメニューを抑制
-            this.hasMouseLightButtonDowned = true;  // このフラグがfalseの場合にmouseup時にコンテキストメニューを抑制
+            if (event.button === 2) {
+                this.isRightButtonPressed = true;
+            }
 
             // ロッカージェスチャー開始
             if (event.buttons === 3 && !this.onMouseGesture) {
@@ -228,10 +225,8 @@ class MouseGestureClient {
                 return;
             }
 
-            // ロッカージェスチャーでマウス右ボタンを押したまま移動してきた場合にコンテキストメニューを抑制
-            if (!this.hasMouseLightButtonDowned) {
-                this.hasMouseLightButtonDowned = false;
-                global.shouldPreventContextMenu = true;
+            if (event.button === 2) {
+                this.isRightButtonPressed = false;
             }
 
             // ロッカージェスチャー
@@ -301,6 +296,7 @@ class MouseGestureClient {
 
             if (request.type === 'prevent-contextmenu') {
                 global.shouldPreventContextMenu = true;
+                this.isRightButtonPressed = true;   // 右ボタンを押したまま移動してきたはずなのでtrueにする
             }
         });
 
@@ -358,7 +354,7 @@ class MouseGestureClient {
         this.rightClickCount = 0;
         this.onMouseGesture = false;
         this.rockerGestureMode = undefined;
-        this.hasMouseLightButtonDowned = false;
+        this.isRightButtonPressed = false;
     }
 
     drawGestureTrail(point) {
@@ -398,6 +394,7 @@ class MouseGestureClient {
             target: this.target,
             url: this.url,
             src: this.src,
+            shouldPreventContextMenu: this.isRightButtonPressed,
         }
     }
 

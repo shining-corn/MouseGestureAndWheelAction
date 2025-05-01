@@ -448,8 +448,8 @@ function getGestureActions() {
         reloadtaball: () => {
             sendChromeMessage({ action: 'reloadtaball' });
         },
-        gotolefttab: (shouldPreventContextMenu) => {
-            sendChromeMessage({ action: 'gotolefttab', shouldPreventContextMenu: shouldPreventContextMenu });
+        gotolefttab: (option) => {
+            sendChromeMessage({ action: 'gotolefttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
         gotorighttab: (option) => {
             sendChromeMessage({ action: 'gotorighttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
@@ -466,17 +466,17 @@ function getGestureActions() {
         gotomostrighttab: (option) => {
             sendChromeMessage({ action: 'gotomostrighttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
-        gotoprevioustab: () => {
-            sendChromeMessage({ action: 'gotoprevioustab' });
+        gotoprevioustab: (option) => {
+            sendChromeMessage({ action: 'gotoprevioustab', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
-        gotoprevioustabloop: () => {
-            sendChromeMessage({ action: 'gotoprevioustabloop' });
+        gotoprevioustabloop: (option) => {
+            sendChromeMessage({ action: 'gotoprevioustabloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
-        gotonexttab: () => {
-            sendChromeMessage({ action: 'gotonexttab' });
+        gotonexttab: (option) => {
+            sendChromeMessage({ action: 'gotonexttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
-        gotonexttabloop: () => {
-            sendChromeMessage({ action: 'gotonexttabloop' });
+        gotonexttabloop: (option) => {
+            sendChromeMessage({ action: 'gotonexttabloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
         addbookmark: () => {
             sendChromeMessage({ action: 'addbookmark', bookmark: { title: document.title, url: document.location.href } });
