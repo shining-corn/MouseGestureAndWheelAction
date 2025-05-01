@@ -1,3 +1,8 @@
+/**
+ * @file InterIframeVariables.js
+ * @description Class to manage variables that need to be shared between iframes.
+ */
+
 class InterIframeVariables {
     constructor() {
         this.variables = {

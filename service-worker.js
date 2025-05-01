@@ -1,4 +1,9 @@
-importScripts('./common.js');
+/**
+ * @file service-worker.js
+ * @description Service worker for the Chrome extension that handles various tab and window management actions.
+ */
+
+importScripts('./ExtensionOptions.js');
 
 function sendMessageToTabs(request, tabs) {
     request.extensionId = chrome.runtime.id;
@@ -584,7 +589,7 @@ class MouseGestureService {
         }
     });
 
-    let options = new ExtensionOption();
+    let options = new ExtensionOptions();
     (async () => { await options.loadFromStrageLocal(); })();
     (new MouseGestureService(options)).start(); // これをasync関数の中で実行するとcontent.jsのchrome.runtime.sendMessage()が稀に'Could not establish connection. Receiving end does not exist.'エラーを起こすので、即時関数で実行する。
 })();

@@ -17,9 +17,11 @@
                 "file://*/*"
             ],
             "js": [
+                "utilities.js",
                 "InterIframeVariables.js",
+                "ExtensionOptions.js",
+                "gestureActions.js",
                 "htmlElements.js",
-                "common.js",
                 "content.js"
             ],
             "run_at": "document_start",

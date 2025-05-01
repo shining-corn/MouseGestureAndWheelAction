@@ -1,3 +1,8 @@
+/**
+ * @file content.js
+ * @description Main script for the extension. Handles mouse gestures, wheel action and rocker gesture.
+ */
+
 const global = new InterIframeVariables();  // IFRAME間で共有する変数
 
 function processAction(extensionOptions, action, actionOption) {
@@ -429,7 +434,7 @@ class MouseGestureClient {
 }
 
 (async () => {
-    let options = new ExtensionOption();
+    let options = new ExtensionOptions();
     await options.loadFromStrageLocal();
     new MouseGestureClient(options).start();
     if (isRootWindow()) {

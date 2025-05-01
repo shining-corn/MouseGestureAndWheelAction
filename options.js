@@ -1,3 +1,8 @@
+/**
+ * @file options.js
+ * @description Options page for the extension.
+ */
+
 class OptionGestureElements {
     constructor(options, gestureDescription) {
         this.options = options;
@@ -899,7 +904,7 @@ function translate(element) {
 }
 
 (async () => {
-    let options = new ExtensionOption();
+    let options = new ExtensionOptions();
     await options.loadFromStrageLocal();
     await options.createDefaultCustomUrlSettings();
     render(options);
