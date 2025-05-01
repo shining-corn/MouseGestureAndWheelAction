@@ -30,9 +30,6 @@ class InterIframeVariables {
                     break;
                 case 'mouse-extension-sync':
                     this.variables = event.data.variables;
-                    if (isRootWindow()) {
-                        this.sync();
-                    }
                     break;
             }
         });

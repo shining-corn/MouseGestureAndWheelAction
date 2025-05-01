@@ -203,8 +203,6 @@ class MouseGestureClient {
                 }
 
                 if (distanceSquare >= strokeLength * strokeLength) {
-                    global.shouldPreventContextMenu = true;
-
                     this.rightClickCount = 0;   // 素早くマウスジェスチャーを繰り返したときに右ダブルクリックと判定しないようにリセットする
 
                     const currentPoint = { x: event.clientX, y: event.clientY };
@@ -250,16 +248,20 @@ class MouseGestureClient {
                     if (this.onMouseGesture) {
                         event.preventDefault();
                         event.stopImmediatePropagation();
+                        global.shouldPreventContextMenu = true;
                     }
 
-                    const command = this.options.getGestureAction(this.arrows);
-                    processAction(this.options, command, this.getActionOptions());
+                    const actionOption = this.getActionOptions();
+                    setTimeout(() => {  // global.shouldPreventContextMenuの変更を他のフレームに反映させるのを待つためにsetTimeoutを使う
+                        const command = this.options.getGestureAction(this.arrows);
+                        processAction(this.options, command, actionOption);
 
-                    getRootWindow().postMessage({
-                        extensionId: chrome.runtime.id,
-                        type: 'reset-gesture',
-                    }, '*');
-                    this.doneGesture();
+                        getRootWindow().postMessage({
+                            extensionId: chrome.runtime.id,
+                            type: 'reset-gesture',
+                        }, '*');
+                        this.doneGesture();
+                    }, 0);
                 }
 
                 this.url = undefined;
