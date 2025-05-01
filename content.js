@@ -45,7 +45,6 @@ class MouseGestureClient {
         this.target = undefined;
         this.rightClickCount = 0;
         this.onMouseGesture = false;
-        this.rockerGestureMode = undefined;
         this.isRightButtonPressed = false;
     }
 
@@ -61,6 +60,7 @@ class MouseGestureClient {
 
         window.addEventListener('blur', () => {
             global.shouldPreventContextMenu = false;    // タブから離れるときにコンテキストメニューの抑制を解除
+            this.resetGesture();
             this.isRightButtonPressed = false;
         });
 
@@ -69,7 +69,7 @@ class MouseGestureClient {
                 return;
             }
 
-            const isWheelAction = () => this.options.enabledWheelAction && ((event.buttons & 2) === 2) && !this.onMouseGesture && !this.rockerGestureMode;
+            const isWheelAction = () => this.options.enabledWheelAction && (event.buttons === 2) && !this.onMouseGesture;
 
             if (isWheelAction()) {
                 if (checkHasExtensionBeenUpdated()) {
@@ -97,9 +97,6 @@ class MouseGestureClient {
                         const option = this.getActionOptions();
                         action(option);
                     }
-
-                    // マウスジェスチャー中の場合はそれをキャンセルする
-                    this.resetGesture();
                 }
             })();
         }, { capture: true, passive: false });
@@ -113,22 +110,35 @@ class MouseGestureClient {
                 this.isRightButtonPressed = true;
             }
 
-            // ロッカージェスチャー開始
+            // ロッカージェスチャー
             if (event.buttons === 3 && !this.onMouseGesture) {
-                global.shouldPreventContextMenu = true;
+                if (checkHasExtensionBeenUpdated()) {
+                    this.resetGesture();
+                    return;
+                }
+
+                let command = '';
                 if (event.button === 0 && this.options.rockerGestureRightLeft) {
-                    this.rockerGestureMode = 'right-left';
-                    this.setActionOptionsFromElement(event.target);
+                    command = this.options.rockerGestureRightLeft;
                 }
                 else if (event.button === 2 && this.options.rockerGestureLeftRight) {
-                    this.rockerGestureMode = 'left-right';
-                    this.setActionOptionsFromElement(event.target);
+                    command = this.options.rockerGestureLeftRight;
+                }
+
+                if (command) {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                    global.shouldPreventContextMenu = true;
+
+                    processAction(this.options, command, this.getActionOptions());
+
+                    return;
                 }
             }
 
             // マウスジェスチャー
-            if (this.options.enabledMouseGesture && !this.rockerGestureMode) {
-                if (((event.buttons & 1) !== 0) && this.previousPoint) {
+            if (this.options.enabledMouseGesture) {
+                if ((event.button === 0) && this.previousPoint) {
                     if (checkHasExtensionBeenUpdated()) {
                         this.resetGesture();
                         return;
@@ -173,7 +183,7 @@ class MouseGestureClient {
 
             const strokeLength = this.options.mouseGestureStrokeLength;
 
-            if ((event.buttons & 2) === 2 && this.previousPoint && !this.rockerGestureMode) {
+            if ((event.buttons & 2) === 2 && this.previousPoint && ((event.buttons & 1) === 0)) {
                 const diffX = event.clientX - this.previousPoint.x;
                 const diffY = event.clientY - this.previousPoint.y;
                 const distanceSquare = diffX * diffX + diffY * diffY;
@@ -227,40 +237,6 @@ class MouseGestureClient {
 
             if (event.button === 2) {
                 this.isRightButtonPressed = false;
-            }
-
-            // ロッカージェスチャー
-            if (this.rockerGestureMode) {
-                if (checkHasExtensionBeenUpdated()) {
-                    this.resetGesture();
-                    return;
-                }
-
-                let command = '';
-                if (this.rockerGestureMode === 'right-left' && event.button === 0 && this.options.rockerGestureRightLeft) {
-                    command = this.options.rockerGestureRightLeft;
-                }
-                else if (this.rockerGestureMode === 'left-right' && event.button === 2 && this.options.rockerGestureLeftRight) {
-                    command = this.options.rockerGestureLeftRight;
-                }
-
-                if (command) {
-                    event.preventDefault();
-                    event.stopImmediatePropagation();
-
-                    processAction(this.options, command, this.getActionOptions());
-                }
-
-                this.rockerGestureMode = undefined;
-                this.resetGesture();
-            }
-
-            // reset RockerGesture state
-            if (event.buttons === 0) {
-                this.rockerGestureMode = undefined;
-                if (event.button === 0) {
-                    global.shouldPreventContextMenu = false;
-                }
             }
 
             // マウスジェスチャー
@@ -340,7 +316,6 @@ class MouseGestureClient {
     }
 
     resetGesture() {
-        this.onMouseGesture = false;
         if (this.previousPoint) {
             this.doneGesture();
             global.shouldPreventContextMenu = false;
@@ -353,8 +328,6 @@ class MouseGestureClient {
         this.target = undefined;
         this.rightClickCount = 0;
         this.onMouseGesture = false;
-        this.rockerGestureMode = undefined;
-        this.isRightButtonPressed = false;
     }
 
     drawGestureTrail(point) {
