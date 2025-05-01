@@ -8,23 +8,23 @@ function sendMessageToTabs(request, tabs) {
     }
 }
 
-function activateTab(allTabs, srcTabId, delta, loop, shouldPreventContextMenu) {
+function goToTab(allTabs, srcTabId, distance, isLoop, shouldPreventContextMenu) {
     allTabs.sort((a, b) => a.index - b.index);
     let i = allTabs.findIndex((tab) => tab.id === srcTabId);
 
     if (i === -1) {
         return false;
     }
-    if (delta === -1 && i === 0) {
-        if (loop) {
+    if (distance === -1 && i === 0) {
+        if (isLoop) {
             i = allTabs.length;
         }
         else {
             return false;
         }
     }
-    if (delta === 1 && i === allTabs.length - 1) {
-        if (loop) {
+    if (distance === 1 && i === allTabs.length - 1) {
+        if (isLoop) {
             i = -1;
         }
         else {
@@ -32,7 +32,7 @@ function activateTab(allTabs, srcTabId, delta, loop, shouldPreventContextMenu) {
         }
     }
 
-    let targetTab = allTabs[i + delta];
+    let targetTab = allTabs[i + distance];
     chrome.tabs.update(targetTab.id, { active: true });
     if (shouldPreventContextMenu) {
         sendMessageToTabs({ type: 'prevent-contextmenu' }, [targetTab]);
@@ -41,7 +41,7 @@ function activateTab(allTabs, srcTabId, delta, loop, shouldPreventContextMenu) {
     return true;
 }
 
-function activateMostLeftTab(allTabs, shouldPreventContextMenu) {
+function goToMostLeftTab(allTabs, shouldPreventContextMenu) {
     allTabs.sort((a, b) => a.index - b.index);
     chrome.tabs.update(allTabs[0].id, { active: true });
     if (shouldPreventContextMenu) {
@@ -51,7 +51,7 @@ function activateMostLeftTab(allTabs, shouldPreventContextMenu) {
     return true;
 }
 
-function activateMostRightTab(allTabs, shouldPreventContextMenu) {
+function goToMostRightTab(allTabs, shouldPreventContextMenu) {
     allTabs.sort((a, b) => b.index - a.index);
     chrome.tabs.update(allTabs[0].id, { active: true });
     if (shouldPreventContextMenu) {
@@ -190,37 +190,37 @@ class MouseGestureService {
                     case 'gotolefttab':
                         (async () => {
                             const tabs = await chrome.tabs.query({ currentWindow: true });
-                            activateTab(tabs, sender.tab.id, -1, false, request.shouldPreventContextMenu);
+                            goToTab(tabs, sender.tab.id, -1, false, request.shouldPreventContextMenu);
                         })();
                         break;
                     case 'gotorighttab':
                         (async () => {
                             const tabs = await chrome.tabs.query({ currentWindow: true });
-                            activateTab(tabs, sender.tab.id, 1, false, request.shouldPreventContextMenu);
+                            goToTab(tabs, sender.tab.id, 1, false, request.shouldPreventContextMenu);
                         })();
                         break;
                     case 'gotolefttabwithloop':
                         (async () => {
                             const tabs = await chrome.tabs.query({ currentWindow: true });
-                            activateTab(tabs, sender.tab.id, -1, true, request.byshouldPreventContextMenuwheel);
+                            goToTab(tabs, sender.tab.id, -1, true, request.byshouldPreventContextMenuwheel);
                         })();
                         break;
                     case 'gotorighttabwithloop':
                         (async () => {
                             const tabs = await chrome.tabs.query({ currentWindow: true });
-                            activateTab(tabs, sender.tab.id, 1, true, request.shouldPreventContextMenu);
+                            goToTab(tabs, sender.tab.id, 1, true, request.shouldPreventContextMenu);
                         })();
                         break;
                     case 'gotomostlefttab':
                         (async () => {
                             const tabs = await chrome.tabs.query({ currentWindow: true });
-                            activateMostLeftTab(tabs, request.shouldPreventContextMenu);
+                            goToMostLeftTab(tabs, request.shouldPreventContextMenu);
                         })();
                         break;
                     case 'gotomostrighttab':
                         (async () => {
                             const tabs = await chrome.tabs.query({ currentWindow: true });
-                            activateMostRightTab(tabs, request.shouldPreventContextMenu);
+                            goToMostRightTab(tabs, request.shouldPreventContextMenu);
                         })();
                         break;
                     case 'gotoprevioustab':
