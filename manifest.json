@@ -18,6 +18,7 @@
             ],
             "js": [
                 "InterIframeVariables.js",
+                "htmlElements.js",
                 "common.js",
                 "content.js"
             ],
