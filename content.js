@@ -134,7 +134,7 @@ class MouseGestureClient {
                     event.preventDefault();
                     event.stopImmediatePropagation();
                     global.shouldPreventContextMenu = true;
-
+                    this.setActionOptionsFromElement(event.target);
                     processAction(this.options, command, this.getActionOptions());
 
                     return;
