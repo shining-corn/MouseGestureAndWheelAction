@@ -267,8 +267,8 @@ function render(options) {
     renderRockerGestureOptions(options);
     renderCustomUrlOptions(options);
     renderAppearanceOptions(options);
-    renderImportExportOptions(options);
     renderDisableExtensionOptions(options);
+    renderImportExportOptions(options);
     renderHints(options);
 }
 
@@ -648,39 +648,6 @@ function renderAppearanceOptions(options) {
             window.location.reload();
         })();
     });
-
-}
-
-function renderImportExportOptions(options) {
-    // export button
-    const copyToClipboardButtonElement = document.getElementById('import-export-copy-to-clipboard');
-    copyToClipboardButtonElement.addEventListener('click', () => {
-        navigator.clipboard.writeText(JSON.stringify(options.options));
-        alert(chrome.i18n.getMessage('messageCopied'));
-    });
-
-    const saveButtonElement = document.getElementById('import-export-save');
-    saveButtonElement.addEventListener('click', () => {
-        (async () => {
-            const textareaElement = document.getElementById('import-export-textarea');
-            try {
-                const newOptions = JSON.parse(textareaElement.value);
-
-                if (Object.prototype.toString.call(newOptions) === '[object Object]') {
-                    await options.setOptions(newOptions);
-                    await options.createDefaultCustomUrlSettings();
-                    window.alert(chrome.i18n.getMessage('messageSucceededInSave'));
-                    window.location.reload();
-                }
-                else {
-                    window.alert(chrome.i18n.getMessage('importErrorMessgeOptionsMustBeObject'));
-                }
-            }
-            catch (error) {
-                window.alert(error);
-            }
-        })();
-    });
 }
 
 function renderDisableExtensionOptions(options) {
@@ -873,6 +840,38 @@ function saveDisableExtension(options) {
         window.alert(chrome.i18n.getMessage('messageSucceededInSave'));
         window.location.reload();
     })();
+}
+
+function renderImportExportOptions(options) {
+    // export button
+    const copyToClipboardButtonElement = document.getElementById('import-export-copy-to-clipboard');
+    copyToClipboardButtonElement.addEventListener('click', () => {
+        navigator.clipboard.writeText(JSON.stringify(options.options));
+        alert(chrome.i18n.getMessage('messageCopied'));
+    });
+
+    const saveButtonElement = document.getElementById('import-export-save');
+    saveButtonElement.addEventListener('click', () => {
+        (async () => {
+            const textareaElement = document.getElementById('import-export-textarea');
+            try {
+                const newOptions = JSON.parse(textareaElement.value);
+
+                if (Object.prototype.toString.call(newOptions) === '[object Object]') {
+                    await options.setOptions(newOptions);
+                    await options.createDefaultCustomUrlSettings();
+                    window.alert(chrome.i18n.getMessage('messageSucceededInSave'));
+                    window.location.reload();
+                }
+                else {
+                    window.alert(chrome.i18n.getMessage('importErrorMessgeOptionsMustBeObject'));
+                }
+            }
+            catch (error) {
+                window.alert(error);
+            }
+        })();
+    });
 }
 
 function renderHints(options) {
