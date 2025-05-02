@@ -1,8 +1,34 @@
 /**
  * @file Mouse Gesture Elements
- * @description This file contains the elements used for mouse gestures.
+ * @description This file contains the elements used for content.js.
  */
 
+/**
+ * @import { ExtensionOptions } from './ExtensionOptions.js';
+ * @import { Point } from './utilities.js';
+ */
+
+/**
+ * @typedef {Object} BookmarkTreeNode
+ * @property {string} id - The ID of the bookmark.
+ * @property {string} title - The title of the bookmark.
+ * @property {string} url - The URL of the bookmark.
+ * @property {string} parentId - The ID of the parent folder.
+ * @property {BookmarkTreeNode[]} children - The children of the bookmark.
+ * @property {number} dateAdded - The date the bookmark was added.
+ * @property {number} dateGroupModified - The date the bookmark was last modified.
+ * @property {number} dateLastUsed - The date the bookmark was last used.
+ * @property {FolderType} folderType - The type of the folder.
+ * @property {number} index - The index of the bookmark.
+ * @property {boolean} syncing - Whether this node is synced with the user's remote account storage by the browser.
+ * @property {"managed"} unmodifiable - Indicates the reason why this node is unmodifiable. 
+ */
+
+/**
+ * @summary Create a background element.
+ * @param {boolean} isCentering - Whether to center the element or not.
+ * @returns The created element.
+ */
 function createBackgroundElement(isCentering) {
     const element = document.createElement('div');
     element.style.all = 'initial';
@@ -23,6 +49,10 @@ function createBackgroundElement(isCentering) {
     return element;
 }
 
+/**
+ * @summary Create a centering element.
+ * @returns The created element.
+ */
 function createCenteringElement() {
     const element = document.createElement('div');
     element.style.all = 'revert';
@@ -33,7 +63,14 @@ function createCenteringElement() {
     return element;
 }
 
+/**
+ * @summary Class for mouse gesture elements.
+ */
 class GestureElements {
+    /**
+     * @constructor
+     * @param {ExtensionOptions} options 
+     */
     constructor(options) {
         this.options = options;
 
@@ -52,16 +89,28 @@ class GestureElements {
         this.backgroundElement.appendChild(this.canvasElement);
     }
 
+    /**
+     * @summary Insert the background element into the target element.
+     * @param {HTMLElement} targetElement - The target element to insert into.
+     */
     insertTo(targetElement) {
         targetElement.insertBefore(this.backgroundElement, null);
         this.canvasElement.width = document.documentElement.clientWidth;
         this.canvasElement.height = document.documentElement.clientHeight;
     }
 
+    /**
+     * @summary Remove the background element from the target element.
+     * @param {HTMLElement} targetElement - The target element to remove from.
+     */
     removeFrom(targetElement) {
         targetElement.removeChild(this.backgroundElement);
     }
 
+    /**
+     * @summary Draw a line from the previous point to the current point.
+     * @param {Point} point - The current point.
+     */
     drawLine(point) {
         if (this.previousPoint) {
             const ctx = this.canvasElement.getContext('2d');
@@ -82,6 +131,9 @@ class GestureElements {
         this.previousPoint = point;
     }
 
+    /**
+     * @summary Reset the canvas element.
+     */
     reset() {
         if (this.previousPoint) {
             const ctx = this.canvasElement.getContext('2d');
@@ -95,7 +147,14 @@ class GestureElements {
     }
 }
 
+/**
+ * @summary Class for showing arrows and action names.
+ */
 class ShowArrowsElements {
+    /**
+     * @constructor
+     * @param {ExtensionOptions} options 
+     */
     constructor(options) {
         this.options = options;
         this.arrows = '';
@@ -156,6 +215,10 @@ class ShowArrowsElements {
         });
     }
 
+    /**
+     * @summary Show the arrows and action names.
+     * @param {string} arrows - The arrows to show.
+     */
     showArrows(arrows) {
         if (this.arrows.length === 0) {
             if (this.options.hideGestureText) {
@@ -223,6 +286,9 @@ class ShowArrowsElements {
     }
 }
 
+/**
+ * @summary Class for bookmark edit dialog elements.
+ */
 class BookMarkEditDialogElements {
     constructor() {
         this.targetElement = undefined;
@@ -239,6 +305,9 @@ class BookMarkEditDialogElements {
         };
     }
 
+    /**
+     * @summary Start the bookmark event listener.
+     */
     start() {
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             if (request && request.extensionId === chrome.runtime.id && request.type === 'upsertbookmarkresponse') {
@@ -252,6 +321,12 @@ class BookMarkEditDialogElements {
         });
     }
 
+    /**
+     * @summary Add the bookmark dialog.
+     * @param {BookmarkTreeNode[]} bookmarks - The bookmarks to add.
+     * @param {boolean} isEditMode - Whether to edit the bookmark or not.
+     * @param {string} defaultBookmarkFolder - The folder selected when the dialog is opened.
+     */
     addDialog(bookmarks, isEditMode, defaultBookmarkFolder) {
         this.targetElement = document.body;
         this.addEventListeners();
@@ -445,6 +520,12 @@ class BookMarkEditDialogElements {
         this.nameInputElement.select();
     }
 
+    /**
+     * @summary Find a bookmark by URL.
+     * @param {BookmarkTreeNode} bookmarks - Search destination bookmarks.
+     * @param {string} url - The URL to search for.
+     * @returns {BookmarkTreeNode} The found bookmark node.
+     */
     findBookmark(bookmarks, url) {
         let bookmarkNodes = bookmarks;
         while (bookmarkNodes.length) {
@@ -464,6 +545,9 @@ class BookMarkEditDialogElements {
         }
     }
 
+    /**
+     * @summary Reset the bookmark dialog.
+     */
     reset() {
         this.targetElement.removeChild(this.backgroundElement);
         this.targetElement = undefined;
@@ -476,6 +560,10 @@ class BookMarkEditDialogElements {
         this.removeEventListeners();
     }
 
+    /**
+     * @summary Handle the OK button click event.
+     * @param {Event} event - The event object.
+     */
     onOk(event) {
         if (event.type === 'click' || event.key === 'Enter') {
             const newBookmark = {
@@ -490,6 +578,10 @@ class BookMarkEditDialogElements {
         }
     }
 
+    /**
+     * @summary Handle the cancel button click event.
+     * @param {Event} event - The event object.
+     */
     onCancel(event) {
         if (event.type === 'click' || event.key === 'Escape') {
             event.preventDefault();
@@ -497,22 +589,36 @@ class BookMarkEditDialogElements {
         }
     }
 
+    /**
+     * @summary Handle the delete bookmark button click event.
+     * @param {Event} event - The event object.
+     */
     onDeleteBookmark(event) {
         event.preventDefault();
         sendChromeMessage({ action: 'deletebookmark', bookmark: { url: document.location.href } });
         this.reset();
     }
 
+    /**
+     * @summary Add event listeners for the OK and cancel buttons.
+     */
     addEventListeners() {
         window.addEventListener('keydown', this.on.ok);
         window.addEventListener('keydown', this.on.cancel);
     }
 
+    /**
+     * @summary Remove event listeners for the OK and cancel buttons.
+     */
     removeEventListeners() {
         window.removeEventListener('keydown', this.on.ok);
         window.removeEventListener('keydown', this.on.cancel);
     }
 
+    /**
+     * @summary Set the default bookmark folder.
+     * @param {string} folderId - The ID of the folder to set as default.
+     */
     setDefaultBookmarkFolder(folderId) {
         chrome.storage.local.set({ defaultBookmarkFolder: folderId }).then();
     }

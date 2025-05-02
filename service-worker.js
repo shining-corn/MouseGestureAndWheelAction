@@ -3,8 +3,39 @@
  * @description Service worker for the Chrome extension that handles various tab and window management actions.
  */
 
+/**
+ * @import { ExtensionOptions } from './ExtensionOptions.js';
+ */
+
+/**
+ * @typedef {object} Tab - Represents a Chrome tab.
+ * @property {number} id - The ID of the tab.
+ * @property {number} index - The index of the tab in the window.
+ * @property {number} windowId - The ID of the window the tab belongs to.
+ * @property {boolean} pinned - Indicates if the tab is pinned.
+ * @property {object} mutedInfo - Information about the tab's mute state.
+ * @property {boolean} mutedInfo.muted - Indicates if the tab is muted.
+ * @property {number} groupId - The ID of the group the tab belongs to.
+ */
+
+/**
+ * @typedef {object} MessageSender - Represents the sender of a message of Chrome.
+ */
+
+/**
+ * @typedef {object} TabActivateHistoryContainer
+ * @property {number[]} history - The history of activated tab IDs.
+ * @property {number} index - The current index in the history.
+ * @property {boolean} shouldPreventAddHistory - Whether to prevent adding history.
+ */
+
 importScripts('./ExtensionOptions.js');
 
+/**
+ * @summary Send a message to specified tabs.
+ * @param {any} request 
+ * @param {Tab[]} tabs
+ */
 function sendMessageToTabs(request, tabs) {
     request.extensionId = chrome.runtime.id;
     for (let tab of tabs) {
@@ -13,6 +44,15 @@ function sendMessageToTabs(request, tabs) {
     }
 }
 
+/**
+ * @summary Go to a specific tab based on the current tab's ID and the distance to move.
+ * @param {Tab[]} allTabs - All tabs in the current window.
+ * @param {number} srcTabId - The ID of the source tab.
+ * @param {number} distance - The distance to move (1 for right, -1 for left).
+ * @param {boolean} isLoop - Whether to loop around when reaching the end of the tab list.
+ * @param {boolean} shouldPreventContextMenu - Whether to prevent the context menu from appearing on the target tab.
+ * @returns {boolean} - Returns true if the tab was successfully changed, false otherwise.
+ */
 function goToTab(allTabs, srcTabId, distance, isLoop, shouldPreventContextMenu) {
     allTabs.sort((a, b) => a.index - b.index);
     let i = allTabs.findIndex((tab) => tab.id === srcTabId);
@@ -46,6 +86,12 @@ function goToTab(allTabs, srcTabId, distance, isLoop, shouldPreventContextMenu) 
     return true;
 }
 
+/**
+ * @summary Go to the most left tab in the current window.
+ * @param {Tab[]} allTabs - All tabs in the current window.
+ * @param {boolean} shouldPreventContextMenu - Whether to prevent the context menu from appearing on the target tab.
+ * @returns {boolean} - Returns true if the tab was successfully changed, false otherwise.
+ */
 function goToMostLeftTab(allTabs, shouldPreventContextMenu) {
     allTabs.sort((a, b) => a.index - b.index);
     chrome.tabs.update(allTabs[0].id, { active: true });
@@ -56,6 +102,12 @@ function goToMostLeftTab(allTabs, shouldPreventContextMenu) {
     return true;
 }
 
+/**
+ * @summary Go to the most right tab in the current window.
+ * @param {Tab[]} allTabs - All tabs in the current window.
+ * @param {boolean} shouldPreventContextMenu - Whether to prevent the context menu from appearing on the target tab.
+ * @returns {boolean} - Returns true if the tab was successfully changed, false otherwise.
+ */
 function goToMostRightTab(allTabs, shouldPreventContextMenu) {
     allTabs.sort((a, b) => b.index - a.index);
     chrome.tabs.update(allTabs[0].id, { active: true });
@@ -66,7 +118,14 @@ function goToMostRightTab(allTabs, shouldPreventContextMenu) {
     return true;
 }
 
+/**
+ * @summary Class representing a mouse gesture service.
+ */
 class MouseGestureService {
+    /**
+     * @constructor
+     * @param {ExtensionOptions} options 
+     */
     constructor(options) {
         this.options = options;
         this.previousWindowState = [];
@@ -74,6 +133,9 @@ class MouseGestureService {
         this.tabActivateHistoryContainer = {};
     }
 
+    /**
+     * @summary Starts the mouse gesture service.
+     */
     start() {
         this.processTabHistory();
 
@@ -476,6 +538,9 @@ class MouseGestureService {
         );
     }
 
+    /**
+     * @summary Processes tab activation history to manage tab switching.
+     */
     processTabHistory() {
         chrome.tabs.onActivated.addListener((activeInfo) => {
             if (!this.tabActivateHistoryContainer[activeInfo.windowId]) {
@@ -527,6 +592,12 @@ class MouseGestureService {
         });
     }
 
+    /**
+     * @summary Goes to the previous tab in the history.
+     * @param {MessageSender} sender 
+     * @param {boolean} shouldLoop - Whether to loop back to the last tab if there are no more tabs in the history.
+     * @param {boolean} shouldPreventContextMenu - Whether to prevent the context menu from appearing on the target tab.
+     */
     goToPreviousTab(sender, shouldLoop, shouldPreventContextMenu) {
         const container = this.tabActivateHistoryContainer[sender.tab.windowId];
         if (container && container.history.length > 0) {
@@ -554,6 +625,12 @@ class MouseGestureService {
         }
     }
 
+    /**
+     * @summary Goes to the next tab in the history.
+     * @param {MessageSender} sender 
+     * @param {boolean} shouldLoop - Whether to loop back to the last tab if there are no more tabs in the history.
+     * @param {boolean} shouldPreventContextMenu - Whether to prevent the context menu from appearing on the target tab.
+     */
     goToNextTab(sender, shouldLoop, shouldPreventContextMenu) {
         const container = this.tabActivateHistoryContainer[sender.tab.windowId];
         if (container && container.history.length > 0) {
@@ -591,5 +668,5 @@ class MouseGestureService {
 
     let options = new ExtensionOptions();
     (async () => { await options.loadFromStrageLocal(); })();
-    (new MouseGestureService(options)).start(); // これをasync関数の中で実行するとcontent.jsのchrome.runtime.sendMessage()が稀に'Could not establish connection. Receiving end does not exist.'エラーを起こすので、即時関数で実行する。
+    (new MouseGestureService(options)).start(); // If execute this in the async function, it rarely causes an error "Could not establish connection. Receiving end does not exist." in `chrome.runtime.sendMessage()` in content.js, so execute it in the immediate function.
 })();

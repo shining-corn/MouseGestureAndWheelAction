@@ -3,173 +3,10 @@
  * @description Mouse gesture actions for the extension.
  */
 
-function canScrollX(element) {
-    if (typeof element.scrollWidth === 'undefined' || typeof element.clientWidth === 'undefined') {
-        return false;
-    }
-    if (element.scrollWidth <= element.clientWidth) {
-        return false;
-    }
-
-    if (element.tagName === 'HTML') {
-        return false;
-    }
-
-    const style = window.getComputedStyle(element);
-    const overflow = style.overflowX || style.overflow;
-    if (overflow !== 'auto' && overflow !== 'scroll') {
-        return false;
-    }
-
-    return true;
-}
-
-function canScrollY(element) {
-    if (typeof element.scrollHeight === 'undefined' || typeof element.clientHeight === 'undefined') {
-        return false;
-    }
-
-    if (element.scrollHeight <= element.clientHeight) {
-        return false;
-    }
-
-    if (element.tagName === 'HTML') {
-        return false;
-    }
-
-    const style = window.getComputedStyle(element);
-    const overflow = style?.overflowY || style?.overflow;
-    if (overflow !== 'auto' && overflow !== 'scroll' && overflow !== undefined) {
-        return false;
-    }
-
-    return true;
-}
-
 /**
- * 指定されたHTMLElementかその上位のHTMLElementがスクロール可能であればスクロールする
- * @param element スクロール対象の起点となるHTMLElement
- * @returns スクロールしなかった場合はtrue、スクロールした場合はfalse
+ * @summary Get the gesture actions for the extension.
+ * @returns {Object} - An object containing gesture actions.
  */
-function scrollUpElement(element) {
-    for (; element; element = element.parentNode) {
-        if (canScrollY(element) &&
-            (element.scrollTop !== 0)
-        ) {
-            element.scrollBy({ top: -element.clientHeight * 0.8, behavior: 'auto' });
-            return false;
-        }
-    }
-
-    return true;
-}
-
-/**
- * 指定されたHTMLElementかその上位のHTMLElementがスクロール可能であればスクロールする
- * @param element スクロール対象の起点となるHTMLElement
- * @returns スクロールしなかった場合はtrue、スクロールした場合はfalse
- */
-function scrollDownElement(element) {
-    for (; element; element = element.parentNode) {
-        if (canScrollY(element) &&
-            (Math.abs(element.scrollHeight - element.clientHeight - element.scrollTop) >= 1)
-        ) {
-            element.scrollBy({ top: element.clientHeight * 0.8, behavior: 'auto' });
-            return false;
-        }
-    }
-
-    return true;
-}
-
-/**
- * 指定されたHTMLElementかその上位のHTMLElementがスクロール可能であればスクロールする
- * @param element スクロール対象の起点となるHTMLElement
- * @returns スクロールしなかった場合はtrue、スクロールした場合はfalse
- */
-function scrollLeftElement(element) {
-    for (; element; element = element.parentNode) {
-        if (canScrollX(element) &&
-            (element.scrollLeft !== 0)
-        ) {
-            element.scrollBy({ left: -element.clientWidth * 0.8, behavior: 'auto' });
-            return false;
-        }
-    }
-
-    return true;
-}
-
-/**
- * 指定されたHTMLElementかその上位のHTMLElementがスクロール可能であればスクロールする
- * @param element スクロール対象の起点となるHTMLElement
- * @returns スクロールしなかった場合はtrue、スクロールした場合はfalse
- */
-function scrollRightElement(element) {
-    for (; element; element = element.parentNode) {
-        if (canScrollX(element) &&
-            (Math.abs(element.scrollWidth - element.clientWidth - element.scrollLeft) >= 1)
-        ) {
-            element.scrollBy({ left: element.clientWidth * 0.8, behavior: 'auto' });
-            return false;
-        }
-    }
-
-    return true;
-}
-
-function scrollTopElement(element) {
-    for (; element; element = element.parentNode) {
-        if (canScrollY(element) &&
-            (element.scrollTop !== 0)
-        ) {
-            element.scroll({ top: 0, behavior: 'auto' });
-            return false;
-        }
-    }
-
-    return true;
-}
-
-function scrollBottomElement(element) {
-    for (; element; element = element.parentNode) {
-        if (canScrollY(element) &&
-            (Math.abs(element.scrollHeight - element.clientHeight - element.scrollTop) >= 1)
-        ) {
-            element.scroll({ top: element.scrollHeight, behavior: 'auto' });
-            return false;
-        }
-    }
-
-    return true;
-}
-
-function scrollLeftmostElement(element) {
-    for (; element; element = element.parentNode) {
-        if (canScrollX(element) &&
-            (element.scrollLeft !== 0)
-        ) {
-            element.scroll({ left: 0, behavior: 'auto' });
-            return false;
-        }
-    }
-
-    return true;
-}
-
-function scrollRightmostElement(element) {
-    for (; element; element = element.parentNode) {
-        if (canScrollX(element) &&
-            (Math.abs(element.scrollWidth - element.clientWidth - element.scrollLeft) >= 1)
-        ) {
-            element.scroll({ left: element.scrollWidth, behavior: 'auto' });
-            return false;
-        }
-    }
-
-    return true;
-}
-
 function getGestureActions() {
     return {
         back: () => {
@@ -557,4 +394,201 @@ function getGestureActions() {
             window.postMessage({ extensionId: chrome.runtime.id, type: 'disable-mousegesture' }, '*');
         }
     };
+}
+
+/**
+ * @summary Check if scrolling is possible in the x direction.
+ * @param {HTMLElement} element - The element to check.
+ * @returns {boolean} - True if scrolling is possible, false otherwise.
+ */
+function canScrollX(element) {
+    if (typeof element.scrollWidth === 'undefined' || typeof element.clientWidth === 'undefined') {
+        return false;
+    }
+    if (element.scrollWidth <= element.clientWidth) {
+        return false;
+    }
+
+    if (element.tagName === 'HTML') {
+        return false;
+    }
+
+    const style = window.getComputedStyle(element);
+    const overflow = style.overflowX || style.overflow;
+    if (overflow !== 'auto' && overflow !== 'scroll') {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * @summary Check if scrolling is possible in the y direction.
+ * @param {HTMLElement} element - The element to check.
+ * @returns {boolean} - True if scrolling is possible, false otherwise.
+ */
+function canScrollY(element) {
+    if (typeof element.scrollHeight === 'undefined' || typeof element.clientHeight === 'undefined') {
+        return false;
+    }
+
+    if (element.scrollHeight <= element.clientHeight) {
+        return false;
+    }
+
+    if (element.tagName === 'HTML') {
+        return false;
+    }
+
+    const style = window.getComputedStyle(element);
+    const overflow = style?.overflowY || style?.overflow;
+    if (overflow !== 'auto' && overflow !== 'scroll' && overflow !== undefined) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * @summary Scroll up the specified element or upper-level HTMLElement if it is scrollable.
+ * @param {HTMLElement} element - The element to scroll.
+ * @returns {boolean} - True if no scrolling occurred, false if scrolling occurred.
+ */
+function scrollUpElement(element) {
+    for (; element; element = element.parentNode) {
+        if (canScrollY(element) &&
+            (element.scrollTop !== 0)
+        ) {
+            element.scrollBy({ top: -element.clientHeight * 0.8, behavior: 'auto' });
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * @summary Scroll down the specified element or upper-level HTMLElement if it is scrollable.
+ * @param {HTMLElement} element - The element to scroll.
+ * @returns {boolean} - True if no scrolling occurred, false if scrolling occurred.
+ */
+function scrollDownElement(element) {
+    for (; element; element = element.parentNode) {
+        if (canScrollY(element) &&
+            (Math.abs(element.scrollHeight - element.clientHeight - element.scrollTop) >= 1)
+        ) {
+            element.scrollBy({ top: element.clientHeight * 0.8, behavior: 'auto' });
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * @summary Scroll left the specified element or upper-level HTMLElement if it is scrollable.
+ * @param {HTMLElement} element - The element to scroll.
+ * @returns {boolean} - True if no scrolling occurred, false if scrolling occurred.
+ */
+function scrollLeftElement(element) {
+    for (; element; element = element.parentNode) {
+        if (canScrollX(element) &&
+            (element.scrollLeft !== 0)
+        ) {
+            element.scrollBy({ left: -element.clientWidth * 0.8, behavior: 'auto' });
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * @summary Scroll right the specified element or upper-level HTMLElement if it is scrollable.
+ * @param {HTMLElement} element - The element to scroll.
+ * @returns {boolean} - True if no scrolling occurred, false if scrolling occurred.
+ */
+function scrollRightElement(element) {
+    for (; element; element = element.parentNode) {
+        if (canScrollX(element) &&
+            (Math.abs(element.scrollWidth - element.clientWidth - element.scrollLeft) >= 1)
+        ) {
+            element.scrollBy({ left: element.clientWidth * 0.8, behavior: 'auto' });
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * @summary Scroll to the top of the specified element or upper-level HTMLElement if it is scrollable.
+ * @param {HTMLElement} element - The element to scroll.
+ * @returns {boolean} - True if no scrolling occurred, false if scrolling occurred.
+ */
+function scrollTopElement(element) {
+    for (; element; element = element.parentNode) {
+        if (canScrollY(element) &&
+            (element.scrollTop !== 0)
+        ) {
+            element.scroll({ top: 0, behavior: 'auto' });
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * @summary Scroll to the bottom of the specified element or upper-level HTMLElement if it is scrollable.
+ * @param {HTMLElement} element - The element to scroll.
+ * @returns {boolean} - True if no scrolling occurred, false if scrolling occurred.
+ */
+function scrollBottomElement(element) {
+    for (; element; element = element.parentNode) {
+        if (canScrollY(element) &&
+            (Math.abs(element.scrollHeight - element.clientHeight - element.scrollTop) >= 1)
+        ) {
+            element.scroll({ top: element.scrollHeight, behavior: 'auto' });
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * @summary Scroll to the leftmost of the specified element or upper-level HTMLElement if it is scrollable.
+ * @param {HTMLElement} element - The element to scroll.
+ * @returns {boolean} - True if no scrolling occurred, false if scrolling occurred.
+ */
+function scrollLeftmostElement(element) {
+    for (; element; element = element.parentNode) {
+        if (canScrollX(element) &&
+            (element.scrollLeft !== 0)
+        ) {
+            element.scroll({ left: 0, behavior: 'auto' });
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * @summary Scroll to the rightmost of the specified element or upper-level HTMLElement if it is scrollable.
+ * @param {HTMLElement} element - The element to scroll.
+ * @returns {boolean} - True if no scrolling occurred, false if scrolling occurred.
+ */
+function scrollRightmostElement(element) {
+    for (; element; element = element.parentNode) {
+        if (canScrollX(element) &&
+            (Math.abs(element.scrollWidth - element.clientWidth - element.scrollLeft) >= 1)
+        ) {
+            element.scroll({ left: element.scrollWidth, behavior: 'auto' });
+            return false;
+        }
+    }
+
+    return true;
 }

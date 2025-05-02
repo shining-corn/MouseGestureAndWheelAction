@@ -3,7 +3,19 @@
  * @description Options page for the extension.
  */
 
+/**
+ * @import { Point, computeDirection } from './utilities.js';
+ */
+
+/**
+ * @summary Mouse gesture elements for the options page.
+ */
 class OptionGestureElements {
+    /**
+     * @constructor
+     * @param {ExtensionOptions} options
+     * @param {string} gestureDescription
+     */
     constructor(options, gestureDescription) {
         this.options = options;
         this.previousPoint = undefined;
@@ -12,6 +24,10 @@ class OptionGestureElements {
         this.createElements(gestureDescription);
     }
 
+    /**
+     * @summary Create elements to make arrows of mouse gesture.
+     * @param {string} description - The description of how to make arrows.
+     */
     createElements(description) {
         this.containerElement = document.createElement('div');
         this.containerElement.style.width = '100vw';
@@ -48,8 +64,8 @@ class OptionGestureElements {
         this.descriptionElement.style.height = 'fit-content';
         this.descriptionElement.style.backgroundColor = 'transparent';
         this.descriptionElement.innerText = description;
-        this.descriptionElement.style.pointerEvents = 'none';   // マウスジェスチャ中に左クリックでテキストを選択すると誤動作するので抑制
-        this.descriptionElement.style.userSelect = 'none';      // 同上
+        this.descriptionElement.style.pointerEvents = 'none';   // To prevent malfunctions caused by left-clicking during mouse gestures.
+        this.descriptionElement.style.userSelect = 'none';      // same as above
 
         this.arrowsElement = document.createElement('div');
         this.centerBox.appendChild(this.arrowsElement);
@@ -78,17 +94,28 @@ class OptionGestureElements {
         this.canvasElement.style.backgroundColor = 'transparent';
     }
 
+    /**
+     * @summary Show the mouse gesture elements.
+     * @param {HTMLElement} parentElement 
+     */
     start(parentElement) {
         parentElement.appendChild(this.containerElement);
         this.parentElement = parentElement;
     }
 
+    /**
+     * @summary Hide the mouse gesture elements.
+     */
     end() {
         if (this.containerElement) {
             this.parentElement.removeChild(this.containerElement);
         }
     }
 
+    /**
+     * @summary Draw a mouse gesture trail on the canvas.
+     * @param {Point} point 
+     */
     drawLine(point) {
         if (this.previousPoint) {
             const ctx = this.canvasElement.getContext('2d');
@@ -104,12 +131,19 @@ class OptionGestureElements {
         this.previousPoint = point;
     }
 
+    /**
+     * @summary Add an arrow to the arrows of mouse gesture.
+     * @param {string} arrow 
+     */
     addArrow(arrow) {
         this.arrows += arrow;
         this.arrowsElement.innerText = this.arrows;
     }
 }
 
+/**
+ * @summary Mouse gesture controller for the options page.
+ */
 class MouseGestureController {
     constructor() {
         this.elements = undefined;
@@ -118,6 +152,9 @@ class MouseGestureController {
         this.finished = false;
         this.leftButtonDown = false;
 
+    /**
+     * @constructor
+     */
         this.on = {
             contextmenu: this.onContextMenu.bind(this),
             mousedown: this.onMouseDown.bind(this),
@@ -126,6 +163,10 @@ class MouseGestureController {
         }
     }
 
+    /**
+     * @summary Start the mouse gesture controller.
+     * @param {ExtensionOptions} options 
+     */
     start(options) {
         this.options = options;
         this.elements = new OptionGestureElements(options, chrome.i18n.getMessage('optionsAddMouseGestureDescription'));
@@ -137,6 +178,9 @@ class MouseGestureController {
         window.addEventListener('mouseup', this.on.mouseup, false);
     }
 
+    /**
+     * @summary End the mouse gesture controller.
+     */
     end() {
         this.finished = true;
         window.removeEventListener('mousedown', this.on.mousedown, false);
@@ -148,6 +192,10 @@ class MouseGestureController {
         }
     }
 
+    /**
+     * @summary Handle the context menu event.
+     * @param {MouseEvent} event 
+     */
     onContextMenu(event) {
         event.preventDefault();
         if (this.finished) {
@@ -155,6 +203,10 @@ class MouseGestureController {
         }
     }
 
+    /**
+     * @summary Handle the mouse down event.
+     * @param {MouseEvent} event 
+     */
     onMouseDown(event) {
         if ((event.buttons & 2) !== 0) {
             const point = { x: event.clientX, y: event.clientY };
@@ -167,6 +219,10 @@ class MouseGestureController {
         }
     }
 
+    /**
+     * @summary Handle the mouse move event.
+     * @param {MouseEvent} event 
+     */
     onMouseMove(event) {
         const strokeLength = this.options.mouseGestureStrokeLength;
 
@@ -192,6 +248,10 @@ class MouseGestureController {
         }
     }
 
+    /**
+     * @summary Handle the mouse up event.
+     * @param {MouseEvent} event 
+     */
     onMouseUp(event) {
         if (((event.buttons & 1) === 0) && this.previousPoint && this.leftButtonDown) {
             this.elements.addArrow('Click ');
@@ -234,6 +294,12 @@ class MouseGestureController {
     }
 }
 
+/**
+ * @summary Append gesture action options to select element.
+ * @param {ExtensionOptions} options 
+ * @param {HTMLElement} selectElement 
+ * @param {string} selectedOption 
+ */
 function appendGestureActionOptionsToSelectElement(options, selectElement, selectedOption) {
     const actions = [''].concat(Object.keys(getGestureActions()));
     for (const action of actions) {
@@ -260,6 +326,10 @@ function appendGestureActionOptionsToSelectElement(options, selectElement, selec
     }
 }
 
+/**
+ * @summary Render the options page.
+ * @param {ExtensionOptions} options 
+ */
 function render(options) {
     renderResetButton(options);
     renderWheelActionOptions(options);
@@ -272,7 +342,10 @@ function render(options) {
     renderHints(options);
 }
 
-function renderResetButton(options) {
+/**
+ * @summary Render the reset button.
+ */
+function renderResetButton() {
     const resetButtonElement = document.getElementById('reset-button');
     resetButtonElement.addEventListener('click', (async () => {
         await chrome.storage.local.remove('options');
@@ -280,6 +353,10 @@ function renderResetButton(options) {
     }));
 }
 
+/**
+ * @summary Render the wheel action options.
+ * @param {ExtensionOptions} options 
+ */
 function renderWheelActionOptions(options) {
     const enabledWheelActionElement = document.getElementById('enabled-wheel-action');
     enabledWheelActionElement.checked = options.enabledWheelAction;
@@ -289,14 +366,14 @@ function renderWheelActionOptions(options) {
             element.disabled = !enabledWheelActionElement.checked;
         }
 
-        options.changeEnabledWheelAction(enabledWheelActionElement.checked);
+        options.setEnabledWheelAction(enabledWheelActionElement.checked);
     });
 
     const selectRightClickWheelUpElement = document.getElementById('select-right-click-wheel-up');
     appendGestureActionOptionsToSelectElement(options, selectRightClickWheelUpElement, options.rightButtonAndWheelUp);
     selectRightClickWheelUpElement.addEventListener('change', () => {
         (async () => {
-            await options.changeRightClickWheelUpAction(selectRightClickWheelUpElement.value);
+            await options.setRightClickWheelUpAction(selectRightClickWheelUpElement.value);
         })();
     });
 
@@ -304,11 +381,15 @@ function renderWheelActionOptions(options) {
     appendGestureActionOptionsToSelectElement(options, selectRightClickWheelDownElement, options.rightButtonAndWheelDown);
     selectRightClickWheelDownElement.addEventListener('change', () => {
         (async () => {
-            await options.changeRightClickWheelDownAction(selectRightClickWheelDownElement.value);
+            await options.setRightClickWheelDownAction(selectRightClickWheelDownElement.value);
         })();
     });
 }
 
+/**
+ * @summary Render the mouse gesture options.
+ * @param {ExtensionOptions} options 
+ */
 function renderMouseGestureOptions(options) {
     const enabledMouseGestureElement = document.getElementById('enabled-mouse-gesture');
     enabledMouseGestureElement.checked = options.enabledMouseGesture;
@@ -327,7 +408,7 @@ function renderMouseGestureOptions(options) {
         const previousTabHistorySizeElement = document.getElementById('previous-tab-hisotry-size');
         previousTabHistorySizeElement.disabled = !enabledMouseGestureElement.checked;
 
-        options.changeEnabledMouseGesture(enabledMouseGestureElement.checked);
+        options.setEnabledMouseGesture(enabledMouseGestureElement.checked);
     });
 
     const gestureTableBodyElement = document.getElementById('gestures');
@@ -389,7 +470,7 @@ function renderMouseGestureOptions(options) {
     rightDoubleClickToContextMenuElement.checked = options.rightDoubleClickToContextMenu;
     rightDoubleClickToContextMenuElement.disabled = !options.enabledMouseGesture;
     rightDoubleClickToContextMenuElement.addEventListener('click', () => {
-        options.changeRightDoubleClickToContextMenu(rightDoubleClickToContextMenuElement.checked);
+        options.setRightDoubleClickToContextMenu(rightDoubleClickToContextMenuElement.checked);
     });
 
     const mouseGestureStrokeLengthElement = document.getElementById('gesture-stroke-length');
@@ -419,20 +500,28 @@ function renderMouseGestureOptions(options) {
     });
 }
 
+/**
+ * @summary Render the rocker gesture options.
+ * @param {ExtensionOptions} options 
+ */
 function renderRockerGestureOptions(options) {
     const selectRockerGestureLeftRightElement = document.getElementById('select-rocker-gesture-left-right');
     appendGestureActionOptionsToSelectElement(options, selectRockerGestureLeftRightElement, options.rockerGestureLeftRight);
     selectRockerGestureLeftRightElement.addEventListener('change', () => {
-        options.changeRockerGestureLeftRight(selectRockerGestureLeftRightElement.value);
+        options.setRockerGestureLeftRight(selectRockerGestureLeftRightElement.value);
     });
 
     const selectRockerGestureRightLeftElement = document.getElementById('select-rocker-gesture-right-left');
     appendGestureActionOptionsToSelectElement(options, selectRockerGestureRightLeftElement, options.rockerGestureRightLeft);
     selectRockerGestureRightLeftElement.addEventListener('change', () => {
-        options.changeRockerGestureRightLeft(selectRockerGestureRightLeftElement.value);
+        options.setRockerGestureRightLeft(selectRockerGestureRightLeftElement.value);
     });
 }
 
+/**
+ * @summary Render the custom URL options.
+ * @param {ExtensionOptions} options 
+ */
 function renderCustomUrlOptions(options) {
     const customUrlOptionsElement = document.getElementById('customUrlOptions');
 
@@ -529,6 +618,10 @@ function renderCustomUrlOptions(options) {
     customUrlOptionsControlsElement.appendChild(saveButtonElement);
 }
 
+/**
+ * @summary Save the custom URL options.
+ * @param {ExtensionOptions} options 
+ */
 function saveCustomUrl(options) {
     const customUrlSettings = [];
     const rowElements = document.querySelectorAll('#customUrlOptions > *')
@@ -538,19 +631,19 @@ function saveCustomUrl(options) {
         const customUrl = row.children[1].children[0].value;
         const checked = row.children[2].children[0].checked;
 
-        // 未入力の行は無視
+        // Ignore empty rows
         if (id.length === 0 && customUrl.length === 0) {
             continue;
         }
 
-        // IDは1文字以上でなければならない
+        // ID must be 1 character or more
         if (id.length === 0) {
             window.alert(chrome.i18n.getMessage('optionsCustomUrlErrorMessageIdMustBeSpecified'));
             row.children[0].children[0].focus();
             return;
         }
 
-        // IDは重複不可
+        // ID must be duplicated
         if (customUrlSettings.filter((option) => option.id === id).length !== 0) {
             window.alert(chrome.i18n.getMessage('optionsCustomUrlErrorMessageIdMustBeUnique'));
             row.children[0].children[0].focus();
@@ -571,6 +664,10 @@ function saveCustomUrl(options) {
     })();
 }
 
+/**
+ * @summary Render the appearance options.
+ * @param {ExtensionOptions} options 
+ */
 function renderAppearanceOptions(options) {
     const lineColorElement = document.getElementById('color-line');
     lineColorElement.value = options.gestureLineColor;
@@ -650,6 +747,10 @@ function renderAppearanceOptions(options) {
     });
 }
 
+/**
+ * @summary Render the disable extension options.
+ * @param {ExtensionOptions} options 
+ */
 function renderDisableExtensionOptions(options) {
     const disableExtensionOptionsElement = document.getElementById('disableExtensionOptions');
 
@@ -803,6 +904,10 @@ function renderDisableExtensionOptions(options) {
     disableExtensionOptionsControlsElement.appendChild(saveButtonElement);
 }
 
+/**
+ * @summary Save the disable extension options.
+ * @param {ExtensionOptions} options 
+ */
 function saveDisableExtension(options) {
     const disableExtensionSettings = [];
     const rowElements = document.querySelectorAll('#disableExtensionOptions > *')
@@ -842,6 +947,10 @@ function saveDisableExtension(options) {
     })();
 }
 
+/**
+ * @summary Render the import/export options.
+ * @param {ExtensionOptions} options 
+ */
 function renderImportExportOptions(options) {
     // export button
     const copyToClipboardButtonElement = document.getElementById('import-export-copy-to-clipboard');
@@ -874,6 +983,10 @@ function renderImportExportOptions(options) {
     });
 }
 
+/**
+ * @summary Render the hints.
+ * @param {ExtensionOptions} options 
+ */
 function renderHints(options) {
     const hintElement = document.getElementById('hint');
     if (options.hideHintPermanently) {
@@ -888,6 +1001,10 @@ function renderHints(options) {
     });
 }
 
+/**
+ * @summary Translate the HTML elements.
+ * @param {HTMLElement} element 
+ */
 function translate(element) {
     const targets = element.querySelectorAll('[data-i18n]');
     for (const target of targets) {

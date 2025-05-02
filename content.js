@@ -3,8 +3,32 @@
  * @description Main script for the extension. Handles mouse gestures, wheel action and rocker gesture.
  */
 
-const global = new InterIframeVariables();  // IFRAME間で共有する変数
+/**
+ * @import { Point, computeDirection } from './utilities.js';
+ * @import { ExtensionOptions, CustomUrlSetting, GestureSetting, DisableExtensionSetting } from './ExtensionOptions.js';
+ * @import { InterIframeVariables } from './InterIframeVariables.js';
+ * @import { getGestureActions } from './gestureActions.js';
+ * @import { GestureElements } from './htmlElements.js';
+ * @import { checkHasExtensionBeenUpdated } from './utilities.js';
+ */
 
+/**
+ * @typedef {object} ActionOption
+ * @property {HTMLElement} target - The target element of the action.
+ * @property {string} url - The href attribute of the target element.
+ * @property {string} src - The src attribute of the target element.
+ * @property {boolean} shouldPreventContextMenu - Indicates whether to prevent the context menu.
+ */
+
+const global = new InterIframeVariables();
+
+/**
+ * @summary Processes the action based on the provided action string and options.
+ * @description If the action string starts with 'customurl:', it processes a custom URL action.
+ * @param {ExtensionOptions} extensionOptions
+ * @param {string} action
+ * @param {ActionOption} actionOption
+ */
 function processAction(extensionOptions, action, actionOption) {
     if (action) {
         if (action.startsWith('customurl:')) {
@@ -37,7 +61,14 @@ function processAction(extensionOptions, action, actionOption) {
     }
 }
 
-class MouseGestureClient {
+/**
+ * @summary MouseGestureAndWheelActionClient class handles mouse gestures, wheel actions and rocker gestures.
+ */
+class MouseGestureAndWheelActionClient {
+    /**
+     * @param {ExtensionOptions} options - The options for the extension.
+     * @constructor
+     */
     constructor(options) {
         this.options = options;
         this.previousPoint = undefined;
@@ -53,6 +84,10 @@ class MouseGestureClient {
         this.isRightButtonPressed = false;
     }
 
+    /**
+     * @summary Starts the mouse gesture client.
+     * @description Initializes the event listeners for mouse events, text selection and context menu handling.
+     */
     start() {
         this.disableExtensionByUrlCondition();
 
@@ -64,7 +99,7 @@ class MouseGestureClient {
         });
 
         window.addEventListener('blur', () => {
-            global.shouldPreventContextMenu = false;    // タブから離れるときにコンテキストメニューの抑制を解除
+            global.shouldPreventContextMenu = false;    // Disable context menu suppression when leaving a tab
             this.resetGesture();
             this.isRightButtonPressed = false;
         });
@@ -85,7 +120,7 @@ class MouseGestureClient {
                 event.preventDefault();
                 global.shouldPreventContextMenu = true;
 
-                this.resetGesture();    // マウスジェスチャー中の場合はそれをキャンセルする
+                this.resetGesture();    // reset gesture state to prevent conflict with mouse gesture
             }
 
             (async () => {
@@ -104,7 +139,10 @@ class MouseGestureClient {
                     }
                 }
             })();
-        }, { capture: true, passive: false });
+        }, {
+            capture: true,  // Measures against stopImmediatePropagation() of other scripts on the WEB site
+            passive: false
+        });
 
         window.addEventListener('mousedown', (event) => {
             if (!global.enabledExtension) {
@@ -115,7 +153,7 @@ class MouseGestureClient {
                 this.isRightButtonPressed = true;
             }
 
-            // ロッカージェスチャー
+            // Rocker Gesture
             if (event.buttons === 3 && !this.onMouseGesture) {
                 if (checkHasExtensionBeenUpdated()) {
                     this.resetGesture();
@@ -141,7 +179,7 @@ class MouseGestureClient {
                 }
             }
 
-            // マウスジェスチャー
+            // Mouse Gesture
             if (this.options.enabledMouseGesture) {
                 if ((event.button === 0) && this.previousPoint) {
                     if (checkHasExtensionBeenUpdated()) {
@@ -178,7 +216,7 @@ class MouseGestureClient {
                 }
             }
         }, {
-            capture: true  // WEBサイト上の他のスクリプトのstopImmediatePropagation()への対処
+            capture: true  // Measures against stopImmediatePropagation() of other scripts on the WEB site
         });
 
         window.addEventListener('mousemove', (event) => {
@@ -203,7 +241,7 @@ class MouseGestureClient {
                 }
 
                 if (distanceSquare >= strokeLength * strokeLength) {
-                    this.rightClickCount = 0;   // 素早くマウスジェスチャーを繰り返したときに右ダブルクリックと判定しないようにリセットする
+                    this.rightClickCount = 0;   // Reset the state to prevent it from being misjudged as a right double-click when a mouse gesture is repeated quickly.
 
                     const currentPoint = { x: event.clientX, y: event.clientY };
                     if (!this.hasGestureDrawn) {
@@ -230,7 +268,7 @@ class MouseGestureClient {
                 }
             }
         }, {
-            capture: true
+            capture: true  // Measures against stopImmediatePropagation() of other scripts on the WEB site
         });
 
         window.addEventListener('mouseup', (event) => {
@@ -242,7 +280,7 @@ class MouseGestureClient {
                 this.isRightButtonPressed = false;
             }
 
-            // マウスジェスチャー
+            // Mouse Gesture
             if (event.button === 2) {
                 if (this.previousPoint) {
                     if (this.onMouseGesture) {
@@ -252,7 +290,7 @@ class MouseGestureClient {
                     }
 
                     const actionOption = this.getActionOptions();
-                    setTimeout(() => {  // global.shouldPreventContextMenuの変更を他のフレームに反映させるのを待つためにsetTimeoutを使う
+                    setTimeout(() => {  // Use setTimeout to wait for global.shouldPreventContextMenu changes to be reflected in other frames
                         const command = this.options.getGestureAction(this.arrows);
                         processAction(this.options, command, actionOption);
 
@@ -269,7 +307,7 @@ class MouseGestureClient {
                 this.onMouseGesture = false;
             }
         }, {
-            capture: true  // WEBサイト上の他のスクリプトのstopImmediatePropagation()への対処
+            capture: true  // Measures against stopImmediatePropagation() of other scripts on the WEB site
         });
 
         chrome.runtime.onMessage.addListener((request) => {
@@ -279,7 +317,7 @@ class MouseGestureClient {
 
             if (request.type === 'prevent-contextmenu') {
                 global.shouldPreventContextMenu = true;
-                this.isRightButtonPressed = true;   // 右ボタンを押したまま移動してきたはずなのでtrueにする
+                this.isRightButtonPressed = true;   // It should have been moved from another tab with the right button held down, so set it to true.
             }
         });
 
@@ -291,14 +329,14 @@ class MouseGestureClient {
         });
 
         window.addEventListener('click', (event) => {
-            if (((event.button === 0) && this.onMouseGesture) ||     // マウスジェスチャー中
-                ((event.button === 0) && (event.buttons === 2))      // ロッカージェスチャー中
+            if (((event.button === 0) && this.onMouseGesture) ||     // During mouse gesture
+                ((event.button === 0) && (event.buttons === 2))      // During rocker gesture
             ) {
                 event.preventDefault();
                 event.stopImmediatePropagation();
             }
         }, {
-            capture: true
+            capture: true  // Measures against stopImmediatePropagation() of other scripts on the WEB site
         });
 
         window.addEventListener('message', (event) => {
@@ -308,6 +346,9 @@ class MouseGestureClient {
         });
     }
 
+    /**
+     * @summary Ends the mouse gesture.
+     */
     doneGesture() {
         if (this.previousPoint) {
             this.previousPoint = undefined;
@@ -322,8 +363,9 @@ class MouseGestureClient {
         this.arrows = '';
     }
 
-    resetGesture() {
-        if (this.previousPoint) {
+    /**
+     * @summary Resets the gesture state.
+     */
             this.doneGesture();
             global.shouldPreventContextMenu = false;
             getRootWindow().postMessage({ extensionId: chrome.runtime.id, type: 'reset-gesture' }, `*`);
@@ -337,6 +379,10 @@ class MouseGestureClient {
         this.onMouseGesture = false;
     }
 
+    /**
+     * @summary Draws the gesture trail.
+     * @param {Point} point 
+     */
     drawGestureTrail(point) {
         if (this.hasGestureDrawn === false) {
             this.hasGestureDrawn = true;
@@ -348,6 +394,10 @@ class MouseGestureClient {
         }
     }
 
+    /**
+     * @summary Sets the action options from the target element.
+     * @param {HTMLElement} element 
+     */
     setActionOptionsFromElement(element) {
         this.target = element;
 
@@ -369,6 +419,10 @@ class MouseGestureClient {
         }
     }
 
+    /**
+     * @summary Returns the action options.
+     * @returns {ActionOption}
+     */
     getActionOptions() {
         return {
             target: this.target,
@@ -402,6 +456,9 @@ class MouseGestureClient {
         return { shouldStop: false };
     }
 
+    /**
+     * @summary Disables the extension based on the URL condition.
+     */
     disableExtensionByUrlCondition() {
         if ((Object.prototype.toString.call(this.options.disableExtensionSettings) !== '[object Array]') || (this.options.disableExtensionSettings.length === 0)) {
             return;
@@ -438,12 +495,12 @@ class MouseGestureClient {
 (async () => {
     let options = new ExtensionOptions();
     await options.loadFromStrageLocal();
-    new MouseGestureClient(options).start();
+    new MouseGestureAndWheelActionClient(options).start();
     if (isRootWindow()) {
         new ShowArrowsElements(options);
         (new BookMarkEditDialogElements()).start();
 
-        // 子windowから送られてきたジェスチャーの実行要求を処理
+        // Processes gesture execution requests sent from child windows
         window.addEventListener('message', (event) => {
             if (event.data.extensionId !== chrome.runtime.id) {
                 return;
