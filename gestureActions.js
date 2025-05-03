@@ -4,6 +4,10 @@
  */
 
 /**
+ * @import { sendChromeMessage, isInRootWindow, getRootWindow } from './utilities.js';
+ */
+
+/**
  * @summary Get the gesture actions for the extension.
  * @returns {Object} - An object containing gesture actions.
  */

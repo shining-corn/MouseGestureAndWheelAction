@@ -4,6 +4,10 @@
  */
 
 /**
+ * @import { isInRootWindow, isInIFrame, getRootWindow } from './utilities.js';
+ */
+
+/**
  * @summary Class for managing inter-iframe variables.
  */
 class InterIframeVariables {

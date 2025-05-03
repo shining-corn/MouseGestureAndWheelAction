@@ -4,7 +4,7 @@
  */
 
 /**
- * @import { Point, computeDirection } from './utilities.js';
+ * @import { Point, sendChromeMessage, computeDirection, isInRootWindow, getRootWindow } from './utilities.js';
  * @import { ExtensionOptions, CustomUrlSetting, GestureSetting, DisableExtensionSetting } from './ExtensionOptions.js';
  * @import { InterIframeVariables } from './InterIframeVariables.js';
  * @import { getGestureActions } from './gestureActions.js';

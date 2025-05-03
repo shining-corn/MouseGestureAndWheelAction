@@ -5,7 +5,7 @@
 
 /**
  * @import { ExtensionOptions } from './ExtensionOptions.js';
- * @import { Point } from './utilities.js';
+ * @import { Point, sendChromeMessage } from './utilities.js';
  */
 
 /**
