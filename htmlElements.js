@@ -68,25 +68,43 @@ function createCenteringElement() {
  */
 class GestureElements {
     /**
+     * @type {ExtensionOptions | undefined}
+     */
+    #options = undefined;
+
+    /**
+     * @type {Point | undefined}
+     */
+    #previousPoint = undefined;
+
+    /**
+     * @type {HTMLElement | undefined}
+     */
+    #backgroundElement = undefined;
+
+    /**
+     * @type {HTMLCanvasElement | undefined}
+     */
+    #canvasElement = undefined;
+
+    /**
      * @constructor
      * @param {ExtensionOptions} options 
      */
     constructor(options) {
-        this.options = options;
+        this.#options = options;
 
-        this.previousPoint = undefined;
+        this.#backgroundElement = createBackgroundElement();
+        this.#backgroundElement.style.zIndex = 16777271;
+        this.#backgroundElement.style.backgroundColor = 'transparent';
 
-        this.backgroundElement = createBackgroundElement();
-        this.backgroundElement.style.zIndex = 16777271;
-        this.backgroundElement.style.backgroundColor = 'transparent';
+        this.#canvasElement = document.createElement('canvas');
+        this.#canvasElement.style.all = 'revert';
+        this.#canvasElement.style.margin = '0px';
+        this.#canvasElement.style.padding = '0px';
+        this.#canvasElement.style.backgroundColor = 'transparent';
 
-        this.canvasElement = document.createElement('canvas');
-        this.canvasElement.style.all = 'revert';
-        this.canvasElement.style.margin = '0px';
-        this.canvasElement.style.padding = '0px';
-        this.canvasElement.style.backgroundColor = 'transparent';
-
-        this.backgroundElement.appendChild(this.canvasElement);
+        this.#backgroundElement.appendChild(this.#canvasElement);
     }
 
     /**
@@ -94,9 +112,9 @@ class GestureElements {
      * @param {HTMLElement} targetElement - The target element to insert into.
      */
     insertTo(targetElement) {
-        targetElement.insertBefore(this.backgroundElement, null);
-        this.canvasElement.width = document.documentElement.clientWidth;
-        this.canvasElement.height = document.documentElement.clientHeight;
+        targetElement.insertBefore(this.#backgroundElement, null);
+        this.#canvasElement.width = document.documentElement.clientWidth;
+        this.#canvasElement.height = document.documentElement.clientHeight;
     }
 
     /**
@@ -104,7 +122,7 @@ class GestureElements {
      * @param {HTMLElement} targetElement - The target element to remove from.
      */
     removeFrom(targetElement) {
-        targetElement.removeChild(this.backgroundElement);
+        targetElement.removeChild(this.#backgroundElement);
     }
 
     /**
@@ -112,37 +130,37 @@ class GestureElements {
      * @param {Point} point - The current point.
      */
     drawLine(point) {
-        if (this.previousPoint) {
-            const ctx = this.canvasElement.getContext('2d');
+        if (this.#previousPoint) {
+            const ctx = this.#canvasElement.getContext('2d');
             ctx.lineWidth = 4;
-            if (this.options.hideGestureLine) {
+            if (this.#options.hideGestureLine) {
                 ctx.strokeStyle = 'rgba(0, 0, 0, 0)';
             }
             else {
-                ctx.strokeStyle = this.options.gestureLineColor;
+                ctx.strokeStyle = this.#options.gestureLineColor;
             }
             ctx.beginPath();
-            ctx.moveTo(this.previousPoint.x, this.previousPoint.y);
+            ctx.moveTo(this.#previousPoint.x, this.#previousPoint.y);
             ctx.lineTo(point.x, point.y);
             ctx.stroke();
             ctx.closePath();
         }
 
-        this.previousPoint = point;
+        this.#previousPoint = point;
     }
 
     /**
      * @summary Reset the canvas element.
      */
     reset() {
-        if (this.previousPoint) {
-            const ctx = this.canvasElement.getContext('2d');
+        if (this.#previousPoint) {
+            const ctx = this.#canvasElement.getContext('2d');
             const element = document.documentElement;
             ctx.clearRect(0, 0, element.clientWidth, element.clientHeight);
 
-            this.previousPoint = undefined;
-            this.canvasElement.width = element.clientWidth;
-            this.canvasElement.height = element.clientHeight;
+            this.#previousPoint = undefined;
+            this.#canvasElement.width = element.clientWidth;
+            this.#canvasElement.height = element.clientHeight;
         }
     }
 }
@@ -152,52 +170,81 @@ class GestureElements {
  */
 class ShowArrowsElement {
     /**
+     * @type {ExtensionOptions | undefined}
+     */
+    #options = undefined;
+
+    /**
+     * @type {string}
+     */
+    #arrows = '';
+
+    /**
+     * @type {HTMLElement | undefined}
+     */
+    #backgroundElement = undefined;
+
+    /**
+     * @type {HTMLElement | undefined}
+     */
+    #centeringElement = undefined;
+
+    /**
+     * @type {HTMLElement | undefined}
+     */
+    #actionNameArea = undefined;
+
+    /**
+     * @type {HTMLElement | undefined}
+     */
+    #arrowsArea = undefined;
+
+    /**
      * @constructor
      * @param {ExtensionOptions} options 
      */
     constructor(options) {
-        this.options = options;
-        this.arrows = '';
+        this.#options = options;
 
-        this.backgroundElement = createBackgroundElement(true);
-        this.backgroundElement.style.zIndex = 16777270;
-        this.backgroundElement.style.backgroundColor = 'transparent';
-        this.backgroundElement.style.pointerEvents = 'none'; // 特定のIFRAME（主にブラウザゲーム）でマウスジェスチャ可能にするために必要
+        this.#backgroundElement = createBackgroundElement(true);
+        this.#backgroundElement.style.zIndex = 16777270;
+        this.#backgroundElement.style.backgroundColor = 'transparent';
+        this.#backgroundElement.style.pointerEvents = 'none'; // 特定のIFRAME（主にブラウザゲーム）でマウスジェスチャ可能にするために必要
 
-        this.centeringElement = createCenteringElement();
-        this.backgroundElement.appendChild(this.centeringElement);
-        this.centeringElement.style.textAlign = 'center';
-        this.centeringElement.style.pointerEvents = 'none';
+        this.#centeringElement = createCenteringElement();
+        this.#backgroundElement.appendChild(this.#centeringElement);
+        this.#centeringElement.style.textAlign = 'center';
+        this.#centeringElement.style.pointerEvents = 'none';
 
-        this.actionNameArea = document.createElement('div');
-        this.centeringElement.appendChild(this.actionNameArea);
-        this.actionNameArea.style.all = 'revert';
-        this.actionNameArea.style.width = 'fit-content';
-        this.actionNameArea.style.height = 'fit-content';
-        this.actionNameArea.style.margin = '0px';
-        this.actionNameArea.style.border = 'none';
-        this.actionNameArea.style.lineHeight = '1';
-        this.actionNameArea.style.fontFamily = 'BIZ UDPGothic';
-        this.actionNameArea.style.backgroundColor = this.options.gestureBackgroundColor;
-        this.actionNameArea.style.display = 'none';
-        this.actionNameArea.style.pointerEvents = 'none';
+        this.#actionNameArea = document.createElement('div');
+        this.#centeringElement.appendChild(this.#actionNameArea);
+        this.#actionNameArea.style.all = 'revert';
+        this.#actionNameArea.style.width = 'fit-content';
+        this.#actionNameArea.style.height = 'fit-content';
+        this.#actionNameArea.style.margin = '0px';
+        this.#actionNameArea.style.border = 'none';
+        this.#actionNameArea.style.lineHeight = '1';
+        this.#actionNameArea.style.fontFamily = 'BIZ UDPGothic';
+        this.#actionNameArea.style.backgroundColor = this.#options.gestureBackgroundColor;
+        this.#actionNameArea.style.display = 'none';
+        this.#actionNameArea.style.pointerEvents = 'none';
 
-        this.arrowArea = document.createElement('div');
-        this.centeringElement.appendChild(this.arrowArea);
-        this.arrowArea.style.all = 'revert';
-        this.arrowArea.style.fontWeight = 'bold';
-        this.arrowArea.style.left = '0';
-        this.arrowArea.style.right = '0';
-        this.arrowArea.style.margin = 'auto';
-        this.arrowArea.style.border = 'none';
-        this.arrowArea.style.lineHeight = '1';
-        this.arrowArea.style.fontFamily = 'monospace';
-        this.arrowArea.style.backgroundColor = this.options.gestureBackgroundColor;
-        this.arrowArea.style.maxWidth = 'calc(100vw - 64px)';
-        this.arrowArea.style.width = 'fit-content';
-        this.arrowArea.style.height = 'fit-content';
-        this.arrowArea.style.overflowWrap = 'anywhere';
-        this.arrowArea.style.pointerEvents = 'none';
+        this.#arrowsArea = document.createElement('div');
+        this.#centeringElement.appendChild(this.#arrowsArea);
+        this.#arrowsArea.style.all = 'revert';
+        this.#arrowsArea.style.fontWeight = 'bold';
+        this.#arrowsArea.style.left = '0';
+        this.#arrowsArea.style.right = '0';
+        this.#arrowsArea.style.margin = 'auto';
+        this.#arrowsArea.style.border = 'none';
+        this.#arrowsArea.style.lineHeight = '1';
+        this.#arrowsArea.style.fontFamily = 'monospace';
+        this.#arrowsArea.style.backgroundColor = this.#options.gestureBackgroundColor;
+        this.#arrowsArea.style.maxWidth = 'calc(100vw - 64px)';
+        this.#arrowsArea.style.width = 'fit-content';
+        this.#arrowsArea.style.height = 'fit-content';
+        this.#arrowsArea.style.overflowWrap = 'anywhere';
+        this.#arrowsArea.style.pointerEvents = 'none';
 
         window.addEventListener('message', (event) => {
             if (event.data.extensionId !== chrome.runtime.id) {
@@ -220,60 +267,60 @@ class ShowArrowsElement {
      * @param {string} arrows - The arrows to show.
      */
     showArrows(arrows) {
-        if (this.arrows.length === 0) {
-            if (this.options.hideGestureText) {
-                this.actionNameArea.style.color = 'rgba(0, 0, 0, 0)';
+        if (this.#arrows.length === 0) {
+            if (this.#options.hideGestureText) {
+                this.#actionNameArea.style.color = 'rgba(0, 0, 0, 0)';
             }
             else {
-                this.actionNameArea.style.color = this.options.gestureFontColor;
+                this.#actionNameArea.style.color = this.#options.gestureFontColor;
             }
 
-            if (this.options.hideGestureBackground || this.options.hideGestureText) {
-                this.actionNameArea.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+            if (this.#options.hideGestureBackground || this.#options.hideGestureText) {
+                this.#actionNameArea.style.backgroundColor = 'rgba(0, 0, 0, 0)';
             }
             else {
-                this.actionNameArea.style.backgroundColor = this.options.gestureBackgroundColor;
+                this.#actionNameArea.style.backgroundColor = this.#options.gestureBackgroundColor;
             }
 
-            this.actionNameArea.style.fontSize = `${this.options.gestureTextFontSize}px`;
-            this.actionNameArea.style.padding = `${Math.floor(this.options.gestureTextFontSize) / 3}px`;
+            this.#actionNameArea.style.fontSize = `${this.#options.gestureTextFontSize}px`;
+            this.#actionNameArea.style.padding = `${Math.floor(this.#options.gestureTextFontSize) / 3}px`;
 
-            if (this.options.hideGestureArrow) {
-                this.arrowArea.style.color = 'rgba(0, 0, 0, 0)';
-            }
-            else {
-                this.arrowArea.style.color = this.options.gestureArrowColor;
-            }
-
-            if (this.options.hideGestureBackground || this.options.hideGestureArrow) {
-                this.arrowArea.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+            if (this.#options.hideGestureArrow) {
+                this.#arrowsArea.style.color = 'rgba(0, 0, 0, 0)';
             }
             else {
-                this.arrowArea.style.backgroundColor = this.options.backgroundColor;
+                this.#arrowsArea.style.color = this.#options.gestureArrowColor;
             }
 
-            this.arrowArea.style.fontSize = `${this.options.gestureArrowFontSize}px`;
-            this.arrowArea.style.padding = `${Math.floor(this.options.gestureArrowFontSize / 8)}px`;
+            if (this.#options.hideGestureBackground || this.#options.hideGestureArrow) {
+                this.#arrowsArea.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+            }
+            else {
+                this.#arrowsArea.style.backgroundColor = this.#options.backgroundColor;
+            }
 
-            document.body.appendChild(this.backgroundElement);
+            this.#arrowsArea.style.fontSize = `${this.#options.gestureArrowFontSize}px`;
+            this.#arrowsArea.style.padding = `${Math.floor(this.#options.gestureArrowFontSize / 8)}px`;
+
+            document.body.appendChild(this.#backgroundElement);
         }
-        this.arrows = arrows;
-        this.arrowArea.innerText = this.arrows;
+        this.#arrows = arrows;
+        this.#arrowsArea.innerText = this.#arrows;
 
-        const action = this.options.getGestureAction(this.arrows);
+        const action = this.#options.getGestureAction(this.#arrows);
         if (action) {
             if (action.startsWith('customurl:')) {
-                this.actionNameArea.innerText = `${chrome.i18n.getMessage('opencustomurl')}:${action.substring(10)}`;
+                this.#actionNameArea.innerText = `${chrome.i18n.getMessage('opencustomurl')}:${action.substring(10)}`;
             }
             else if (action) {
-                this.actionNameArea.innerText = chrome.i18n.getMessage(action);
+                this.#actionNameArea.innerText = chrome.i18n.getMessage(action);
             }
-            this.actionNameArea.style.display = 'inline';
-            this.arrowArea.style.marginTop = '10px';
+            this.#actionNameArea.style.display = 'inline';
+            this.#arrowsArea.style.marginTop = '10px';
         }
         else {
-            this.actionNameArea.style.display = 'none';
-            this.arrowArea.style.marginTop = '35px';
+            this.#actionNameArea.style.display = 'none';
+            this.#arrowsArea.style.marginTop = '35px';
         }
     }
 
@@ -281,6 +328,10 @@ class ShowArrowsElement {
      * @summary Reset the ShowArrowsElement.
      */
     reset() {
+        if (this.#arrows) {
+            this.#arrows = '';
+            this.#arrowsArea.innerText = this.#arrows;
+            document.body.removeChild(this.#backgroundElement);
         }
     }
 }
@@ -289,14 +340,40 @@ class ShowArrowsElement {
  * @summary Class for bookmark edit dialog elements.
  */
 class BookMarkEditDialogElements {
-    constructor() {
-        this.targetElement = undefined;
-        this.backgroundElement = undefined;
-        this.existingBookmark = undefined;
-        this.nameInputElement = undefined;
-        this.urlInputElement = undefined;
-        this.folderSelectElement = undefined;
+    /**
+     * @type {HTMLElement | undefined}
+     */
+    #targetElement = undefined;
 
+    /**
+     * @type {HTMLElement | undefined}
+     */
+    #backgroundElement = undefined;
+
+    /**
+     * @type {BookmarkTreeNode | undefined}
+     */
+    #existingBookmark = undefined;
+
+    /**
+     * @type {HTMLInputElement | undefined}
+     */
+    #nameInputElement = undefined;
+
+    /**
+     * @type {HTMLInputElement | undefined}
+     */
+    #urlInputElement = undefined;
+
+    /**
+     * @type {HTMLSelectElement | undefined}
+     */
+    #folderSelectElement = undefined;
+
+    /**
+     * @constructor
+     */
+    constructor() {
         this.on = {
             ok: this.onOk.bind(this),
             cancel: this.onCancel.bind(this),
@@ -308,10 +385,10 @@ class BookMarkEditDialogElements {
      * @summary Start the bookmark event listener.
      */
     start() {
-        chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+        chrome.runtime.onMessage.addListener((request) => {
             if (request && request.extensionId === chrome.runtime.id && request.type === 'upsertbookmarkresponse') {
                 (async () => {
-                    if (!this.targetElement) {
+                    if (!this.#targetElement) {
                         const data = await chrome.storage.local.get(['defaultBookmarkFolder']);
                         this.addDialog(request.bookmarks, request.existsBookmark, data ? data.defaultBookmarkFolder : undefined);
                     }
@@ -327,22 +404,22 @@ class BookMarkEditDialogElements {
      * @param {string} defaultBookmarkFolder - The folder selected when the dialog is opened.
      */
     addDialog(bookmarks, isEditMode, defaultBookmarkFolder) {
-        this.targetElement = document.body;
+        this.#targetElement = document.body;
         this.addEventListeners();
 
-        this.existingBookmark = this.findBookmark(bookmarks, document.location.href);
+        this.#existingBookmark = this.findBookmark(bookmarks, document.location.href);
 
-        this.backgroundElement = createBackgroundElement(true);
-        this.backgroundElement.style.zIndex = 16777271;
-        this.backgroundElement.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-        this.backgroundElement.addEventListener('click', (event) => {
-            if (event.target === this.backgroundElement) {
+        this.#backgroundElement = createBackgroundElement(true);
+        this.#backgroundElement.style.zIndex = 16777271;
+        this.#backgroundElement.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+        this.#backgroundElement.addEventListener('click', (event) => {
+            if (event.target === this.#backgroundElement) {
                 this.onCancel(event);
             }
         });
 
         const centeringElement = createCenteringElement();
-        this.backgroundElement.appendChild(centeringElement);
+        this.#backgroundElement.appendChild(centeringElement);
 
         const dialogElement = document.createElement('div');
         dialogElement.style.all = 'revert';
@@ -398,17 +475,17 @@ class BookMarkEditDialogElements {
         nameInputColumnElement.style.display = 'table-cell';
         rowNameElement.appendChild(nameInputColumnElement);
 
-        this.nameInputElement = document.createElement('input');
-        this.nameInputElement.style.all = 'revert';
-        this.nameInputElement.type = 'text';
-        this.nameInputElement.style.width = '40vw';
-        if (this.existingBookmark) {
-            this.nameInputElement.value = this.existingBookmark.title || '';
+        this.#nameInputElement = document.createElement('input');
+        this.#nameInputElement.style.all = 'revert';
+        this.#nameInputElement.type = 'text';
+        this.#nameInputElement.style.width = '40vw';
+        if (this.#existingBookmark) {
+            this.#nameInputElement.value = this.#existingBookmark.title || '';
         }
         else {
-            this.nameInputElement.value = document.title;
+            this.#nameInputElement.value = document.title;
         }
-        nameInputColumnElement.appendChild(this.nameInputElement);
+        nameInputColumnElement.appendChild(this.#nameInputElement);
 
         const rowUrlElement = document.createElement('div');
         rowUrlElement.style.all = 'revert';
@@ -427,12 +504,12 @@ class BookMarkEditDialogElements {
         urlInputColumnElement.style.display = 'table-cell';
         rowUrlElement.appendChild(urlInputColumnElement);
 
-        this.urlInputElement = document.createElement('input');
-        this.urlInputElement.style.all = 'revert';
-        this.urlInputElement.type = 'text';
-        this.urlInputElement.style.width = '40vw';
-        this.urlInputElement.value = this.existingBookmark ? this.existingBookmark.url : document.location.href;
-        urlInputColumnElement.appendChild(this.urlInputElement);
+        this.#urlInputElement = document.createElement('input');
+        this.#urlInputElement.style.all = 'revert';
+        this.#urlInputElement.type = 'text';
+        this.#urlInputElement.style.width = '40vw';
+        this.#urlInputElement.value = this.#existingBookmark ? this.#existingBookmark.url : document.location.href;
+        urlInputColumnElement.appendChild(this.#urlInputElement);
 
         const rowFolderElement = document.createElement('div');
         rowFolderElement.style.all = 'revert';
@@ -451,12 +528,12 @@ class BookMarkEditDialogElements {
         folderSelectColumnElement.style.display = 'table-cell';
         rowFolderElement.appendChild(folderSelectColumnElement);
 
-        this.folderSelectElement = document.createElement('select');
-        this.folderSelectElement.style.all = 'revert';
-        this.folderSelectElement.style.width = '40vw';
-        folderSelectColumnElement.appendChild(this.folderSelectElement);
+        this.#folderSelectElement = document.createElement('select');
+        this.#folderSelectElement.style.all = 'revert';
+        this.#folderSelectElement.style.width = '40vw';
+        folderSelectColumnElement.appendChild(this.#folderSelectElement);
 
-        const parentIdOfexistingBookmark = this.existingBookmark ? this.existingBookmark.parentId : defaultBookmarkFolder;
+        const parentIdOfexistingBookmark = this.#existingBookmark ? this.#existingBookmark.parentId : defaultBookmarkFolder;
         let bookmarkNodes = bookmarks;
         while (bookmarkNodes.length) {
             const nextBookmarkNodes = [];
@@ -474,7 +551,7 @@ class BookMarkEditDialogElements {
                         if (parentIdOfexistingBookmark === node.id) {
                             optionElement.selected = true;
                         }
-                        this.folderSelectElement.appendChild(optionElement);
+                        this.#folderSelectElement.appendChild(optionElement);
                     }
                 }
             }
@@ -514,9 +591,9 @@ class BookMarkEditDialogElements {
         okButton.addEventListener('click', this.on.ok);
         okButtonColumn.appendChild(okButton);
 
-        this.targetElement.appendChild(this.backgroundElement);
-        this.nameInputElement.focus();
-        this.nameInputElement.select();
+        this.#targetElement.appendChild(this.#backgroundElement);
+        this.#nameInputElement.focus();
+        this.#nameInputElement.select();
     }
 
     /**
@@ -548,13 +625,13 @@ class BookMarkEditDialogElements {
      * @summary Reset the bookmark dialog.
      */
     reset() {
-        this.targetElement.removeChild(this.backgroundElement);
-        this.targetElement = undefined;
-        this.backgroundElement = undefined;
-        this.existingBookmark = undefined;
-        this.nameInputElement = undefined;
-        this.urlInputElement = undefined;
-        this.folderSelectElement = undefined;
+        this.#targetElement.removeChild(this.#backgroundElement);
+        this.#targetElement = undefined;
+        this.#backgroundElement = undefined;
+        this.#existingBookmark = undefined;
+        this.#nameInputElement = undefined;
+        this.#urlInputElement = undefined;
+        this.#folderSelectElement = undefined;
 
         this.removeEventListeners();
     }
@@ -566,10 +643,10 @@ class BookMarkEditDialogElements {
     onOk(event) {
         if (event.type === 'click' || event.key === 'Enter') {
             const newBookmark = {
-                id: this.existingBookmark ? this.existingBookmark.id : undefined,
-                title: this.nameInputElement.value,
-                url: this.urlInputElement.value,
-                parentId: this.folderSelectElement.value
+                id: this.#existingBookmark ? this.#existingBookmark.id : undefined,
+                title: this.#nameInputElement.value,
+                url: this.#urlInputElement.value,
+                parentId: this.#folderSelectElement.value
             };
             sendChromeMessage({ action: 'editbookmark', bookmark: newBookmark });
             this.reset();

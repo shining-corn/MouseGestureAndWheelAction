@@ -8,19 +8,37 @@
  */
 class InterIframeVariables {
     /**
+     * @typdef {Object} InterIframeVariables.Variables
+     * @property {boolean} shouldPreventContextMenu - Flag to prevent context menu.
+     * @property {string} selectedText - The selected text in the iframe.
+     * @property {boolean} enabledExtension - Flag to enable or disable the extension.
+     */
+
+    /**
+     * @type {InterIframeVariables.Variables}
+     * @description Object to hold the variables that need to be shared between iframes.
+     */
+    #variables;
+
+    /**
+     * @type {Window[]}
+     * @description Array of windows to synchronize variables with.
+     */
+    #syncTargets = [];
+
+    /**
      * @constructor
      */
     constructor() {
-        this.variables = {
+        this.#variables = {
             shouldPreventContextMenu: false,
             selectedText: undefined,
             enabledExtension: true,
         };
 
-        this.syncTargets = [];
         if (isInIFrame()) {
             this.registerToRootWindow();
-            this.syncTargets.push(getRootWindow());
+            this.#syncTargets.push(getRootWindow());
         }
 
         window.addEventListener('message', event => {
@@ -31,10 +49,11 @@ class InterIframeVariables {
             switch (event.data.type) {
                 case 'mouse-extension-register':
                     if (event.source) {
-                        this.syncTargets.push(event.source);
+                        this.#syncTargets.push(event.source);
                     }
                     break;
                 case 'mouse-extension-sync':
+                    this.#variables = event.data.variables;
                     if (isInRootWindow()) {
                         this.sync();    // Synchronize variables received from one iframe to all iframes.
                     }
@@ -54,9 +73,9 @@ class InterIframeVariables {
      * @summary Synchronizes the variables with all registered windows.
      */
     sync() {
-        for (const w of this.syncTargets) {
+        for (const w of this.#syncTargets) {
             w.postMessage(
-                { extensionId: chrome.runtime.id, type: 'mouse-extension-sync', variables: this.variables },
+                { extensionId: chrome.runtime.id, type: 'mouse-extension-sync', variables: this.#variables },
                 '*'
             );
         }
@@ -67,7 +86,7 @@ class InterIframeVariables {
      * @param {boolean} shouldPreventContextMenu - Whether to prevent the context menu.
      */
     set shouldPreventContextMenu(should) {
-        this.variables.shouldPreventContextMenu = should;
+        this.#variables.shouldPreventContextMenu = should;
         this.sync();
     }
 
@@ -76,7 +95,7 @@ class InterIframeVariables {
      * @returns {boolean} - Whether to prevent the context menu.
      */
     get shouldPreventContextMenu() {
-        return this.variables.shouldPreventContextMenu;
+        return this.#variables.shouldPreventContextMenu;
     }
 
     /**
@@ -84,7 +103,7 @@ class InterIframeVariables {
      * @param {string} text - The selected text.
      */
     set selectedText(text) {
-        this.variables.selectedText = text;
+        this.#variables.selectedText = text;
         this.sync();
     }
 
@@ -93,7 +112,7 @@ class InterIframeVariables {
      * @returns {string} - The selected text.
      */
     get selectedText() {
-        return this.variables.selectedText;
+        return this.#variables.selectedText;
     }
 
     /**
@@ -101,7 +120,7 @@ class InterIframeVariables {
      * @param {boolean} enabled - Whether the extension is enabled.
      */
     set enabledExtension(enabled) {
-        this.variables.enabledExtension = enabled;
+        this.#variables.enabledExtension = enabled;
         this.sync();
     }
 
@@ -110,6 +129,6 @@ class InterIframeVariables {
      * @returns {boolean} - Whether the extension is enabled.
      */
     get enabledExtension() {
-        return this.variables.enabledExtension;
+        return this.#variables.enabledExtension;
     }
 };

@@ -12,15 +12,52 @@
  */
 class OptionGestureElements {
     /**
+     * @type {ExtensionOptions | undefined}
+     */
+    #options = undefined;
+
+    /**
+     * @type {Point | undefined}
+     */
+    #previousPoint = undefined;
+
+    /**
+     * @type {string}
+     */
+    #arrows = '';
+
+    /**
+     * @type {HTMLElement | undefined}
+     */
+    #containerElement = undefined;
+
+    /**
+     * @type {HTMLElement | undefined}
+     */
+    #centerBox = undefined;
+
+    /**
+     * @type {HTMLElement | undefined}
+     */
+    #descriptionElement = undefined;
+
+    /**
+     * @type {HTMLElement | undefined}
+     */
+    #arrowsElement = undefined;
+
+    /**
+     * @type {HTMLElement | undefined}
+     */
+    #parentElement = undefined;
+
+    /**
      * @constructor
      * @param {ExtensionOptions} options
      * @param {string} gestureDescription
      */
     constructor(options, gestureDescription) {
-        this.options = options;
-        this.previousPoint = undefined;
-        this.arrows = '';
-        this.parentElement = undefined;
+        this.#options = options;
         this.createElements(gestureDescription);
     }
 
@@ -29,65 +66,65 @@ class OptionGestureElements {
      * @param {string} description - The description of how to make arrows.
      */
     createElements(description) {
-        this.containerElement = document.createElement('div');
-        this.containerElement.style.width = '100vw';
-        this.containerElement.style.height = '100vh';
-        this.containerElement.style.position = 'fixed';
-        this.containerElement.style.left = '0px';
-        this.containerElement.style.top = '0px';
-        this.containerElement.style.zIndex = 16777270;
-        this.containerElement.style.margin = '0px';
-        this.containerElement.style.padding = '0px';
-        this.containerElement.style.border = 'none';
-        this.containerElement.style.color = this.options.gestureFontColor;
-        this.containerElement.style.backgroundColor = this.options.gestureBackgroundColor;
+        this.#containerElement = document.createElement('div');
+        this.#containerElement.style.width = '100vw';
+        this.#containerElement.style.height = '100vh';
+        this.#containerElement.style.position = 'fixed';
+        this.#containerElement.style.left = '0px';
+        this.#containerElement.style.top = '0px';
+        this.#containerElement.style.zIndex = 16777270;
+        this.#containerElement.style.margin = '0px';
+        this.#containerElement.style.padding = '0px';
+        this.#containerElement.style.border = 'none';
+        this.#containerElement.style.color = this.#options.gestureFontColor;
+        this.#containerElement.style.backgroundColor = this.#options.gestureBackgroundColor;
 
-        this.centerBox = document.createElement('div');
-        this.containerElement.appendChild(this.centerBox);
-        this.centerBox.style.top = '0';
-        this.centerBox.style.bottom = '0';
-        this.centerBox.style.left = '0';
-        this.centerBox.style.right = '0';
-        this.centerBox.style.margin = 'auto';
-        this.centerBox.style.padding = '0px';
-        this.centerBox.style.border = 'none';
-        this.centerBox.style.position = 'absolute';
-        this.centerBox.style.maxWidth = '100vw';
-        this.centerBox.style.width = 'fit-content';
-        this.centerBox.style.height = 'fit-content';
-        this.centerBox.style.textAlign = 'center';
-        this.centerBox.style.backgroundColor = 'transparent';
+        this.#centerBox = document.createElement('div');
+        this.#containerElement.appendChild(this.#centerBox);
+        this.#centerBox.style.top = '0';
+        this.#centerBox.style.bottom = '0';
+        this.#centerBox.style.left = '0';
+        this.#centerBox.style.right = '0';
+        this.#centerBox.style.margin = 'auto';
+        this.#centerBox.style.padding = '0px';
+        this.#centerBox.style.border = 'none';
+        this.#centerBox.style.position = 'absolute';
+        this.#centerBox.style.maxWidth = '100vw';
+        this.#centerBox.style.width = 'fit-content';
+        this.#centerBox.style.height = 'fit-content';
+        this.#centerBox.style.textAlign = 'center';
+        this.#centerBox.style.backgroundColor = 'transparent';
 
-        this.descriptionElement = document.createElement('span');
-        this.centerBox.appendChild(this.descriptionElement);
-        this.descriptionElement.style.width = 'fit-content';
-        this.descriptionElement.style.height = 'fit-content';
-        this.descriptionElement.style.backgroundColor = 'transparent';
-        this.descriptionElement.innerText = description;
-        this.descriptionElement.style.pointerEvents = 'none';   // To prevent malfunctions caused by left-clicking during mouse gestures.
-        this.descriptionElement.style.userSelect = 'none';      // same as above
+        this.#descriptionElement = document.createElement('span');
+        this.#centerBox.appendChild(this.#descriptionElement);
+        this.#descriptionElement.style.width = 'fit-content';
+        this.#descriptionElement.style.height = 'fit-content';
+        this.#descriptionElement.style.backgroundColor = 'transparent';
+        this.#descriptionElement.innerText = description;
+        this.#descriptionElement.style.pointerEvents = 'none';   // To prevent malfunctions caused by left-clicking during mouse gestures.
+        this.#descriptionElement.style.userSelect = 'none';      // same as above
 
-        this.arrowsElement = document.createElement('div');
-        this.centerBox.appendChild(this.arrowsElement);
-        this.arrowsElement.style.fontWeight = 'bold';
-        this.arrowsElement.style.padding = '24px';
-        this.arrowsElement.style.left = '0';
-        this.arrowsElement.style.right = '0';
-        this.arrowsElement.style.margin = 'auto';
-        this.arrowsElement.style.border = 'none';
-        this.arrowsElement.style.fontSize = '64px';
-        this.arrowsElement.style.lineHeight = '1';
-        this.arrowsElement.style.fontFamily = 'monospace';
-        this.arrowsElement.style.maxWidth = 'calc(100vw - 64px)';
-        this.arrowsElement.style.width = 'fit-content';
-        this.arrowsElement.style.height = 'fit-content';
-        this.arrowsElement.style.overflowWrap = 'anywhere';
-        this.arrowsElement.style.backgroundColor = 'transparent';
-        this.arrowsElement.style.pointerEvents = 'none';
-        this.arrowsElement.style.userSelect = 'none';
+        this.#arrowsElement = document.createElement('div');
+        this.#centerBox.appendChild(this.#arrowsElement);
+        this.#arrowsElement.style.fontWeight = 'bold';
+        this.#arrowsElement.style.padding = '24px';
+        this.#arrowsElement.style.left = '0';
+        this.#arrowsElement.style.right = '0';
+        this.#arrowsElement.style.margin = 'auto';
+        this.#arrowsElement.style.border = 'none';
+        this.#arrowsElement.style.fontSize = '64px';
+        this.#arrowsElement.style.lineHeight = '1';
+        this.#arrowsElement.style.fontFamily = 'monospace';
+        this.#arrowsElement.style.maxWidth = 'calc(100vw - 64px)';
+        this.#arrowsElement.style.width = 'fit-content';
+        this.#arrowsElement.style.height = 'fit-content';
+        this.#arrowsElement.style.overflowWrap = 'anywhere';
+        this.#arrowsElement.style.backgroundColor = 'transparent';
+        this.#arrowsElement.style.pointerEvents = 'none';
+        this.#arrowsElement.style.userSelect = 'none';
 
         this.canvasElement = document.createElement('canvas');
-        this.containerElement.appendChild(this.canvasElement);
+        this.#containerElement.appendChild(this.canvasElement);
         this.canvasElement.style.zIndex = 16777271;
         this.canvasElement.width = document.documentElement.clientWidth;
         this.canvasElement.height = document.documentElement.clientHeight;
@@ -99,16 +136,16 @@ class OptionGestureElements {
      * @param {HTMLElement} parentElement 
      */
     start(parentElement) {
-        parentElement.appendChild(this.containerElement);
-        this.parentElement = parentElement;
+        parentElement.appendChild(this.#containerElement);
+        this.#parentElement = parentElement;
     }
 
     /**
      * @summary Hide the mouse gesture elements.
      */
     end() {
-        if (this.containerElement) {
-            this.parentElement.removeChild(this.containerElement);
+        if (this.#containerElement) {
+            this.#parentElement.removeChild(this.#containerElement);
         }
     }
 
@@ -117,18 +154,18 @@ class OptionGestureElements {
      * @param {Point} point 
      */
     drawLine(point) {
-        if (this.previousPoint) {
+        if (this.#previousPoint) {
             const ctx = this.canvasElement.getContext('2d');
             ctx.lineWidth = 4;
-            ctx.strokeStyle = this.options.gestureLineColor;
+            ctx.strokeStyle = this.#options.gestureLineColor;
             ctx.beginPath();
-            ctx.moveTo(this.previousPoint.x, this.previousPoint.y);
+            ctx.moveTo(this.#previousPoint.x, this.#previousPoint.y);
             ctx.lineTo(point.x, point.y);
             ctx.stroke();
             ctx.closePath();
         }
 
-        this.previousPoint = point;
+        this.#previousPoint = point;
     }
 
     /**
@@ -136,8 +173,8 @@ class OptionGestureElements {
      * @param {string} arrow 
      */
     addArrow(arrow) {
-        this.arrows += arrow;
-        this.arrowsElement.innerText = this.arrows;
+        this.#arrows += arrow;
+        this.#arrowsElement.innerText = this.#arrows;
     }
 }
 
@@ -145,16 +182,40 @@ class OptionGestureElements {
  * @summary Mouse gesture controller for the options page.
  */
 class MouseGestureController {
-    constructor() {
-        this.elements = undefined;
-        this.previousPoint = undefined;
-        this.previousDirection = undefined;
-        this.finished = false;
-        this.leftButtonDown = false;
+    /**
+     * @type {ExtensionOptions | undefined}
+     */
+    #options = undefined;
+
+    /**
+     * @type {OptionGestureElements | undefined}
+     */
+    #elements = undefined;
+
+    /**
+     * @type {Point | undefined}
+     */
+    #previousPoint = undefined;
+
+    /**
+     * @type {string | undefined}
+     */
+    #previousDirection = undefined;
+
+    /**
+     * @type {boolean}
+     */
+    #finished = false;
+
+    /**
+     * @type {boolean}
+     */
+    #leftButtonDown = false;
 
     /**
      * @constructor
      */
+    constructor() {
         this.on = {
             contextmenu: this.onContextMenu.bind(this),
             mousedown: this.onMouseDown.bind(this),
@@ -168,9 +229,9 @@ class MouseGestureController {
      * @param {ExtensionOptions} options 
      */
     start(options) {
-        this.options = options;
-        this.elements = new OptionGestureElements(options, chrome.i18n.getMessage('optionsAddMouseGestureDescription'));
-        this.elements.start(document.body);
+        this.#options = options;
+        this.#elements = new OptionGestureElements(options, chrome.i18n.getMessage('optionsAddMouseGestureDescription'));
+        this.#elements.start(document.body);
 
         window.addEventListener('contextmenu', this.on.contextmenu, false);
         window.addEventListener('mousedown', this.on.mousedown, false);
@@ -182,13 +243,13 @@ class MouseGestureController {
      * @summary End the mouse gesture controller.
      */
     end() {
-        this.finished = true;
+        this.#finished = true;
         window.removeEventListener('mousedown', this.on.mousedown, false);
         window.removeEventListener('mousemove', this.on.mousemove, false);
         window.removeEventListener('mouseup', this.on.mouseup, false);
 
-        if (this.elements) {
-            this.elements.end();
+        if (this.#elements) {
+            this.#elements.end();
         }
     }
 
@@ -198,7 +259,7 @@ class MouseGestureController {
      */
     onContextMenu(event) {
         event.preventDefault();
-        if (this.finished) {
+        if (this.#finished) {
             window.removeEventListener('contextmenu', this.on.contextmenu, false);
         }
     }
@@ -210,11 +271,11 @@ class MouseGestureController {
     onMouseDown(event) {
         if ((event.buttons & 2) !== 0) {
             const point = { x: event.clientX, y: event.clientY };
-            this.elements.drawLine(point);
-            this.previousPoint = point;
+            this.#elements.drawLine(point);
+            this.#previousPoint = point;
 
             if ((event.buttons & 1) !== 0) {
-                this.leftButtonDown = true;
+                this.#leftButtonDown = true;
             }
         }
     }
@@ -224,25 +285,25 @@ class MouseGestureController {
      * @param {MouseEvent} event 
      */
     onMouseMove(event) {
-        const strokeLength = this.options.mouseGestureStrokeLength;
+        const strokeLength = this.#options.mouseGestureStrokeLength;
 
-        if ((event.buttons & 2) === 2 && this.previousPoint) {
+        if ((event.buttons & 2) === 2 && this.#previousPoint) {
             const point = { x: event.clientX, y: event.clientY };
-            this.elements.drawLine(point);
+            this.#elements.drawLine(point);
 
-            const diffX = point.x - this.previousPoint.x;
-            const diffY = point.y - this.previousPoint.y;
+            const diffX = point.x - this.#previousPoint.x;
+            const diffY = point.y - this.#previousPoint.y;
             const distanceSquare = diffX * diffX + diffY * diffY;
 
             if (strokeLength * strokeLength <= distanceSquare) {
-                this.previousPoint = point;
+                this.#previousPoint = point;
 
                 const direction = computeDirection(diffX, diffY);
                 if (direction) {
-                    if (direction !== this.previousDirection) {
-                        this.elements.addArrow(direction);
+                    if (direction !== this.#previousDirection) {
+                        this.#elements.addArrow(direction);
                     }
-                    this.previousDirection = direction;
+                    this.#previousDirection = direction;
                 }
             }
         }
@@ -253,17 +314,17 @@ class MouseGestureController {
      * @param {MouseEvent} event 
      */
     onMouseUp(event) {
-        if (((event.buttons & 1) === 0) && this.previousPoint && this.leftButtonDown) {
-            this.elements.addArrow('Click ');
-            this.previousPoint = { x: event.clientX, y: event.clientY };
-            this.previousDirection = undefined;
-            this.leftButtonDown = false;
+        if (((event.buttons & 1) === 0) && this.#previousPoint && this.#leftButtonDown) {
+            this.#elements.addArrow('Click ');
+            this.#previousPoint = { x: event.clientX, y: event.clientY };
+            this.#previousDirection = undefined;
+            this.#leftButtonDown = false;
         }
 
-        if ((event.button === 2) && this.previousPoint) {
-            const arrows = this.elements.arrows;
+        if ((event.button === 2) && this.#previousPoint) {
+            const arrows = this.#elements.arrows;
             if (arrows !== '') {
-                const action = this.options.getGestureAction(arrows);
+                const action = this.#options.getGestureAction(arrows);
 
                 const backgroundElement = document.getElementById('background');
                 backgroundElement.style.visibility = 'visible';
@@ -271,13 +332,13 @@ class MouseGestureController {
                 generatedGestureElement.innerText = arrows;
                 const selectActionElement = document.getElementById('select-action');
                 selectActionElement.innerText = '';
-                appendGestureActionOptionsToSelectElement(this.options, selectActionElement, action);
+                appendGestureActionOptionsToSelectElement(this.#options, selectActionElement, action);
                 translate(selectActionElement);
 
                 document.getElementById('select-action-add')
                     .addEventListener('click', () => {
                         (async () => {
-                            await this.options.upsertGesture(arrows, selectActionElement.value);
+                            await this.#options.upsertGesture(arrows, selectActionElement.value);
                             window.location.reload();
                         })();
                     });

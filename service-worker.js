@@ -123,14 +123,31 @@ function goToMostRightTab(allTabs, shouldPreventContextMenu) {
  */
 class MouseGestureService {
     /**
+     * @type {ExtensionOptions | undefined}
+     */
+    #options = undefined;
+
+    /**
+     * @type {windows.WindowState[]}
+     */
+    #previousWindowState = [];
+
+    /**
+     * @type {number | undefined}
+     */
+    #lastCreatedGroupId = undefined;
+
+    /**
+     * @type {TabActivateHistoryContainer[]}
+     */
+    #tabActivateHistoryContainer = {};
+
+    /**
      * @constructor
      * @param {ExtensionOptions} options 
      */
     constructor(options) {
-        this.options = options;
-        this.previousWindowState = [];
-        this.lastCreatedGroupId = undefined;
-        this.tabActivateHistoryContainer = {};
+        this.#options = options;
     }
 
     /**
@@ -152,21 +169,21 @@ class MouseGestureService {
                     case 'addtabtogroup':
                         (async () => {
                             const tab = await chrome.tabs.get(sender.tab.id);
-                            if (this.lastCreatedGroupId && tab.groupId === this.lastCreatedGroupId) {
-                                this.lastCreatedGroupId = undefined;
+                            if (this.#lastCreatedGroupId && tab.groupId === this.#lastCreatedGroupId) {
+                                this.#lastCreatedGroupId = undefined;
                             }
 
-                            this.lastCreatedGroupId = await chrome.tabs.group({ groupId: this.lastCreatedGroupId, tabIds: sender.tab.id, });
+                            this.#lastCreatedGroupId = await chrome.tabs.group({ groupId: this.#lastCreatedGroupId, tabIds: sender.tab.id, });
 
                         })();
                         break;
                     case 'removetabfromgroup':
                         (async () => {
                             chrome.tabs.ungroup(sender.tab.id);
-                            if (this.lastCreatedGroupId) {
-                                const tabs = await chrome.tabs.query({ groupId: this.lastCreatedGroupId });
+                            if (this.#lastCreatedGroupId) {
+                                const tabs = await chrome.tabs.query({ groupId: this.#lastCreatedGroupId });
                                 if (tabs.length === 0) {
-                                    this.lastCreatedGroupId = undefined;
+                                    this.#lastCreatedGroupId = undefined;
                                 }
                             }
                         })();
@@ -404,12 +421,12 @@ class MouseGestureService {
                             window.then((w) => {
                                 (async () => {
                                     if (w.state !== 'maximized') {
-                                        this.previousWindowState[w.id] = w.state;
+                                        this.#previousWindowState[w.id] = w.state;
                                         await chrome.windows.update(w.id, { state: 'maximized' });
                                     }
                                     else {
-                                        if (this.previousWindowState[w.id]) {
-                                            await chrome.windows.update(w.id, { state: this.previousWindowState[w.id] });
+                                        if (this.#previousWindowState[w.id]) {
+                                            await chrome.windows.update(w.id, { state: this.#previousWindowState[w.id] });
                                         }
                                         else {
                                             await chrome.windows.update(w.id, { state: 'normal' });
@@ -435,12 +452,12 @@ class MouseGestureService {
                             window.then((w) => {
                                 (async () => {
                                     if (w.state !== 'fullscreen') {
-                                        this.previousWindowState[w.id] = w.state;
+                                        this.#previousWindowState[w.id] = w.state;
                                         await chrome.windows.update(w.id, { state: 'fullscreen' });
                                     }
                                     else {
-                                        if (this.previousWindowState[w.id]) {
-                                            await chrome.windows.update(w.id, { state: this.previousWindowState[w.id] });
+                                        if (this.#previousWindowState[w.id]) {
+                                            await chrome.windows.update(w.id, { state: this.#previousWindowState[w.id] });
                                         }
                                         else {
                                             await chrome.windows.update(w.id, { state: 'maximized' });
@@ -543,15 +560,15 @@ class MouseGestureService {
      */
     processTabHistory() {
         chrome.tabs.onActivated.addListener((activeInfo) => {
-            if (!this.tabActivateHistoryContainer[activeInfo.windowId]) {
-                this.tabActivateHistoryContainer[activeInfo.windowId] = {
+            if (!this.#tabActivateHistoryContainer[activeInfo.windowId]) {
+                this.#tabActivateHistoryContainer[activeInfo.windowId] = {
                     history: [],
                     index: -1,
                     shouldPreventAddHistory: false,
                 };
             }
 
-            const container = this.tabActivateHistoryContainer[activeInfo.windowId];
+            const container = this.#tabActivateHistoryContainer[activeInfo.windowId];
             if (container.shouldPreventAddHistory) {
                 container.shouldPreventAddHistory = false;
             }
@@ -560,33 +577,33 @@ class MouseGestureService {
                 container.index = -1;
 
                 // Remove the oldest history if it exceeds the limit
-                const historySize = this.options.previousTabHistorySize;
+                const historySize = this.#options.previousTabHistorySize;
                 container.history.splice(0, container.history.length - historySize);
             }
         });
 
         chrome.tabs.onDetached.addListener((tabId, detachInfo) => {
-            if (this.tabActivateHistoryContainer[detachInfo.oldWindowId]) {
-                this.tabActivateHistoryContainer[detachInfo.oldWindowId].history = this.tabActivateHistoryContainer[detachInfo.oldWindowId].history.filter((elem) => elem !== tabId);
+            if (this.#tabActivateHistoryContainer[detachInfo.oldWindowId]) {
+                this.#tabActivateHistoryContainer[detachInfo.oldWindowId].history = this.#tabActivateHistoryContainer[detachInfo.oldWindowId].history.filter((elem) => elem !== tabId);
 
-                this.tabActivateHistoryContainer[detachInfo.oldWindowId].history = this.tabActivateHistoryContainer[detachInfo.oldWindowId].history.filter((elem, i, array) => i === 0 || elem !== array[i - 1]);
+                this.#tabActivateHistoryContainer[detachInfo.oldWindowId].history = this.#tabActivateHistoryContainer[detachInfo.oldWindowId].history.filter((elem, i, array) => i === 0 || elem !== array[i - 1]);
 
-                if (this.tabActivateHistoryContainer[detachInfo.oldWindowId].history.length === 0) {
-                    delete this.tabActivateHistoryContainer[detachInfo.oldWindowId];
+                if (this.#tabActivateHistoryContainer[detachInfo.oldWindowId].history.length === 0) {
+                    delete this.#tabActivateHistoryContainer[detachInfo.oldWindowId];
                 }
             }
         });
 
         chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
             if (removeInfo.isWindowClosing) {
-                delete this.tabActivateHistoryContainer[removeInfo.windowId];
+                delete this.#tabActivateHistoryContainer[removeInfo.windowId];
             }
-            else if (this.tabActivateHistoryContainer[removeInfo.windowId]) {
-                this.tabActivateHistoryContainer[removeInfo.windowId].history = this.tabActivateHistoryContainer[removeInfo.windowId].history.filter((elem) => elem !== tabId);
+            else if (this.#tabActivateHistoryContainer[removeInfo.windowId]) {
+                this.#tabActivateHistoryContainer[removeInfo.windowId].history = this.#tabActivateHistoryContainer[removeInfo.windowId].history.filter((elem) => elem !== tabId);
 
-                this.tabActivateHistoryContainer[removeInfo.windowId].history = this.tabActivateHistoryContainer[removeInfo.windowId].history.filter((elem, i, array) => i === 0 || elem !== array[i - 1]);
-                if (this.tabActivateHistoryContainer[removeInfo.windowId].history.length === 0) {
-                    delete this.tabActivateHistoryContainer[removeInfo.windowId];
+                this.#tabActivateHistoryContainer[removeInfo.windowId].history = this.#tabActivateHistoryContainer[removeInfo.windowId].history.filter((elem, i, array) => i === 0 || elem !== array[i - 1]);
+                if (this.#tabActivateHistoryContainer[removeInfo.windowId].history.length === 0) {
+                    delete this.#tabActivateHistoryContainer[removeInfo.windowId];
                 }
             }
         });
@@ -599,7 +616,7 @@ class MouseGestureService {
      * @param {boolean} shouldPreventContextMenu - Whether to prevent the context menu from appearing on the target tab.
      */
     goToPreviousTab(sender, shouldLoop, shouldPreventContextMenu) {
-        const container = this.tabActivateHistoryContainer[sender.tab.windowId];
+        const container = this.#tabActivateHistoryContainer[sender.tab.windowId];
         if (container && container.history.length > 0) {
             if (container.index === -1) {
                 container.index = container.history.length - 1;
@@ -632,7 +649,7 @@ class MouseGestureService {
      * @param {boolean} shouldPreventContextMenu - Whether to prevent the context menu from appearing on the target tab.
      */
     goToNextTab(sender, shouldLoop, shouldPreventContextMenu) {
-        const container = this.tabActivateHistoryContainer[sender.tab.windowId];
+        const container = this.#tabActivateHistoryContainer[sender.tab.windowId];
         if (container && container.history.length > 0) {
             if (container.index === -1) {
                 container.index = container.history.length - 1;

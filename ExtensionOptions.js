@@ -30,14 +30,17 @@
  */
 class ExtensionOptions {
     /**
+     * @type {ExtensionOptions | undefined}
+     */
+    #options = undefined;
+
+    /**
      * @constructor
      */
     constructor() {
-        this.options = undefined;
-
         chrome.storage.local.onChanged.addListener((event) => {
             if (event.options && event.options.newValue) {
-                this.options = event.options.newValue;
+                this.#options = event.options.newValue;
             }
         })
     }
@@ -48,10 +51,10 @@ class ExtensionOptions {
     async loadFromStrageLocal() {
         const result = await chrome.storage.local.get(['options']);
         if (result.options) {
-            this.options = result.options;
+            this.#options = result.options;
         }
         else {
-            this.options = {
+            this.#options = {
                 enabledWheelAction: true,
                 rightButtonAndWheelUp: 'gotolefttab',
                 rightButtonAndWheelDown: 'gotorighttab',
@@ -79,7 +82,7 @@ class ExtensionOptions {
                 ],
             };
 
-            await chrome.storage.local.set({ options: this.options });
+            await chrome.storage.local.set({ options: this.#options });
         }
     }
 
@@ -87,12 +90,12 @@ class ExtensionOptions {
      * @summary Creates default custom URL settings if they don't exist
      */
     async createDefaultCustomUrlSettingsIfNotExist() {
-        if (!this.options) {
+        if (!this.#options) {
             return;
         }
 
-        if (typeof this.options.customUrlSettings === 'undefined') {
-            this.options.customUrlSettings = [
+        if (typeof this.#options.customUrlSettings === 'undefined') {
+            this.#options.customUrlSettings = [
                 {
                     id: 'Google',
                     customUrl: 'https://google.com/search?q={}',
@@ -106,7 +109,7 @@ class ExtensionOptions {
             ];
         }
 
-        await chrome.storage.local.set({ options: this.options });
+        await chrome.storage.local.set({ options: this.#options });
     }
 
     /**
@@ -115,9 +118,9 @@ class ExtensionOptions {
      */
     async setOptions(options) {
         if (options) {
-            this.options = options;
+            this.#options = options;
 
-            await chrome.storage.local.set({ 'options': this.options });
+            await chrome.storage.local.set({ 'options': this.#options });
         }
     }
 
@@ -126,7 +129,7 @@ class ExtensionOptions {
      * @returns {GestureSetting[]} Gesture settings array.
      */
     get gestureSettings() {
-        return this.options?.gestureSettings || {};
+        return this.#options?.gestureSettings || {};
     }
 
     /**
@@ -135,10 +138,10 @@ class ExtensionOptions {
      * @returns {string} The action associated with the gesture.
      */
     getGestureAction(gesture) {
-        if (this.options && this.options.gestureSettings && (typeof this.options.gestureSettings.findIndex === 'function')) {
-            const i = this.options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
+        if (this.#options && this.#options.gestureSettings && (typeof this.#options.gestureSettings.findIndex === 'function')) {
+            const i = this.#options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
             if (i !== -1) {
-                return this.options.gestureSettings[i]?.action || '';
+                return this.#options.gestureSettings[i]?.action || '';
             }
         }
         return '';
@@ -150,7 +153,7 @@ class ExtensionOptions {
      * @param {string} action - The action to associate with the gesture.
      **/
     async upsertGesture(gesture, action) {
-        if (!this.options) {
+        if (!this.#options) {
             await this.loadFromStrageLocal();
         }
 
@@ -159,19 +162,19 @@ class ExtensionOptions {
             action: action
         };
 
-        if (Object.prototype.toString.call(this.options.gestureSettings) !== '[object Array]') {
-            this.options.gestureSettings = [];
+        if (Object.prototype.toString.call(this.#options.gestureSettings) !== '[object Array]') {
+            this.#options.gestureSettings = [];
         }
 
-        const i = this.options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
+        const i = this.#options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
         if (i !== -1) {
-            this.options.gestureSettings[i] = newGesture;
+            this.#options.gestureSettings[i] = newGesture;
         }
         else {
-            this.options.gestureSettings.push(newGesture);
+            this.#options.gestureSettings.push(newGesture);
         }
 
-        await chrome.storage.local.set({ 'options': this.options });
+        await chrome.storage.local.set({ 'options': this.#options });
     }
 
     /**
@@ -179,15 +182,15 @@ class ExtensionOptions {
      * @param {string} gesture - The gesture string to remove.
      **/
     async removeGesture(gesture) {
-        if (!this.options) {
+        if (!this.#options) {
             await this.loadFromStrageLocal();
         }
 
-        const i = this.options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
+        const i = this.#options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
         if (i !== -1) {
-            this.options.gestureSettings.splice(i, 1);
+            this.#options.gestureSettings.splice(i, 1);
 
-            await chrome.storage.local.set({ 'options': this.options });
+            await chrome.storage.local.set({ 'options': this.#options });
         }
     }
 
@@ -196,7 +199,7 @@ class ExtensionOptions {
      * @returns {boolean} Whether the wheel action is enabled or not.
      */
     get enabledWheelAction() {
-        return this.options?.enabledWheelAction || false;
+        return this.#options?.enabledWheelAction || false;
     }
 
     /**
@@ -204,12 +207,12 @@ class ExtensionOptions {
      * @param {boolean} enabled 
      */
     async setEnabledWheelAction(enabled) {
-        if (!this.options) {
+        if (!this.#options) {
             await this.loadFromStrageLocal();
         }
 
-        this.options.enabledWheelAction = enabled;
-        await chrome.storage.local.set({ 'options': this.options });
+        this.#options.enabledWheelAction = enabled;
+        await chrome.storage.local.set({ 'options': this.#options });
     }
 
     /**
@@ -217,7 +220,7 @@ class ExtensionOptions {
      * @returns {string} rightButtonAndWheelUp
      */
     get rightButtonAndWheelUp() {
-        return this.options?.rightButtonAndWheelUp;
+        return this.#options?.rightButtonAndWheelUp;
     }
 
     /**
@@ -225,12 +228,12 @@ class ExtensionOptions {
      * @param {string} action 
      */
     async setRightClickWheelUpAction(action) {
-        if (!this.options) {
+        if (!this.#options) {
             await this.loadFromStrageLocal();
         }
 
-        this.options.rightButtonAndWheelUp = action;
-        await chrome.storage.local.set({ 'options': this.options });
+        this.#options.rightButtonAndWheelUp = action;
+        await chrome.storage.local.set({ 'options': this.#options });
     }
 
     /**
@@ -238,7 +241,7 @@ class ExtensionOptions {
      * @returns {string} Right button and wheel down action.
      */
     get rightButtonAndWheelDown() {
-        return this.options?.rightButtonAndWheelDown;
+        return this.#options?.rightButtonAndWheelDown;
     }
 
     /**
@@ -246,12 +249,12 @@ class ExtensionOptions {
      * @param {string} action
      */
     async setRightClickWheelDownAction(action) {
-        if (!this.options) {
+        if (!this.#options) {
             await this.loadFromStrageLocal();
         }
 
-        this.options.rightButtonAndWheelDown = action;
-        await chrome.storage.local.set({ 'options': this.options });
+        this.#options.rightButtonAndWheelDown = action;
+        await chrome.storage.local.set({ 'options': this.#options });
     }
 
     /**
@@ -259,7 +262,7 @@ class ExtensionOptions {
      * @returns {boolean} Whether the mouse gesture is enabled or not.
      */
     get enabledMouseGesture() {
-        return this.options?.enabledMouseGesture || false;
+        return this.#options?.enabledMouseGesture || false;
     }
 
     /**
@@ -267,12 +270,12 @@ class ExtensionOptions {
      * @param {boolean} enabled 
      */
     async setEnabledMouseGesture(enabled) {
-        if (!this.options) {
+        if (!this.#options) {
             await this.loadFromStrageLocal();
         }
 
-        this.options.enabledMouseGesture = enabled;
-        await chrome.storage.local.set({ 'options': this.options });
+        this.#options.enabledMouseGesture = enabled;
+        await chrome.storage.local.set({ 'options': this.#options });
     }
 
     /**
@@ -280,7 +283,7 @@ class ExtensionOptions {
      * @returns {boolean} Whether the right double click to context menu is enabled or not.
      */
     get rightDoubleClickToContextMenu() {
-        return this.options?.rightDoubleClickToContextMenu || false;
+        return this.#options?.rightDoubleClickToContextMenu || false;
     }
 
     /**
@@ -288,12 +291,12 @@ class ExtensionOptions {
      * @param {boolean} enabled 
      */
     async setRightDoubleClickToContextMenu(enabled) {
-        if (!this.options) {
+        if (!this.#options) {
             await this.loadFromStrageLocal();
         }
 
-        this.options.rightDoubleClickToContextMenu = enabled;
-        await chrome.storage.local.set({ 'options': this.options });
+        this.#options.rightDoubleClickToContextMenu = enabled;
+        await chrome.storage.local.set({ 'options': this.#options });
     }
 
     /**
@@ -301,8 +304,8 @@ class ExtensionOptions {
      * @returns {number} The length of the mouse gesture stroke.
      */
     get mouseGestureStrokeLength() {
-        if (typeof this.options?.mouseGestureStrokeLength === 'number' && this.options.mouseGestureStrokeLength) {
-            return this.options.mouseGestureStrokeLength;
+        if (typeof this.#options?.mouseGestureStrokeLength === 'number' && this.#options.mouseGestureStrokeLength) {
+            return this.#options.mouseGestureStrokeLength;
         }
 
         return 16;
@@ -313,12 +316,12 @@ class ExtensionOptions {
      * @param {number} length - The length of the mouse gesture stroke.
      */
     async setMouseGestureStrokeLength(length) {
-        if (!this.options) {
+        if (!this.#options) {
             await this.loadFromStrageLocal();
         }
 
-        this.options.mouseGestureStrokeLength = length;
-        await chrome.storage.local.set({ 'options': this.options });
+        this.#options.mouseGestureStrokeLength = length;
+        await chrome.storage.local.set({ 'options': this.#options });
     }
 
     /**
@@ -326,8 +329,8 @@ class ExtensionOptions {
      * @returns {number} The size of the previous tab history.
      */
     get previousTabHistorySize() {
-        if (typeof this.options?.previousTabHistorySize === 'number' && this.options.previousTabHistorySize) {
-            return this.options.previousTabHistorySize;
+        if (typeof this.#options?.previousTabHistorySize === 'number' && this.#options.previousTabHistorySize) {
+            return this.#options.previousTabHistorySize;
         }
 
         return 4096;
@@ -338,12 +341,12 @@ class ExtensionOptions {
      * @param {number} size - The size of the previous tab history.
      */
     async setPreviousTabHistorySize(size) {
-        if (!this.options) {
+        if (!this.#options) {
             await this.loadFromStrageLocal();
         }
 
-        this.options.previousTabHistorySize = size;
-        await chrome.storage.local.set({ 'options': this.options });
+        this.#options.previousTabHistorySize = size;
+        await chrome.storage.local.set({ 'options': this.#options });
     }
 
     /**
@@ -351,7 +354,7 @@ class ExtensionOptions {
      * @returns {string | undefined} The action for the left-right rocker gesture.
      */
     get rockerGestureLeftRight() {
-        return this.options?.rockerGestureLeftRight;
+        return this.#options?.rockerGestureLeftRight;
     }
 
     /**
@@ -359,12 +362,12 @@ class ExtensionOptions {
      * @param {string} action - The action for the left-right rocker gesture.
      */
     async setRockerGestureLeftRight(action) {
-        if (!this.options) {
+        if (!this.#options) {
             await this.loadFromStrageLocal();
         }
 
-        this.options.rockerGestureLeftRight = action;
-        await chrome.storage.local.set({ 'options': this.options });
+        this.#options.rockerGestureLeftRight = action;
+        await chrome.storage.local.set({ 'options': this.#options });
     }
 
     /**
@@ -372,7 +375,7 @@ class ExtensionOptions {
      * @returns {string | undefined} The action for the right-left rocker gesture.
      */
     get rockerGestureRightLeft() {
-        return this.options?.rockerGestureRightLeft;
+        return this.#options?.rockerGestureRightLeft;
     }
 
     /**
@@ -380,12 +383,12 @@ class ExtensionOptions {
      * @param {string} action - The action for the right-left rocker gesture.
      */
     async setRockerGestureRightLeft(action) {
-        if (!this.options) {
+        if (!this.#options) {
             await this.loadFromStrageLocal();
         }
 
-        this.options.rockerGestureRightLeft = action;
-        await chrome.storage.local.set({ 'options': this.options });
+        this.#options.rockerGestureRightLeft = action;
+        await chrome.storage.local.set({ 'options': this.#options });
     }
 
     /**
@@ -393,7 +396,7 @@ class ExtensionOptions {
      * @returns {CustomUrlSetting[]} The custom URL settings array.
      */
     get customUrlSettings() {
-        return this.options?.customUrlSettings;
+        return this.#options?.customUrlSettings;
     }
 
     /**
@@ -402,8 +405,8 @@ class ExtensionOptions {
      * @return {CustomUrlSetting | undefined} The custom URL setting with the specified ID, or undefined if not found.
      */
     getCustomUrlSetting(id) {
-        if (this.options?.customUrlSettings && (typeof this.options?.customUrlSettings.find === 'function')) {
-            return this.options.customUrlSettings.find(elem => elem.id === id);
+        if (this.#options?.customUrlSettings && (typeof this.#options?.customUrlSettings.find === 'function')) {
+            return this.#options.customUrlSettings.find(elem => elem.id === id);
         }
         return undefined;
     }
@@ -413,13 +416,13 @@ class ExtensionOptions {
      * @param {CustomUrlSetting[]} customUrlSettings - The custom URL settings array to set.
      */
     async setCustomUrlSettings(customUrlSettings) {
-        if (!this.options) {
+        if (!this.#options) {
             await this.loadFromStrageLocal();
         }
 
-        this.options.customUrlSettings = customUrlSettings;
+        this.#options.customUrlSettings = customUrlSettings;
 
-        await chrome.storage.local.set({ 'options': this.options });
+        await chrome.storage.local.set({ 'options': this.#options });
     }
 
     /**
@@ -427,8 +430,8 @@ class ExtensionOptions {
      * @returns {string} The color of the gesture line.
      */
     get gestureLineColor() {
-        if (typeof this.options?.gestureLineColor === 'string' && this.options.gestureLineColor) {
-            return this.options.gestureLineColor;
+        if (typeof this.#options?.gestureLineColor === 'string' && this.#options.gestureLineColor) {
+            return this.#options.gestureLineColor;
         }
 
         return 'rgba(128, 128, 255, 0.9)';
@@ -439,7 +442,7 @@ class ExtensionOptions {
      * @returns {boolean} Whether the gesture line is hidden or not.
      */
     get hideGestureLine() {
-        return this.options?.hideGestureLine || false;
+        return this.#options?.hideGestureLine || false;
     }
 
     /**
@@ -447,8 +450,8 @@ class ExtensionOptions {
      * @returns {string} The color of the gesture arrow.
      */
     get gestureArrowColor() {
-        if (typeof this.options?.gestureArrowColor === 'string' && this.options.gestureArrowColor) {
-            return this.options.gestureArrowColor;
+        if (typeof this.#options?.gestureArrowColor === 'string' && this.#options.gestureArrowColor) {
+            return this.#options.gestureArrowColor;
         }
 
         return 'rgba(239, 239, 255, 0.9)';
@@ -459,8 +462,8 @@ class ExtensionOptions {
      * @returns {number} The font size of the gesture arrow.
      */
     get gestureArrowFontSize() {
-        if (typeof this.options?.gestureArrowFontSize === 'number' && this.options.gestureArrowFontSize) {
-            return this.options.gestureArrowFontSize;
+        if (typeof this.#options?.gestureArrowFontSize === 'number' && this.#options.gestureArrowFontSize) {
+            return this.#options.gestureArrowFontSize;
         }
 
         return 64;
@@ -471,7 +474,7 @@ class ExtensionOptions {
      * @returns {boolean} Whether the gesture arrow is hidden or not.
      */
     get hideGestureArrow() {
-        return this.options?.hideGestureArrow || false;
+        return this.#options?.hideGestureArrow || false;
     }
 
     /**
@@ -479,8 +482,8 @@ class ExtensionOptions {
      * @returns {string} The color of the gesture text.
      */
     get gestureFontColor() {
-        if (typeof this.options?.gestureFontColor === 'string' && this.options.gestureFontColor) {
-            return this.options.gestureFontColor;
+        if (typeof this.#options?.gestureFontColor === 'string' && this.#options.gestureFontColor) {
+            return this.#options.gestureFontColor;
         }
 
         return 'rgba(239, 239, 255, 0.9)';
@@ -491,8 +494,8 @@ class ExtensionOptions {
      * @returns {number} The font size of the gesture text.
      */
     get gestureTextFontSize() {
-        if (typeof this.options?.gestureTextFontSize === 'number' && this.options.gestureTextFontSize) {
-            return this.options.gestureTextFontSize;
+        if (typeof this.#options?.gestureTextFontSize === 'number' && this.#options.gestureTextFontSize) {
+            return this.#options.gestureTextFontSize;
         }
 
         return 24;
@@ -503,7 +506,7 @@ class ExtensionOptions {
      * @returns {boolean} Whether the gesture text is hidden or not.
      */
     get hideGestureText() {
-        return this.options?.hideGestureText || false;
+        return this.#options?.hideGestureText || false;
     }
 
     /**
@@ -511,8 +514,8 @@ class ExtensionOptions {
      * @returns {string} The color of the gesture background.
      */
     get gestureBackgroundColor() {
-        if (typeof this.options?.gestureBackgroundColor === 'string' && this.options.gestureBackgroundColor) {
-            return this.options.gestureBackgroundColor;
+        if (typeof this.#options?.gestureBackgroundColor === 'string' && this.#options.gestureBackgroundColor) {
+            return this.#options.gestureBackgroundColor;
         }
 
         return 'rgba(0, 0, 32, 0.9)';
@@ -523,7 +526,7 @@ class ExtensionOptions {
      * @returns {boolean} Whether the gesture background is hidden or not.
      */
     get hideGestureBackground() {
-        return this.options?.hideGestureBackground || false;
+        return this.#options?.hideGestureBackground || false;
     }
 
     /**
@@ -540,25 +543,25 @@ class ExtensionOptions {
      * @param {boolean} hideBackground 
      */
     async setGestureAppearance(lineColor, hideLine, arrowColor, arrowFontSize, hideArrow, textColor, textFontSize, hideText, backgroundColor, hideBackground) {
-        if (!this.options) {
+        if (!this.#options) {
             await this.loadFromStrageLocal();
         }
 
-        this.options.gestureLineColor = lineColor;
-        this.options.hideGestureLine = hideLine;
+        this.#options.gestureLineColor = lineColor;
+        this.#options.hideGestureLine = hideLine;
 
-        this.options.gestureArrowColor = arrowColor;
-        this.options.gestureArrowFontSize = arrowFontSize;
-        this.options.hideGestureArrow = hideArrow;
+        this.#options.gestureArrowColor = arrowColor;
+        this.#options.gestureArrowFontSize = arrowFontSize;
+        this.#options.hideGestureArrow = hideArrow;
 
-        this.options.gestureFontColor = textColor;
-        this.options.gestureTextFontSize = textFontSize;
-        this.options.hideGestureText = hideText;
+        this.#options.gestureFontColor = textColor;
+        this.#options.gestureTextFontSize = textFontSize;
+        this.#options.hideGestureText = hideText;
 
-        this.options.gestureBackgroundColor = backgroundColor;
-        this.options.hideGestureBackground = hideBackground;
+        this.#options.gestureBackgroundColor = backgroundColor;
+        this.#options.hideGestureBackground = hideBackground;
 
-        await chrome.storage.local.set({ 'options': this.options });
+        await chrome.storage.local.set({ 'options': this.#options });
     }
 
     /**
@@ -566,7 +569,7 @@ class ExtensionOptions {
      * @returns {Array<DisableExtensionSetting> | undefined} The disable extension settings array.
      */
     get disableExtensionSettings() {
-        return this.options?.disableExtensionSettings;
+        return this.#options?.disableExtensionSettings;
     }
 
     /**
@@ -574,13 +577,13 @@ class ExtensionOptions {
      * @param {Array<DisableExtensionSetting>} disableExtensionSettings - The disable extension settings array to set.
      */
     async setDisableExtensionSettings(disableExtensionSettings) {
-        if (!this.options) {
+        if (!this.#options) {
             await this.loadFromStrageLocal();
         }
 
-        this.options.disableExtensionSettings = disableExtensionSettings;
+        this.#options.disableExtensionSettings = disableExtensionSettings;
 
-        await chrome.storage.local.set({ 'options': this.options });
+        await chrome.storage.local.set({ 'options': this.#options });
     }
 
     /**
@@ -588,7 +591,7 @@ class ExtensionOptions {
      * @returns {boolean} Whether the hint is hidden permanently or not.
      */
     get hideHintPermanently() {
-        return this.options?.hideHintPermanently || false;
+        return this.#options?.hideHintPermanently || false;
     }
 
     /**
@@ -596,12 +599,12 @@ class ExtensionOptions {
      * @param {boolean} hide - Whether to hide the hint permanently or not.
      */
     async setHideHintPermanently(hide) {
-        if (!this.options) {
+        if (!this.#options) {
             await this.loadFromStrageLocal();
         }
 
-        this.options.hideHintPermanently = hide;
+        this.#options.hideHintPermanently = hide;
 
-        await chrome.storage.local.set({ 'options': this.options });
+        await chrome.storage.local.set({ 'options': this.#options });
     }
 }

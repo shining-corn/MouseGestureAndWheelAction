@@ -66,22 +66,72 @@ function processAction(extensionOptions, action, actionOption) {
  */
 class MouseGestureAndWheelActionClient {
     /**
+     * @type {ExtensionOptions | undefined}
+     */
+    #options = undefined;
+
+    /**
+     * @type {Point | undefined}
+     */
+    #previousPoint = undefined;
+
+    /**
+     * @type {string | undefined}
+     */
+    #previousDirection = undefined;
+
+    /**
+     * @type {boolean}
+     */
+    #hasGestureDrawn = false;
+
+    /**
+     * @type {GestureElements | undefined}
+     */
+    #gestureElement = undefined;
+
+    /**
+     * @type {string}
+     */
+    #arrows = '';
+
+    /**
+     * @type {string | undefined}
+     */
+    #url = undefined;
+
+    /**
+     * @type {string | undefined}
+     */
+    #src = undefined;
+
+    /**
+     * @type {HTMLElement | undefined}
+     */
+    #target = undefined;
+
+    /**
+     * * @type {number}
+     */
+    #rightClickCount = 0;
+
+    /**
+     * @type {boolean}
+     */
+    #onMouseGesture = false;
+
+    /**
+     * @type {boolean}
+     */
+    #isRightButtonPressed = false;
+
+    /**
      * @param {ExtensionOptions} options - The options for the extension.
      * @constructor
      */
     constructor(options) {
-        this.options = options;
-        this.previousPoint = undefined;
-        this.previousDirection = undefined;
-        this.hasGestureDrawn = false;
-        this.gestureElement = new GestureElements(options);
-        this.arrows = '';
-        this.url = undefined;
-        this.src = undefined;
-        this.target = undefined;
-        this.rightClickCount = 0;
-        this.onMouseGesture = false;
-        this.isRightButtonPressed = false;
+        this.#options = options;
+        this.#gestureElement = new GestureElements(options);
     }
 
     /**
@@ -100,8 +150,8 @@ class MouseGestureAndWheelActionClient {
 
         window.addEventListener('blur', () => {
             global.shouldPreventContextMenu = false;    // Disable context menu suppression when leaving a tab
-            this.resetGesture();
-            this.isRightButtonPressed = false;
+            this.resetGestureState();
+            this.#isRightButtonPressed = false;
         });
 
         window.addEventListener('wheel', (event) => {
@@ -109,7 +159,7 @@ class MouseGestureAndWheelActionClient {
                 return;
             }
 
-            const isWheelAction = () => this.options.enabledWheelAction && (event.buttons === 2) && !this.onMouseGesture;
+            const isWheelAction = () => this.#options.enabledWheelAction && (event.buttons === 2) && !this.#onMouseGesture;
 
             if (isWheelAction()) {
                 if (checkHasExtensionBeenUpdated()) {
@@ -128,10 +178,10 @@ class MouseGestureAndWheelActionClient {
                     this.setActionOptionsFromElement(event.target);
                     let action;
                     if (event.wheelDelta > 0) {
-                        action = getGestureActions()[this.options.rightButtonAndWheelUp];
+                        action = getGestureActions()[this.#options.rightButtonAndWheelUp];
                     }
                     else {
-                        action = getGestureActions()[this.options.rightButtonAndWheelDown];
+                        action = getGestureActions()[this.#options.rightButtonAndWheelDown];
                     }
                     if (typeof action === 'function') {
                         const option = this.getActionOptions();
@@ -150,22 +200,22 @@ class MouseGestureAndWheelActionClient {
             }
 
             if (event.button === 2) {
-                this.isRightButtonPressed = true;
+                this.#isRightButtonPressed = true;
             }
 
             // Rocker Gesture
-            if (event.buttons === 3 && !this.onMouseGesture) {
+            if (event.buttons === 3 && !this.#onMouseGesture) {
                 if (checkHasExtensionBeenUpdated()) {
                     this.resetGestureState();
                     return;
                 }
 
                 let command = '';
-                if (event.button === 0 && this.options.rockerGestureRightLeft) {
-                    command = this.options.rockerGestureRightLeft;
+                if (event.button === 0 && this.#options.rockerGestureRightLeft) {
+                    command = this.#options.rockerGestureRightLeft;
                 }
-                else if (event.button === 2 && this.options.rockerGestureLeftRight) {
-                    command = this.options.rockerGestureLeftRight;
+                else if (event.button === 2 && this.#options.rockerGestureLeftRight) {
+                    command = this.#options.rockerGestureLeftRight;
                 }
 
                 if (command) {
@@ -173,15 +223,15 @@ class MouseGestureAndWheelActionClient {
                     event.stopImmediatePropagation();
                     global.shouldPreventContextMenu = true;
                     this.setActionOptionsFromElement(event.target);
-                    processAction(this.options, command, this.getActionOptions());
+                    processAction(this.#options, command, this.getActionOptions());
 
                     return;
                 }
             }
 
             // Mouse Gesture
-            if (this.options.enabledMouseGesture) {
-                if ((event.button === 0) && this.previousPoint) {
+            if (this.#options.enabledMouseGesture) {
+                if ((event.button === 0) && this.#previousPoint) {
                     if (checkHasExtensionBeenUpdated()) {
                         this.resetGestureState();
                         return;
@@ -190,18 +240,18 @@ class MouseGestureAndWheelActionClient {
                     event.preventDefault();
                     event.stopImmediatePropagation();
 
-                    this.onMouseGesture = true;
-                    this.arrows += 'Click ';
+                    this.#onMouseGesture = true;
+                    this.#arrows += 'Click ';
                     getRootWindow().postMessage(
                         {
                             extensionId: chrome.runtime.id,
                             type: 'show-arrows',
-                            arrows: this.arrows,
+                            arrows: this.#arrows,
                         },
                         '*'
                     );
-                    this.previousDirection = undefined;
-                    this.previousPoint = { x: event.clientX, y: event.clientY };
+                    this.#previousDirection = undefined;
+                    this.#previousPoint = { x: event.clientX, y: event.clientY };
                     global.shouldPreventContextMenu = true;
                 }
 
@@ -210,9 +260,9 @@ class MouseGestureAndWheelActionClient {
                         return;
                     }
 
-                    this.previousPoint = { x: event.clientX, y: event.clientY };
+                    this.#previousPoint = { x: event.clientX, y: event.clientY };
                     this.setActionOptionsFromElement(event.target);
-                    this.target = event.target;
+                    this.#target = event.target;
                 }
             }
         }, {
@@ -224,11 +274,11 @@ class MouseGestureAndWheelActionClient {
                 return;
             }
 
-            const strokeLength = this.options.mouseGestureStrokeLength;
+            const strokeLength = this.#options.mouseGestureStrokeLength;
 
-            if ((event.buttons & 2) === 2 && this.previousPoint && ((event.buttons & 1) === 0)) {
-                const diffX = event.clientX - this.previousPoint.x;
-                const diffY = event.clientY - this.previousPoint.y;
+            if ((event.buttons & 2) === 2 && this.#previousPoint && ((event.buttons & 1) === 0)) {
+                const diffX = event.clientX - this.#previousPoint.x;
+                const diffY = event.clientY - this.#previousPoint.y;
                 const distanceSquare = diffX * diffX + diffY * diffY;
 
                 if (checkHasExtensionBeenUpdated()) {
@@ -236,34 +286,34 @@ class MouseGestureAndWheelActionClient {
                     return;
                 }
 
-                if (this.hasGestureDrawn) {
+                if (this.#hasGestureDrawn) {
                     this.drawGestureTrail({ x: event.clientX, y: event.clientY });
                 }
 
                 if (distanceSquare >= strokeLength * strokeLength) {
-                    this.rightClickCount = 0;   // Reset the state to prevent it from being misjudged as a right double-click when a mouse gesture is repeated quickly.
+                    this.#rightClickCount = 0;   // Reset the state to prevent it from being misjudged as a right double-click when a mouse gesture is repeated quickly.
 
                     const currentPoint = { x: event.clientX, y: event.clientY };
-                    if (!this.hasGestureDrawn) {
-                        this.drawGestureTrail(this.previousPoint);
+                    if (!this.#hasGestureDrawn) {
+                        this.drawGestureTrail(this.#previousPoint);
                         this.drawGestureTrail(currentPoint);
                     }
 
-                    this.previousPoint = currentPoint;
+                    this.#previousPoint = currentPoint;
 
                     const direction = computeDirection(diffX, diffY);
-                    if (direction && direction !== this.previousDirection) {
-                        this.onMouseGesture = true;
-                        this.arrows += direction;
+                    if (direction && direction !== this.#previousDirection) {
+                        this.#onMouseGesture = true;
+                        this.#arrows += direction;
                         getRootWindow().postMessage(
                             {
                                 extensionId: chrome.runtime.id,
                                 type: 'show-arrows',
-                                arrows: this.arrows,
+                                arrows: this.#arrows,
                             },
                             '*'
                         );
-                        this.previousDirection = direction;
+                        this.#previousDirection = direction;
                     }
                 }
             }
@@ -277,13 +327,13 @@ class MouseGestureAndWheelActionClient {
             }
 
             if (event.button === 2) {
-                this.isRightButtonPressed = false;
+                this.#isRightButtonPressed = false;
             }
 
             // Mouse Gesture
             if (event.button === 2) {
-                if (this.previousPoint) {
-                    if (this.onMouseGesture) {
+                if (this.#previousPoint) {
+                    if (this.#onMouseGesture) {
                         event.preventDefault();
                         event.stopImmediatePropagation();
                         global.shouldPreventContextMenu = true;
@@ -291,8 +341,8 @@ class MouseGestureAndWheelActionClient {
 
                     const actionOption = this.getActionOptions();
                     setTimeout(() => {  // Use setTimeout to wait for global.shouldPreventContextMenu changes to be reflected in other frames
-                        const command = this.options.getGestureAction(this.arrows);
-                        processAction(this.options, command, actionOption);
+                        const command = this.#options.getGestureAction(this.#arrows);
+                        processAction(this.#options, command, actionOption);
 
                         getRootWindow().postMessage({
                             extensionId: chrome.runtime.id,
@@ -302,9 +352,9 @@ class MouseGestureAndWheelActionClient {
                     }, 0);
                 }
 
-                this.url = undefined;
-                this.src = undefined;
-                this.onMouseGesture = false;
+                this.#url = undefined;
+                this.#src = undefined;
+                this.#onMouseGesture = false;
             }
         }, {
             capture: true  // Measures against stopImmediatePropagation() of other scripts on the WEB site
@@ -317,7 +367,7 @@ class MouseGestureAndWheelActionClient {
 
             if (request.type === 'prevent-contextmenu') {
                 global.shouldPreventContextMenu = true;
-                this.isRightButtonPressed = true;   // It should have been moved from another tab with the right button held down, so set it to true.
+                this.#isRightButtonPressed = true;   // It should have been moved from another tab with the right button held down, so set it to true.
             }
         });
 
@@ -329,7 +379,7 @@ class MouseGestureAndWheelActionClient {
         });
 
         window.addEventListener('click', (event) => {
-            if (((event.button === 0) && this.onMouseGesture) ||     // During mouse gesture
+            if (((event.button === 0) && this.#onMouseGesture) ||     // During mouse gesture
                 ((event.button === 0) && (event.buttons === 2))      // During rocker gesture
             ) {
                 event.preventDefault();
@@ -350,34 +400,35 @@ class MouseGestureAndWheelActionClient {
      * @summary Ends the mouse gesture.
      */
     doneGesture() {
-        if (this.previousPoint) {
-            this.previousPoint = undefined;
-            this.previousDirection = undefined;
+        if (this.#previousPoint) {
+            this.#previousPoint = undefined;
+            this.#previousDirection = undefined;
 
-            if (this.hasGestureDrawn) {
-                this.gestureElement.removeFrom(document.body);
+            if (this.#hasGestureDrawn) {
+                this.#gestureElement.removeFrom(document.body);
             }
-            this.gestureElement.reset();
-            this.hasGestureDrawn = false;
+            this.#gestureElement.reset();
+            this.#hasGestureDrawn = false;
         }
-        this.arrows = '';
+        this.#arrows = '';
     }
 
     /**
      * @summary Resets the gesture state.
      */
     resetGestureState() {
+        if (this.#previousPoint) {
             this.doneGesture();
             global.shouldPreventContextMenu = false;
             getRootWindow().postMessage({ extensionId: chrome.runtime.id, type: 'reset-gesture' }, `*`);
         }
 
-        this.arrows = '';
-        this.url = undefined;
-        this.src = undefined;
-        this.target = undefined;
-        this.rightClickCount = 0;
-        this.onMouseGesture = false;
+        this.#arrows = '';
+        this.#url = undefined;
+        this.#src = undefined;
+        this.#target = undefined;
+        this.#rightClickCount = 0;
+        this.#onMouseGesture = false;
     }
 
     /**
@@ -385,13 +436,13 @@ class MouseGestureAndWheelActionClient {
      * @param {Point} point 
      */
     drawGestureTrail(point) {
-        if (this.hasGestureDrawn === false) {
-            this.hasGestureDrawn = true;
-            this.gestureElement.insertTo(document.body);
-            this.gestureElement.drawLine(point);
+        if (this.#hasGestureDrawn === false) {
+            this.#hasGestureDrawn = true;
+            this.#gestureElement.insertTo(document.body);
+            this.#gestureElement.drawLine(point);
         }
         else {
-            this.gestureElement.drawLine(point);
+            this.#gestureElement.drawLine(point);
         }
     }
 
@@ -400,19 +451,19 @@ class MouseGestureAndWheelActionClient {
      * @param {HTMLElement} element 
      */
     setActionOptionsFromElement(element) {
-        this.target = element;
+        this.#target = element;
 
         // get url and src attribute
-        this.url = undefined;
-        this.src = undefined;
+        this.#url = undefined;
+        this.#src = undefined;
         let elem = element;
         while (elem) {
             if (elem.href) {
-                this.url = elem.href;
+                this.#url = elem.href;
                 break;
             }
             else if (elem.src) {
-                this.src = elem.src;
+                this.#src = elem.src;
                 break;
             }
 
@@ -426,10 +477,10 @@ class MouseGestureAndWheelActionClient {
      */
     getActionOptions() {
         return {
-            target: this.target,
-            url: this.url,
-            src: this.src,
-            shouldPreventContextMenu: this.isRightButtonPressed,
+            target: this.#target,
+            url: this.#url,
+            src: this.#src,
+            shouldPreventContextMenu: this.#isRightButtonPressed,
         }
     }
 
@@ -439,17 +490,17 @@ class MouseGestureAndWheelActionClient {
      * @returns Whether the mouse gesture process should be interrupted
      */
     handleContextMenu() {
-        if (this.options.rightDoubleClickToContextMenu) {
-            this.rightClickCount++;
-            if (this.rightClickCount === 1) {
+        if (this.#options.rightDoubleClickToContextMenu) {
+            this.#rightClickCount++;
+            if (this.#rightClickCount === 1) {
                 global.shouldPreventContextMenu = true;
                 this.rightClickTimeout = setTimeout(() => {
-                    this.rightClickCount = 0;
+                    this.#rightClickCount = 0;
                 }, 750);
             }
-            else if (this.rightClickCount === 2) {
+            else if (this.#rightClickCount === 2) {
                 clearTimeout(this.rightClickTimeout);
-                this.rightClickCount = 0;
+                this.#rightClickCount = 0;
                 global.shouldPreventContextMenu = false;
                 return { shouldStop: true };
             }
@@ -461,11 +512,11 @@ class MouseGestureAndWheelActionClient {
      * @summary Disables the extension based on the URL condition.
      */
     disableExtensionByUrlCondition() {
-        if ((Object.prototype.toString.call(this.options.disableExtensionSettings) !== '[object Array]') || (this.options.disableExtensionSettings.length === 0)) {
+        if ((Object.prototype.toString.call(this.#options.disableExtensionSettings) !== '[object Array]') || (this.#options.disableExtensionSettings.length === 0)) {
             return;
         }
 
-        for (const setting of this.options.disableExtensionSettings) {
+        for (const setting of this.#options.disableExtensionSettings) {
             switch (setting.method) {
                 case 'prefixMatch':
                     if (document.location.href.indexOf(setting.value) === 0) {
