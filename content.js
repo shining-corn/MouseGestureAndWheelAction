@@ -281,16 +281,16 @@ class MouseGestureAndWheelActionClient {
                 const diffY = event.clientY - this.#previousPoint.y;
                 const distanceSquare = diffX * diffX + diffY * diffY;
 
-                if (checkHasExtensionBeenUpdated()) {
-                    this.resetGestureState();
-                    return;
-                }
-
                 if (this.#hasGestureDrawn) {
                     this.drawGestureTrail({ x: event.clientX, y: event.clientY });
                 }
 
                 if (distanceSquare >= strokeLength * strokeLength) {
+                    if (checkHasExtensionBeenUpdated()) {
+                        this.resetGestureState();
+                        return;
+                    }
+
                     this.#rightClickCount = 0;   // Reset the state to prevent it from being misjudged as a right double-click when a mouse gesture is repeated quickly.
 
                     const currentPoint = { x: event.clientX, y: event.clientY };
