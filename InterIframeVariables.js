@@ -35,7 +35,9 @@ class InterIframeVariables {
                     }
                     break;
                 case 'mouse-extension-sync':
-                    this.variables = event.data.variables;
+                    if (isInRootWindow()) {
+                        this.sync();    // Synchronize variables received from one iframe to all iframes.
+                    }
                     break;
             }
         });
