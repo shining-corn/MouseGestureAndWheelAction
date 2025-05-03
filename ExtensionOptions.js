@@ -83,7 +83,10 @@ class ExtensionOptions {
         }
     }
 
-    async createDefaultCustomUrlSettings() {
+    /**
+     * @summary Creates default custom URL settings if they don't exist
+     */
+    async createDefaultCustomUrlSettingsIfNotExist() {
         if (!this.options) {
             return;
         }

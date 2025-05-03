@@ -10,7 +10,7 @@
 function getGestureActions() {
     return {
         back: () => {
-            if (isRootWindow()) {
+            if (isInRootWindow()) {
                 window.history.go(-1);
             }
             else {
@@ -24,7 +24,7 @@ function getGestureActions() {
             }
         },
         forward: () => {
-            if (isRootWindow()) {
+            if (isInRootWindow()) {
                 window.history.go(1);
             }
             else {
@@ -38,7 +38,7 @@ function getGestureActions() {
             }
         },
         scrollup: (option) => {
-            if (isRootWindow()) {
+            if (isInRootWindow()) {
                 const element = option.target || document.documentElement;
                 if (scrollUpElement(element)) {
                     window.scrollBy({ top: -0.8 * window.innerHeight, behavior: 'auto' });
@@ -58,7 +58,7 @@ function getGestureActions() {
             }
         },
         scrolldown: (option) => {
-            if (isRootWindow()) {
+            if (isInRootWindow()) {
                 const element = option.target || document.documentElement;
                 if (scrollDownElement(element)) {
                     window.scrollBy({ top: 0.8 * window.innerHeight, behavior: 'auto' });
@@ -78,7 +78,7 @@ function getGestureActions() {
             }
         },
         scrollleft: (option) => {
-            if (isRootWindow()) {
+            if (isInRootWindow()) {
                 const element = option.target || document.documentElement;
                 if (scrollLeftElement(element)) {
                     window.scrollBy({ left: -0.8 * window.innerWidth, behavior: 'auto' });
@@ -98,7 +98,7 @@ function getGestureActions() {
             }
         },
         scrollright: (option) => {
-            if (isRootWindow()) {
+            if (isInRootWindow()) {
                 const element = option.target || document.documentElement;
                 if (scrollRightElement(element)) {
                     window.scrollBy({ left: 0.8 * window.innerWidth, behavior: 'auto' });
@@ -118,7 +118,7 @@ function getGestureActions() {
             }
         },
         scrolltotop: (option) => {
-            if (isRootWindow()) {
+            if (isInRootWindow()) {
                 const element = option.target || document.documentElement;
                 if (scrollTopElement(element)) {
                     window.scroll({ top: 0, behavior: 'auto' });
@@ -138,7 +138,7 @@ function getGestureActions() {
             }
         },
         scrolltobottom: (option) => {
-            if (isRootWindow()) {
+            if (isInRootWindow()) {
                 const element = option.target || document.documentElement;
                 if (scrollBottomElement(element)) {
                     window.scroll({ top: document.documentElement.scrollHeight, behavior: 'auto' });
@@ -158,7 +158,7 @@ function getGestureActions() {
             }
         },
         scrolltoleftmost: (option) => {
-            if (isRootWindow()) {
+            if (isInRootWindow()) {
                 const element = option.target || document.documentElement;
                 if (scrollLeftmostElement(element)) {
                     window.scroll({ left: 0, behavior: 'auto' });
@@ -178,7 +178,7 @@ function getGestureActions() {
             }
         },
         scrolltorightmost: (option) => {
-            if (isRootWindow()) {
+            if (isInRootWindow()) {
                 const element = option.target || document.documentElement;
                 if (scrollRightmostElement(element)) {
                     window.scroll({ left: document.documentElement.scrollWidth, behavior: 'auto' });
@@ -294,7 +294,7 @@ function getGestureActions() {
             sendChromeMessage({ action: 'fullscreenwindow' });
         },
         copyurl: () => {
-            if (isRootWindow()) {
+            if (isInRootWindow()) {
                 navigator.clipboard.writeText(document.location.href).then(() => { });
                 alert(`${chrome.i18n.getMessage('messageCopied')}\n ${document.location.href}`);
             }
@@ -309,7 +309,7 @@ function getGestureActions() {
             }
         },
         copytitle: () => {
-            if (isRootWindow()) {
+            if (isInRootWindow()) {
                 navigator.clipboard.writeText(document.title).then(() => { });
                 alert(`${chrome.i18n.getMessage('messageCopied')}\n ${document.title}`);
             }

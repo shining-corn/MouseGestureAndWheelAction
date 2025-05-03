@@ -113,14 +113,14 @@ class MouseGestureAndWheelActionClient {
 
             if (isWheelAction()) {
                 if (checkHasExtensionBeenUpdated()) {
-                    this.resetGesture();
+                    this.resetGestureState();
                     return;
                 }
 
                 event.preventDefault();
                 global.shouldPreventContextMenu = true;
 
-                this.resetGesture();    // reset gesture state to prevent conflict with mouse gesture
+                this.resetGestureState();    // reset gesture state to prevent conflict with mouse gesture
             }
 
             (async () => {
@@ -156,7 +156,7 @@ class MouseGestureAndWheelActionClient {
             // Rocker Gesture
             if (event.buttons === 3 && !this.onMouseGesture) {
                 if (checkHasExtensionBeenUpdated()) {
-                    this.resetGesture();
+                    this.resetGestureState();
                     return;
                 }
 
@@ -183,7 +183,7 @@ class MouseGestureAndWheelActionClient {
             if (this.options.enabledMouseGesture) {
                 if ((event.button === 0) && this.previousPoint) {
                     if (checkHasExtensionBeenUpdated()) {
-                        this.resetGesture();
+                        this.resetGestureState();
                         return;
                     }
 
@@ -232,7 +232,7 @@ class MouseGestureAndWheelActionClient {
                 const distanceSquare = diffX * diffX + diffY * diffY;
 
                 if (checkHasExtensionBeenUpdated()) {
-                    this.resetGesture();
+                    this.resetGestureState();
                     return;
                 }
 
@@ -366,6 +366,7 @@ class MouseGestureAndWheelActionClient {
     /**
      * @summary Resets the gesture state.
      */
+    resetGestureState() {
             this.doneGesture();
             global.shouldPreventContextMenu = false;
             getRootWindow().postMessage({ extensionId: chrome.runtime.id, type: 'reset-gesture' }, `*`);
@@ -496,8 +497,8 @@ class MouseGestureAndWheelActionClient {
     let options = new ExtensionOptions();
     await options.loadFromStrageLocal();
     new MouseGestureAndWheelActionClient(options).start();
-    if (isRootWindow()) {
-        new ShowArrowsElements(options);
+    if (isInRootWindow()) {
+        new ShowArrowsElement(options);
         (new BookMarkEditDialogElements()).start();
 
         // Processes gesture execution requests sent from child windows

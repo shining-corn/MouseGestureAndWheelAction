@@ -150,7 +150,7 @@ class GestureElements {
 /**
  * @summary Class for showing arrows and action names.
  */
-class ShowArrowsElements {
+class ShowArrowsElement {
     /**
      * @constructor
      * @param {ExtensionOptions} options 
@@ -209,7 +209,7 @@ class ShowArrowsElements {
                     this.showArrows(event.data.arrows);
                     break;
                 case 'reset-gesture':
-                    this.resetMouseGesture();
+                    this.reset();
                     break;
             }
         });
@@ -277,11 +277,10 @@ class ShowArrowsElements {
         }
     }
 
-    resetMouseGesture() {
-        if (this.arrows) {
-            this.arrows = '';
-            this.arrowArea.innerText = this.arrows;
-            document.body.removeChild(this.backgroundElement);
+    /**
+     * @summary Reset the ShowArrowsElement.
+     */
+    reset() {
         }
     }
 }

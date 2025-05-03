@@ -41,7 +41,7 @@ function sendChromeMessage(request) {
  * @summary Check if the script is running in a root window.
  * @returns {boolean} - True if the srcript is running in a root window, false otherwise.
  */
-function isRootWindow() {
+function isInRootWindow() {
     return window === window.parent;
 }
 
