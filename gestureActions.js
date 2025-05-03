@@ -46,7 +46,7 @@ function getGestureActions() {
             }
             else {
                 if (scrollUpElement(option.target)) {
-                    option.target = undefined;  // 別のwindowからliveなHTMLElementにはアクセスできないため削除
+                    option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
                     getRootWindow().postMessage({
                         extensionId: chrome.runtime.id,
                         type: 'execute-action',
@@ -66,7 +66,7 @@ function getGestureActions() {
             }
             else {
                 if (scrollDownElement(option.target)) {
-                    option.target = undefined;  // 別のwindowからliveなHTMLElementにはアクセスできないため削除
+                    option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
                     getRootWindow().postMessage({
                         extensionId: chrome.runtime.id,
                         type: 'execute-action',
@@ -86,7 +86,7 @@ function getGestureActions() {
             }
             else {
                 if (scrollLeftElement(option.target)) {
-                    option.target = undefined;  // 別のwindowからliveなHTMLElementにはアクセスできないため削除
+                    option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
                     getRootWindow().postMessage({
                         extensionId: chrome.runtime.id,
                         type: 'execute-action',
@@ -106,7 +106,7 @@ function getGestureActions() {
             }
             else {
                 if (scrollRightElement(option.target)) {
-                    option.target = undefined;  // 別のwindowからliveなHTMLElementにはアクセスできないため削除
+                    option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
                     getRootWindow().postMessage({
                         extensionId: chrome.runtime.id,
                         type: 'execute-action',
@@ -126,7 +126,7 @@ function getGestureActions() {
             }
             else {
                 if (scrollTopElement(option.target)) {
-                    option.target = undefined;  // 別のwindowからliveなHTMLElementにはアクセスできないため削除
+                    option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
                     getRootWindow().postMessage({
                         extensionId: chrome.runtime.id,
                         type: 'execute-action',
@@ -146,7 +146,7 @@ function getGestureActions() {
             }
             else {
                 if (scrollBottomElement(option.target)) {
-                    option.target = undefined;  // 別のwindowからliveなHTMLElementにはアクセスできないため削除
+                    option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
                     getRootWindow().postMessage({
                         extensionId: chrome.runtime.id,
                         type: 'execute-action',
@@ -166,7 +166,7 @@ function getGestureActions() {
             }
             else {
                 if (scrollLeftmostElement(option.target)) {
-                    option.target = undefined;  // 別のwindowからliveなHTMLElementにはアクセスできないため削除
+                    option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
                     getRootWindow().postMessage({
                         extensionId: chrome.runtime.id,
                         type: 'execute-action',
@@ -186,7 +186,7 @@ function getGestureActions() {
             }
             else {
                 if (scrollRightmostElement(option.target)) {
-                    option.target = undefined;  // 別のwindowからliveなHTMLElementにはアクセスできないため削除
+                    option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
                     getRootWindow().postMessage({
                         extensionId: chrome.runtime.id,
                         type: 'execute-action',
