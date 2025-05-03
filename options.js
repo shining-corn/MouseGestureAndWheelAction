@@ -1029,7 +1029,7 @@ function renderImportExportOptions(options) {
 
                 if (Object.prototype.toString.call(newOptions) === '[object Object]') {
                     await options.setOptions(newOptions);
-                    await options.createDefaultCustomUrlSettings();
+                    await options.createDefaultCustomUrlSettingsIfNotExist();
                     window.alert(chrome.i18n.getMessage('messageSucceededInSave'));
                     window.location.reload();
                 }
@@ -1083,7 +1083,7 @@ function translate(element) {
 (async () => {
     let options = new ExtensionOptions();
     await options.loadFromStrageLocal();
-    await options.createDefaultCustomUrlSettings();
+    await options.createDefaultCustomUrlSettingsIfNotExist();
     render(options);
     translate(document.body);
 })();
