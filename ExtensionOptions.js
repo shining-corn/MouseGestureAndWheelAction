@@ -126,6 +126,14 @@ class ExtensionOptions {
 
     /**
      * @summary Gets the options for the extension.
+     * @returns {ExtensionOptions} The options for the extension.
+     */
+    get options() {
+        return this.#options;
+    }
+
+    /**
+     * @summary Gets the options for the extension.
      * @returns {GestureSetting[]} Gesture settings array.
      */
     get gestureSettings() {
