@@ -176,6 +176,14 @@ class OptionGestureElements {
         this.#arrows += arrow;
         this.#arrowsElement.innerText = this.#arrows;
     }
+
+    /**
+     * @summary Get the arrows of mouse gesture.
+     * @return {string}
+     */
+    get arrows() {
+        return this.#arrows;
+    }
 }
 
 /**
@@ -323,7 +331,7 @@ class MouseGestureController {
 
         if ((event.button === 2) && this.#previousPoint) {
             const arrows = this.#elements.arrows;
-            if (arrows !== '') {
+            if (arrows !== undefined && arrows !== '') {
                 const action = this.#options.getGestureAction(arrows);
 
                 const backgroundElement = document.getElementById('background');
