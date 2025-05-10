@@ -137,7 +137,7 @@ class ExtensionOptions {
      * @returns {GestureSetting[]} Gesture settings array.
      */
     get gestureSettings() {
-        return this.#options?.gestureSettings || {};
+        return this.#options?.gestureSettings ?? {};
     }
 
     /**
@@ -149,7 +149,7 @@ class ExtensionOptions {
         if (this.#options && this.#options.gestureSettings && (typeof this.#options.gestureSettings.findIndex === 'function')) {
             const i = this.#options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
             if (i !== -1) {
-                return this.#options.gestureSettings[i]?.action || '';
+                return this.#options.gestureSettings[i]?.action ?? '';
             }
         }
         return '';
@@ -207,7 +207,7 @@ class ExtensionOptions {
      * @returns {boolean} Whether the wheel action is enabled or not.
      */
     get enabledWheelAction() {
-        return this.#options?.enabledWheelAction || false;
+        return this.#options?.enabledWheelAction ?? false;
     }
 
     /**
@@ -270,7 +270,7 @@ class ExtensionOptions {
      * @returns {boolean} Whether the mouse gesture is enabled or not.
      */
     get enabledMouseGesture() {
-        return this.#options?.enabledMouseGesture || false;
+        return this.#options?.enabledMouseGesture ?? false;
     }
 
     /**
@@ -291,7 +291,7 @@ class ExtensionOptions {
      * @returns {boolean} Whether the right double click to context menu is enabled or not.
      */
     get rightDoubleClickToContextMenu() {
-        return this.#options?.rightDoubleClickToContextMenu || false;
+        return this.#options?.rightDoubleClickToContextMenu ?? false;
     }
 
     /**
@@ -450,7 +450,7 @@ class ExtensionOptions {
      * @returns {boolean} Whether the gesture line is hidden or not.
      */
     get hideGestureLine() {
-        return this.#options?.hideGestureLine || false;
+        return this.#options?.hideGestureLine ?? false;
     }
 
     /**
@@ -482,7 +482,7 @@ class ExtensionOptions {
      * @returns {boolean} Whether the gesture arrow is hidden or not.
      */
     get hideGestureArrow() {
-        return this.#options?.hideGestureArrow || false;
+        return this.#options?.hideGestureArrow ?? false;
     }
 
     /**
@@ -514,7 +514,7 @@ class ExtensionOptions {
      * @returns {boolean} Whether the gesture text is hidden or not.
      */
     get hideGestureText() {
-        return this.#options?.hideGestureText || false;
+        return this.#options?.hideGestureText ?? false;
     }
 
     /**
@@ -534,7 +534,7 @@ class ExtensionOptions {
      * @returns {boolean} Whether the gesture background is hidden or not.
      */
     get hideGestureBackground() {
-        return this.#options?.hideGestureBackground || false;
+        return this.#options?.hideGestureBackground ?? false;
     }
 
     /**
@@ -599,7 +599,7 @@ class ExtensionOptions {
      * @returns {boolean} Whether the hint is hidden permanently or not.
      */
     get hideHintPermanently() {
-        return this.#options?.hideHintPermanently || false;
+        return this.#options?.hideHintPermanently ?? false;
     }
 
     /**
