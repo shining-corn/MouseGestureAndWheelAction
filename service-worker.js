@@ -198,7 +198,14 @@ class MouseGestureService {
                         })();
                         break;
                     case 'closetab':
-                        chrome.tabs.remove(sender.tab.id);
+                        (async () => {
+                            const tab = await chrome.tabs.query({ windowId: sender.tab.windowId });
+                            if (tab.length === 1 && this.#options.addNewTabOnLastTabClose) {
+                                chrome.tabs.create({ windowId: sender.tab.windowId, url: 'chrome://newtab' });
+                            }
+
+                            chrome.tabs.remove(sender.tab.id);
+                        })();
                         break;
                     case 'closetableftall':
                         (async () => {

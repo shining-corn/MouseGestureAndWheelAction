@@ -275,6 +275,9 @@
     "optionsPreviousTabHistorySize": {
         "message": "History size of \"Go to previous tab\""
     },
+    "optionsAddNewTabOnLastTabClose": {
+        "message": "Add new tab when the last tab is closed"
+    },
     "optionsPageTitleRockerGesture": {
         "message": "Rocker Gesture"
     },

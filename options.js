@@ -477,6 +477,9 @@ function renderMouseGestureOptions(options) {
         const previousTabHistorySizeElement = document.getElementById('previous-tab-hisotry-size');
         previousTabHistorySizeElement.disabled = !enabledMouseGestureElement.checked;
 
+        const addNewTabOnLastTabCloseElement = document.getElementById('add-new-tab-on-last-tab-close');
+        addNewTabOnLastTabCloseElement.disabled = !enabledMouseGestureElement.checked;
+
         options.setEnabledMouseGesture(enabledMouseGestureElement.checked);
     });
 
@@ -566,6 +569,13 @@ function renderMouseGestureOptions(options) {
     });
     previousTabHistorySizeElement.addEventListener('input', () => {
         previousTabHistorySizeElement.value = previousTabHistorySizeElement.value.slice(0, 4);
+    });
+
+    const addNewTabOnLastTabCloseElement = document.getElementById('add-new-tab-on-last-tab-close');
+    addNewTabOnLastTabCloseElement.checked = options.addNewTabOnLastTabClose;
+    addNewTabOnLastTabCloseElement.disabled = !options.enabledMouseGesture;
+    addNewTabOnLastTabCloseElement.addEventListener('click', () => {
+        options.setAddNewTabOnLastTabClose(addNewTabOnLastTabCloseElement.checked);
     });
 }
 

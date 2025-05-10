@@ -275,6 +275,9 @@
     "optionsPreviousTabHistorySize": {
         "message": "「前のタブに戻る」の履歴の最大数"
     },
+    "optionsAddNewTabOnLastTabClose": {
+        "message": "最後のタブを閉じたときに新しいタブを追加する"
+    },
     "optionsPageTitleRockerGesture": {
         "message": "ロッカージェスチャー"
     },

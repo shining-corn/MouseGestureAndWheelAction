@@ -366,6 +366,23 @@ class ExtensionOptions {
     }
 
     /**
+     * @summary Get the option to add a new tab when the last tab is closed.
+     * @returns {boolean} Whether the feature is enabled.
+     */
+    get addNewTabOnLastTabClose() {
+        return this.#options?.addNewTabOnLastTabClose ?? false;
+    }
+
+    /**
+     * @summary Set the option to add a new tab when the last tab is closed.
+     * @param {boolean} enabled - Whether to enable the feature.
+     */
+    async setAddNewTabOnLastTabClose(enabled) {
+        this.#options.addNewTabOnLastTabClose = enabled;
+        await chrome.storage.local.set({ 'options': this.#options });
+    }
+
+    /**
      * @summary Set the rockerGestureLeftRight action.
      * @param {string} action - The action for the left-right rocker gesture.
      */
