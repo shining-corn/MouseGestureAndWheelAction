@@ -101,9 +101,6 @@
     "gotonexttabloop": {
         "message": "次のタブに進む（ループする）"
     },
-    "openoptionspage": {
-        "message": "オプションを開く"
-    },
     "addbookmark": {
         "message": "ブックマークバーに追加"
     },
@@ -187,6 +184,12 @@
     },
     "openimageinnewwindowandactivate": {
         "message": "画像を新しいウィンドウで開いてアクティブにする"
+    },
+    "screenshot": {
+        "message": "スクリーンショット"
+    },
+    "openoptionspage": {
+        "message": "オプションを開く"
     },
     "opencustomurl": {
         "message": "カスタムURLを開く"

@@ -391,6 +391,9 @@ function getGestureActions() {
                 sendChromeMessage({ action: 'openlinkinnwewindowandactivate', url: option.src });
             }
         },
+        screenshot: () => {
+            sendChromeMessage({ action: 'screenshot' });
+        },
         openoptionspage: () => {
             sendChromeMessage({ action: 'openoptionspage' });
         },

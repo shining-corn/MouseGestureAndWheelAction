@@ -101,9 +101,6 @@
     "gotonexttabloop": {
         "message": "Go to next tab (loop)"
     },
-    "openoptionspage": {
-        "message": "Open options"
-    },
     "addbookmark": {
         "message": "Add to bookmarks bar"
     },
@@ -187,6 +184,12 @@
     },
     "openimageinnewwindowandactivate": {
         "message": "Open image in new window and activate"
+    },
+    "screenshot": {
+        "message": "Screenshot"
+    },
+    "openoptionspage": {
+        "message": "Open options"
     },
     "opencustomurl": {
         "message": "Open custom URL"

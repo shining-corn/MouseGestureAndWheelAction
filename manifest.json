@@ -35,7 +35,11 @@
     "permissions": [
         "storage",
         "sessions",
-        "bookmarks"
+        "bookmarks",
+        "downloads"
+    ],
+    "host_permissions": [
+        "<all_urls>"
     ],
     "options_ui": {
         "page": "options.html",

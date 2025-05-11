@@ -502,6 +502,27 @@ class MouseGestureService {
                     case 'mutetabtoggle':
                         chrome.tabs.update(sender.tab.id, { muted: !sender.tab.mutedInfo.muted });
                         break;
+                    case 'screenshot':
+                        (async () => {
+                            const tab = await chrome.tabs.get(sender.tab.id);
+                            if (tab) {
+                                try {
+                                    chrome.tabs.captureVisibleTab(tab.windowId, { format: 'png' }, (dataUrl) => {
+                                        if (dataUrl) {
+                                            chrome.downloads.download({
+                                                url: dataUrl,
+                                                filename: `screenshot-${encodeURI(tab.title)}.png`,
+                                                conflictAction: 'uniquify',
+                                            });
+                                        }
+                                    });
+                                }
+                                catch (error) {
+                                    console.error('Error capturing tab:', error);
+                                }
+                            }
+                        })();
+                        break;
                     case 'zoomin':
                         (async () => {
                             const zoom = (await chrome.tabs.getZoom()) + 0.25;
@@ -555,7 +576,7 @@ class MouseGestureService {
                         })();
                         break;
                     default:
-                        console.log('Unexpected request:', request);
+                        console.error('Unexpected request:', request);
                         break;
                 }
             }

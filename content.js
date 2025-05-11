@@ -342,13 +342,22 @@ class MouseGestureAndWheelActionClient {
                     const actionOption = this.getActionOptions();
                     setTimeout(() => {  // Use setTimeout to wait for global.shouldPreventContextMenu changes to be reflected in other frames
                         const command = this.#options.getGestureAction(this.#arrows);
-                        processAction(this.#options, command, actionOption);
 
                         getRootWindow().postMessage({
                             extensionId: chrome.runtime.id,
                             type: 'reset-gesture',
                         }, '*');
                         this.doneGesture();
+
+                        // To prevent the mouse gesture from showing up in the screenshot, do `processAction()` after `doneGesture()`.
+                        if (command === 'screenshot') {
+                            setTimeout(() => {
+                                processAction(this.#options, command, actionOption);
+                            }, 100);
+                        }
+                        else {
+                            
+                        }
                     }, 0);
                 }
 
@@ -365,9 +374,11 @@ class MouseGestureAndWheelActionClient {
                 return;
             }
 
-            if (request.type === 'prevent-contextmenu') {
-                global.shouldPreventContextMenu = true;
-                this.#isRightButtonPressed = true;   // It should have been moved from another tab with the right button held down, so set it to true.
+            switch (request.type) {
+                case 'prevent-contextmenu':
+                    global.shouldPreventContextMenu = true;
+                    this.#isRightButtonPressed = true;   // It should have been moved from another tab with the right button held down, so set it to true.
+                    break;
             }
         });
 

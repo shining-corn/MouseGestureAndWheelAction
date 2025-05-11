@@ -1092,7 +1092,7 @@ function translate(element) {
                 target.innerText = chrome.i18n.getMessage(target.dataset.i18n);
             }
             else {
-                console.log('message not found: ', target);
+                console.error('message not found: ', target);
             }
         }
     }
