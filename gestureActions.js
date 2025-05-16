@@ -299,8 +299,13 @@ function getGestureActions() {
         },
         copyurl: () => {
             if (isInRootWindow()) {
-                navigator.clipboard.writeText(document.location.href).then(() => { });
-                alert(`${chrome.i18n.getMessage('messageCopied')}\n ${document.location.href}`);
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(document.location.href).then(() => { });
+                    alert(`${chrome.i18n.getMessage('messageCopied')}\n ${document.location.href}`);
+                }
+                else {
+                    alert(chrome.i18n.getMessage('messageCopyError'));
+                }
             }
             else {
                 getRootWindow().postMessage({
@@ -314,8 +319,13 @@ function getGestureActions() {
         },
         copytitle: () => {
             if (isInRootWindow()) {
-                navigator.clipboard.writeText(document.title).then(() => { });
-                alert(`${chrome.i18n.getMessage('messageCopied')}\n ${document.title}`);
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(document.title).then(() => { });
+                    alert(`${chrome.i18n.getMessage('messageCopied')}\n ${document.title}`);
+                }
+                else {
+                    alert(chrome.i18n.getMessage('messageCopyError'));
+                }
             }
             else {
                 getRootWindow().postMessage({

@@ -194,6 +194,9 @@
     "messageCopied": {
         "message": "Copied."
     },
+    "messageCopyError": {
+        "message": "Failed to copy. Copying is not possible for HTTP web pages. It is possible for HTTPS web pages."
+    },
     "messageCustomUrlHelp": {
         "message": "To open a custom URL, drag the mouse to select the text, then make a mouse gesture."
     },

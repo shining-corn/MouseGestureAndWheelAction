@@ -194,6 +194,9 @@
     "messageCopied": {
         "message": "コピーしました。"
     },
+    "messageCopyError": {
+        "message": "コピーに失敗しました。HTTPのWEBページではコピーはできません。HTTPSのWEBページでのみ可能です。"
+    },
     "messageCustomUrlHelp": {
         "message": "カスタムURLを開くには、マウスをドラッグしてテキストを選択した後、マウスジェスチャーを行います。"
     },
