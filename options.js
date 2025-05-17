@@ -370,12 +370,12 @@ class MouseGestureController {
  * @param {string} selectedOption 
  */
 function appendGestureActionOptionsToSelectElement(options, selectElement, selectedOption) {
-    const actions = [''].concat(Object.keys(getGestureActions()));
-    for (const action of actions) {
+    const actionIdList = getGestureActionIdList();
+    for (const id of actionIdList) {
         const optionElement = document.createElement('option');
-        optionElement.value = action;
-        optionElement.dataset.i18n = action || 'optionsSelectOptionNone';
-        if (selectedOption === action) {
+        optionElement.value = id;
+        optionElement.dataset.i18n = id || 'optionsSelectOptionNone';
+        if (selectedOption === id) {
             optionElement.selected = true;
         }
         selectElement.appendChild(optionElement);

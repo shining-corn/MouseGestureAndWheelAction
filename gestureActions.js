@@ -8,12 +8,26 @@
  */
 
 /**
- * @summary Get the gesture actions for the extension.
- * @returns {Object} - An object containing gesture actions.
+ * @typedef {object} ActionOption
+ * @property {HTMLElement} target - The target element of the action.
+ * @property {string} url - The href attribute of the target element.
+ * @property {string} src - The src attribute of the target element.
+ * @property {boolean} shouldPreventContextMenu - Indicates whether to prevent the context menu.
  */
-function getGestureActions() {
-    return {
-        back: () => {
+
+/**
+ * @typedef {Object} MouseGestureAction
+ * @property {string} id - The ID of the action.
+ * @property {function} function - The function to execute the action.
+ */
+
+/**
+ * @summary Mouse gesture actions for the extension.
+ */
+const mouseGestureAction = [
+    {
+        id: 'back',
+        function: () => {
             if (isInRootWindow()) {
                 window.history.go(-1);
             }
@@ -26,8 +40,11 @@ function getGestureActions() {
                 },
                     '*');
             }
-        },
-        forward: () => {
+        }
+    },
+    {
+        id: 'forward',
+        function: () => {
             if (isInRootWindow()) {
                 window.history.go(1);
             }
@@ -41,7 +58,10 @@ function getGestureActions() {
                     '*');
             }
         },
-        scrollup: (option) => {
+    },
+    {
+        id: 'scrollup',
+        function: (option) => {
             if (isInRootWindow()) {
                 const element = option.target || document.documentElement;
                 if (scrollUpElement(element)) {
@@ -61,7 +81,10 @@ function getGestureActions() {
                 }
             }
         },
-        scrolldown: (option) => {
+    },
+    {
+        id: 'scrolldown',
+        function: (option) => {
             if (isInRootWindow()) {
                 const element = option.target || document.documentElement;
                 if (scrollDownElement(element)) {
@@ -81,7 +104,10 @@ function getGestureActions() {
                 }
             }
         },
-        scrollleft: (option) => {
+    },
+    {
+        id: 'scrollleft',
+        function: (option) => {
             if (isInRootWindow()) {
                 const element = option.target || document.documentElement;
                 if (scrollLeftElement(element)) {
@@ -101,7 +127,10 @@ function getGestureActions() {
                 }
             }
         },
-        scrollright: (option) => {
+    },
+    {
+        id: 'scrollright',
+        function: (option) => {
             if (isInRootWindow()) {
                 const element = option.target || document.documentElement;
                 if (scrollRightElement(element)) {
@@ -121,7 +150,10 @@ function getGestureActions() {
                 }
             }
         },
-        scrolltotop: (option) => {
+    },
+    {
+        id: 'scrolltotop',
+        function: (option) => {
             if (isInRootWindow()) {
                 const element = option.target || document.documentElement;
                 if (scrollTopElement(element)) {
@@ -141,7 +173,10 @@ function getGestureActions() {
                 }
             }
         },
-        scrolltobottom: (option) => {
+    },
+    {
+        id: 'scrolltobottom',
+        function: (option) => {
             if (isInRootWindow()) {
                 const element = option.target || document.documentElement;
                 if (scrollBottomElement(element)) {
@@ -161,7 +196,10 @@ function getGestureActions() {
                 }
             }
         },
-        scrolltoleftmost: (option) => {
+    },
+    {
+        id: 'scrolltoleftmost',
+        function: (option) => {
             if (isInRootWindow()) {
                 const element = option.target || document.documentElement;
                 if (scrollLeftmostElement(element)) {
@@ -181,7 +219,10 @@ function getGestureActions() {
                 }
             }
         },
-        scrolltorightmost: (option) => {
+    },
+    {
+        id: 'scrolltorightmost',
+        function: (option) => {
             if (isInRootWindow()) {
                 const element = option.target || document.documentElement;
                 if (scrollRightmostElement(element)) {
@@ -201,103 +242,230 @@ function getGestureActions() {
                 }
             }
         },
-        createtab: () => {
+    },
+    {
+        id: 'createtab',
+        function: () => {
             sendChromeMessage({ action: 'createtab' });
         },
-        addtabtogroup: () => {
+    },
+    {
+        id: 'addtabtogroup',
+        function: () => {
             sendChromeMessage({ action: 'addtabtogroup' });
         },
-        removetabfromgroup: () => {
+    },
+    {
+        id: 'removetabfromgroup',
+        function: () => {
             sendChromeMessage({ action: 'removetabfromgroup' });
         },
-        duplicatetab: () => {
+    },
+    {
+        id: 'duplicatetab',
+        function: () => {
             sendChromeMessage({ action: 'duplicatetab' });
         },
-        pintab: () => {
+    },
+    {
+        id: 'pintab',
+        function: () => {
             sendChromeMessage({ action: 'pintab' });
         },
-        closetab: () => {
+
+    },
+    {
+        id: 'closetab',
+        function: () => {
             sendChromeMessage({ action: 'closetab' });
         },
-        closetableftall: () => {
+
+    },
+    {
+        id: 'closetableftall',
+        function: () => {
             sendChromeMessage({ action: 'closetableftall' });
         },
-        closetabrightall: () => {
+
+    },
+    {
+        id: 'closetabrightall',
+        function: () => {
             sendChromeMessage({ action: 'closetabrightall' });
         },
-        closetabotherall: () => {
+
+    },
+    {
+        id: 'closetabotherall',
+        function: () => {
             sendChromeMessage({ action: 'closetabotherall' });
         },
-        reopenclosedtab: () => {
+
+    },
+    {
+        id: 'reopenclosedtab',
+        function: () => {
             sendChromeMessage({ action: 'reopenclosedtab' });
         },
-        reloadtab: () => {
+
+    },
+    {
+        id: 'reloadtab',
+        function: () => {
             sendChromeMessage({ action: 'reloadtab' });
         },
-        reloadtabhard: () => {
+
+    },
+    {
+        id: 'reloadtabhard',
+        function: () => {
             sendChromeMessage({ action: 'reloadtabhard' });
         },
-        reloadtaball: () => {
+
+    },
+    {
+        id: 'reloadtaball',
+        function: () => {
             sendChromeMessage({ action: 'reloadtaball' });
         },
-        gotolefttab: (option) => {
+
+    },
+    {
+        id: 'gotolefttab',
+        function: (option) => {
             sendChromeMessage({ action: 'gotolefttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
-        gotorighttab: (option) => {
+
+    },
+    {
+        id: 'gotorighttab',
+        function: (option) => {
             sendChromeMessage({ action: 'gotorighttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
-        gotolefttabwithloop: (option) => {
+
+    },
+    {
+        id: 'gotolefttabwithloop',
+        function: (option) => {
             sendChromeMessage({ action: 'gotolefttabwithloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
-        gotorighttabwithloop: (option) => {
+
+    },
+    {
+        id: 'gotorighttabwithloop',
+        function: (option) => {
             sendChromeMessage({ action: 'gotorighttabwithloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
-        gotomostlefttab: (option) => {
+
+    },
+    {
+        id: 'gotomostlefttab',
+        function: (option) => {
             sendChromeMessage({ action: 'gotomostlefttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
-        gotomostrighttab: (option) => {
+
+    },
+    {
+        id: 'gotomostrighttab',
+        function: (option) => {
             sendChromeMessage({ action: 'gotomostrighttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
-        gotoprevioustab: (option) => {
+
+    },
+    {
+        id: 'gotoprevioustab',
+        function: (option) => {
             sendChromeMessage({ action: 'gotoprevioustab', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
-        gotoprevioustabloop: (option) => {
+
+    },
+    {
+        id: 'gotoprevioustabloop',
+        function: (option) => {
             sendChromeMessage({ action: 'gotoprevioustabloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
-        gotonexttab: (option) => {
+
+    },
+    {
+        id: 'gotonexttab',
+        function: (option) => {
             sendChromeMessage({ action: 'gotonexttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
-        gotonexttabloop: (option) => {
+
+    },
+    {
+        id: 'gotonexttabloop',
+        function: (option) => {
             sendChromeMessage({ action: 'gotonexttabloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
         },
-        addbookmark: () => {
+
+    },
+    {
+        id: 'addbookmark',
+        function: () => {
             sendChromeMessage({ action: 'addbookmark', bookmark: { title: document.title, url: document.location.href } });
         },
-        upsertbookmark: () => {
+
+    },
+    {
+        id: 'upsertbookmark',
+        function: () => {
             sendChromeMessage({ action: 'upsertbookmark', bookmark: { title: document.title, url: document.location.href } });
         },
-        deletebookmark: () => {
+
+    },
+    {
+        id: 'deletebookmark',
+        function: () => {
             sendChromeMessage({ action: 'deletebookmark', bookmark: { url: document.location.href } });
         },
-        createwindow: () => {
+
+    },
+    {
+        id: 'createwindow',
+        function: () => {
             sendChromeMessage({ action: 'createwindow' });
         },
-        closewindow: () => {
+
+    },
+    {
+        id: 'closewindow',
+        function: () => {
             sendChromeMessage({ action: 'closewindow' });
         },
-        closewindowall: () => {
+
+    },
+    {
+        id: 'closewindowall',
+        function: () => {
             sendChromeMessage({ action: 'closewindowall' });
         },
-        maximizewindow: () => {
+
+    },
+    {
+        id: 'maximizewindow',
+        function: () => {
             sendChromeMessage({ action: 'maximizewindow' });
         },
-        minimizewindow: () => {
+
+    },
+    {
+        id: 'minimizewindow',
+        function: () => {
             sendChromeMessage({ action: 'minimizewindow' });
         },
-        fullscreenwindow: () => {
+
+    },
+    {
+        id: 'fullscreenwindow',
+        function: () => {
             sendChromeMessage({ action: 'fullscreenwindow' });
         },
-        copyurl: () => {
+
+    },
+    {
+        id: 'copyurl',
+        function: () => {
             if (isInRootWindow()) {
                 if (navigator.clipboard) {
                     navigator.clipboard.writeText(document.location.href).then(() => { });
@@ -317,7 +485,11 @@ function getGestureActions() {
                     '*');
             }
         },
-        copytitle: () => {
+
+    },
+    {
+        id: 'copytitle',
+        function: () => {
             if (isInRootWindow()) {
                 if (navigator.clipboard) {
                     navigator.clipboard.writeText(document.title).then(() => { });
@@ -337,77 +509,172 @@ function getGestureActions() {
                     '*');
             }
         },
-        mutetab: () => {
+
+    },
+    {
+        id: 'mutetab',
+        function: () => {
             sendChromeMessage({ action: 'mutetab' });
         },
-        unmutetab: () => {
+
+    },
+    {
+        id: 'unmutetab',
+        function: () => {
             sendChromeMessage({ action: 'unmutetab' });
         },
-        mutetabtoggle: () => {
+
+    },
+    {
+        id: 'mutetabtoggle',
+        function: () => {
             sendChromeMessage({ action: 'mutetabtoggle' });
         },
-        mutetaball: () => {
+
+    },
+    {
+        id: 'mutetaball',
+        function: () => {
             sendChromeMessage({ action: 'mutetaball' });
         },
-        unmutetaball: () => {
+
+    },
+    {
+        id: 'unmutetaball',
+        function: () => {
             sendChromeMessage({ action: 'unmutetaball' });
         },
-        zoomin: () => {
+
+    },
+    {
+        id: 'zoomin',
+        function: () => {
             sendChromeMessage({ action: 'zoomin' });
         },
-        zoomout: () => {
+
+    },
+    {
+        id: 'zoomout',
+        function: () => {
             sendChromeMessage({ action: 'zoomout' });
         },
-        zoomdefault: () => {
+
+    },
+    {
+        id: 'zoomdefault',
+        function: () => {
             sendChromeMessage({ action: 'zoomdefault' });
         },
-        openlinkinnwetab: (option) => {
+
+    },
+    {
+        id: 'openlinkinnwetab',
+        function: (option) => {
             if (option.url) {
                 sendChromeMessage({ action: 'openlinkinnwetab', url: option.url });
             }
         },
-        openlinkinnwetabandactivate: (option) => {
+
+    },
+    {
+        id: 'openlinkinnwetabandactivate',
+        function: (option) => {
             if (option.url) {
                 sendChromeMessage({ action: 'openlinkinnwetabandactivate', url: option.url });
             }
         },
-        openlinkinnwewindow: (option) => {
+
+    },
+    {
+        id: 'openlinkinnwewindow',
+        function: (option) => {
             if (option.url) {
                 sendChromeMessage({ action: 'openlinkinnwewindow', url: option.url });
             }
         },
-        openlinkinnwewindowandactivate: (option) => {
+
+    },
+    {
+        id: 'openlinkinnwewindowandactivate',
+        function: (option) => {
             if (option.url) {
                 sendChromeMessage({ action: 'openlinkinnwewindowandactivate', url: option.url });
             }
         },
-        openimageinnewtab: (option) => {
+
+    },
+    {
+        id: 'openimageinnewtab',
+        function: (option) => {
             if (option.src) {
                 sendChromeMessage({ action: 'openlinkinnwetab', url: option.src });
             }
         },
-        openimageinnewtabandactivate: (option) => {
+
+    },
+    {
+        id: 'openimageinnewtabandactivate',
+        function: (option) => {
             if (option.src) {
                 sendChromeMessage({ action: 'openlinkinnwetabandactivate', url: option.src });
             }
         },
-        openimageinnewwindow: (option) => {
+
+    },
+    {
+        id: 'openimageinnewwindow',
+        function: (option) => {
             if (option.src) {
                 sendChromeMessage({ action: 'openlinkinnwewindow', url: option.src });
             }
         },
-        openimageinnewwindowandactivate: (option) => {
+
+    },
+    {
+        id: 'openimageinnewwindowandactivate',
+        function: (option) => {
             if (option.src) {
                 sendChromeMessage({ action: 'openlinkinnwewindowandactivate', url: option.src });
             }
         },
-        openoptionspage: () => {
+
+    },
+    {
+        id: 'openoptionspage',
+        function: () => {
             sendChromeMessage({ action: 'openoptionspage' });
         },
-        disableextension: () => {
+
+    },
+    {
+        id: 'disableextension',
+        function: () => {
             window.postMessage({ extensionId: chrome.runtime.id, type: 'disable-mousegesture' }, '*');
         }
-    };
+    }
+];
+
+/**
+ * @summary Execute the action based on the ID and options provided.
+ * @param {string} id - The ID of the action.
+ * @param {ActionOption} actionOption - The options for the action.
+ */
+function executeAction(id, actionOption) {
+    const action = mouseGestureAction.find((action) => action.id === id);
+    if (action && action.function) {
+        action.function(actionOption);
+    }
+    else {
+        console.error(`Action with id ${id} not found.`);
+    }
+}
+
+/**
+ * @summary Get the list of action IDs.
+ * @returns {string[]} - The list of action IDs.
+ */
+function getGestureActionIdList() {
+    return mouseGestureAction.map((action) => action.id);
 }
 
 /**

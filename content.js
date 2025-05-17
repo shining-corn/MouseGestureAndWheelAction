@@ -7,17 +7,9 @@
  * @import { Point, sendChromeMessage, computeDirection, isInRootWindow, getRootWindow } from './utilities.js';
  * @import { ExtensionOptions, CustomUrlSetting, GestureSetting, DisableExtensionSetting } from './ExtensionOptions.js';
  * @import { InterIframeVariables } from './InterIframeVariables.js';
- * @import { getGestureActions } from './gestureActions.js';
+ * @import { getGestureAction, ActionOption } from './gestureActions.js';
  * @import { GestureElements } from './htmlElements.js';
  * @import { checkHasExtensionBeenUpdated } from './utilities.js';
- */
-
-/**
- * @typedef {object} ActionOption
- * @property {HTMLElement} target - The target element of the action.
- * @property {string} url - The href attribute of the target element.
- * @property {string} src - The src attribute of the target element.
- * @property {boolean} shouldPreventContextMenu - Indicates whether to prevent the context menu.
  */
 
 const global = new InterIframeVariables();
@@ -56,7 +48,7 @@ function processAction(extensionOptions, action, actionOption) {
             }
         }
         else {
-            getGestureActions()[action](actionOption);
+            executeAction(action, actionOption);
         }
     }
 }
@@ -178,14 +170,10 @@ class MouseGestureAndWheelActionClient {
                     this.setActionOptionsFromElement(event.target);
                     let action;
                     if (event.wheelDelta > 0) {
-                        action = getGestureActions()[this.#options.rightButtonAndWheelUp];
+                        executeAction(this.#options.rightButtonAndWheelUp, this.getActionOptions());
                     }
                     else {
-                        action = getGestureActions()[this.#options.rightButtonAndWheelDown];
-                    }
-                    if (typeof action === 'function') {
-                        const option = this.getActionOptions();
-                        action(option);
+                        executeAction(this.#options.rightButtonAndWheelDown, this.getActionOptions());
                     }
                 }
             })();
@@ -560,7 +548,7 @@ class MouseGestureAndWheelActionClient {
 
             switch (event.data.type) {
                 case 'execute-action':
-                    getGestureActions()[event.data.action](event.data.option);
+                    executeAction(event.data.action, event.data.option);
                     break;
             }
         });
