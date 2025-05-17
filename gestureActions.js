@@ -22,636 +22,637 @@
  */
 
 /**
- * @summary Mouse gesture actions for the extension.
+ * @typedef {Object} MouseGestureActionCategory
+ * @property {string} id - The ID of the category.
+ * @property {MouseGestureAction[]} actions - The list of actions in the category.
  */
-const mouseGestureAction = [
+
+/**
+ * @summary Mouse gesture actions for the extension.
+ * @type {MouseGestureActionCategory[]}
+ */
+const mouseGestureActionCategories = [
     {
-        id: 'back',
-        function: () => {
-            if (isInRootWindow()) {
-                window.history.go(-1);
-            }
-            else {
-                getRootWindow().postMessage({
-                    extensionId: chrome.runtime.id,
-                    type: 'execute-action',
-                    action: 'back',
-                    option: undefined,
+        id: 'actionCategoryHistory',
+        actions: [
+            {
+                id: 'back',
+                function: () => {
+                    if (isInRootWindow()) {
+                        window.history.go(-1);
+                    }
+                    else {
+                        getRootWindow().postMessage({
+                            extensionId: chrome.runtime.id,
+                            type: 'execute-action',
+                            action: 'back',
+                            option: undefined,
+                        },
+                            '*');
+                    }
+                }
+            },
+            {
+                id: 'forward',
+                function: () => {
+                    if (isInRootWindow()) {
+                        window.history.go(1);
+                    }
+                    else {
+                        getRootWindow().postMessage({
+                            extensionId: chrome.runtime.id,
+                            type: 'execute-action',
+                            action: 'forward',
+                            option: undefined,
+                        },
+                            '*');
+                    }
                 },
-                    '*');
-            }
-        }
+            },
+        ]
     },
     {
-        id: 'forward',
-        function: () => {
-            if (isInRootWindow()) {
-                window.history.go(1);
-            }
-            else {
-                getRootWindow().postMessage({
-                    extensionId: chrome.runtime.id,
-                    type: 'execute-action',
-                    action: 'forward',
-                    option: undefined,
+        id: 'actionCategoryScroll',
+        actions: [
+            {
+                id: 'scrollup',
+                function: (option) => {
+                    if (isInRootWindow()) {
+                        const element = option.target || document.documentElement;
+                        if (scrollUpElement(element)) {
+                            window.scrollBy({ top: -0.8 * window.innerHeight, behavior: 'auto' });
+                        }
+                    }
+                    else {
+                        if (scrollUpElement(option.target)) {
+                            option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
+                            getRootWindow().postMessage({
+                                extensionId: chrome.runtime.id,
+                                type: 'execute-action',
+                                action: 'scrollup',
+                                option: option,
+                            },
+                                '*');
+                        }
+                    }
                 },
-                    '*');
-            }
-        },
-    },
-    {
-        id: 'scrollup',
-        function: (option) => {
-            if (isInRootWindow()) {
-                const element = option.target || document.documentElement;
-                if (scrollUpElement(element)) {
-                    window.scrollBy({ top: -0.8 * window.innerHeight, behavior: 'auto' });
-                }
-            }
-            else {
-                if (scrollUpElement(option.target)) {
-                    option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
-                    getRootWindow().postMessage({
-                        extensionId: chrome.runtime.id,
-                        type: 'execute-action',
-                        action: 'scrollup',
-                        option: option,
-                    },
-                        '*');
-                }
-            }
-        },
-    },
-    {
-        id: 'scrolldown',
-        function: (option) => {
-            if (isInRootWindow()) {
-                const element = option.target || document.documentElement;
-                if (scrollDownElement(element)) {
-                    window.scrollBy({ top: 0.8 * window.innerHeight, behavior: 'auto' });
-                }
-            }
-            else {
-                if (scrollDownElement(option.target)) {
-                    option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
-                    getRootWindow().postMessage({
-                        extensionId: chrome.runtime.id,
-                        type: 'execute-action',
-                        action: 'scrolldown',
-                        option: option,
-                    },
-                        '*');
-                }
-            }
-        },
-    },
-    {
-        id: 'scrollleft',
-        function: (option) => {
-            if (isInRootWindow()) {
-                const element = option.target || document.documentElement;
-                if (scrollLeftElement(element)) {
-                    window.scrollBy({ left: -0.8 * window.innerWidth, behavior: 'auto' });
-                }
-            }
-            else {
-                if (scrollLeftElement(option.target)) {
-                    option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
-                    getRootWindow().postMessage({
-                        extensionId: chrome.runtime.id,
-                        type: 'execute-action',
-                        action: 'scrollleft',
-                        option: option,
-                    },
-                        '*');
-                }
-            }
-        },
-    },
-    {
-        id: 'scrollright',
-        function: (option) => {
-            if (isInRootWindow()) {
-                const element = option.target || document.documentElement;
-                if (scrollRightElement(element)) {
-                    window.scrollBy({ left: 0.8 * window.innerWidth, behavior: 'auto' });
-                }
-            }
-            else {
-                if (scrollRightElement(option.target)) {
-                    option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
-                    getRootWindow().postMessage({
-                        extensionId: chrome.runtime.id,
-                        type: 'execute-action',
-                        action: 'scrollright',
-                        option: option,
-                    },
-                        '*');
-                }
-            }
-        },
-    },
-    {
-        id: 'scrolltotop',
-        function: (option) => {
-            if (isInRootWindow()) {
-                const element = option.target || document.documentElement;
-                if (scrollTopElement(element)) {
-                    window.scroll({ top: 0, behavior: 'auto' });
-                }
-            }
-            else {
-                if (scrollTopElement(option.target)) {
-                    option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
-                    getRootWindow().postMessage({
-                        extensionId: chrome.runtime.id,
-                        type: 'execute-action',
-                        action: 'scrolltotop',
-                        option: option,
-                    },
-                        '*');
-                }
-            }
-        },
-    },
-    {
-        id: 'scrolltobottom',
-        function: (option) => {
-            if (isInRootWindow()) {
-                const element = option.target || document.documentElement;
-                if (scrollBottomElement(element)) {
-                    window.scroll({ top: document.documentElement.scrollHeight, behavior: 'auto' });
-                }
-            }
-            else {
-                if (scrollBottomElement(option.target)) {
-                    option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
-                    getRootWindow().postMessage({
-                        extensionId: chrome.runtime.id,
-                        type: 'execute-action',
-                        action: 'scrolltobottom',
-                        option: option,
-                    },
-                        '*');
-                }
-            }
-        },
-    },
-    {
-        id: 'scrolltoleftmost',
-        function: (option) => {
-            if (isInRootWindow()) {
-                const element = option.target || document.documentElement;
-                if (scrollLeftmostElement(element)) {
-                    window.scroll({ left: 0, behavior: 'auto' });
-                }
-            }
-            else {
-                if (scrollLeftmostElement(option.target)) {
-                    option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
-                    getRootWindow().postMessage({
-                        extensionId: chrome.runtime.id,
-                        type: 'execute-action',
-                        action: 'scrolltoleftmost',
-                        option: option,
-                    },
-                        '*');
-                }
-            }
-        },
-    },
-    {
-        id: 'scrolltorightmost',
-        function: (option) => {
-            if (isInRootWindow()) {
-                const element = option.target || document.documentElement;
-                if (scrollRightmostElement(element)) {
-                    window.scroll({ left: document.documentElement.scrollWidth, behavior: 'auto' });
-                }
-            }
-            else {
-                if (scrollRightmostElement(option.target)) {
-                    option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
-                    getRootWindow().postMessage({
-                        extensionId: chrome.runtime.id,
-                        type: 'execute-action',
-                        action: 'scrolltorightmost',
-                        option: option,
-                    },
-                        '*');
-                }
-            }
-        },
-    },
-    {
-        id: 'createtab',
-        function: () => {
-            sendChromeMessage({ action: 'createtab' });
-        },
-    },
-    {
-        id: 'addtabtogroup',
-        function: () => {
-            sendChromeMessage({ action: 'addtabtogroup' });
-        },
-    },
-    {
-        id: 'removetabfromgroup',
-        function: () => {
-            sendChromeMessage({ action: 'removetabfromgroup' });
-        },
-    },
-    {
-        id: 'duplicatetab',
-        function: () => {
-            sendChromeMessage({ action: 'duplicatetab' });
-        },
-    },
-    {
-        id: 'pintab',
-        function: () => {
-            sendChromeMessage({ action: 'pintab' });
-        },
-
-    },
-    {
-        id: 'closetab',
-        function: () => {
-            sendChromeMessage({ action: 'closetab' });
-        },
-
-    },
-    {
-        id: 'closetableftall',
-        function: () => {
-            sendChromeMessage({ action: 'closetableftall' });
-        },
-
-    },
-    {
-        id: 'closetabrightall',
-        function: () => {
-            sendChromeMessage({ action: 'closetabrightall' });
-        },
-
-    },
-    {
-        id: 'closetabotherall',
-        function: () => {
-            sendChromeMessage({ action: 'closetabotherall' });
-        },
-
-    },
-    {
-        id: 'reopenclosedtab',
-        function: () => {
-            sendChromeMessage({ action: 'reopenclosedtab' });
-        },
-
-    },
-    {
-        id: 'reloadtab',
-        function: () => {
-            sendChromeMessage({ action: 'reloadtab' });
-        },
-
-    },
-    {
-        id: 'reloadtabhard',
-        function: () => {
-            sendChromeMessage({ action: 'reloadtabhard' });
-        },
-
-    },
-    {
-        id: 'reloadtaball',
-        function: () => {
-            sendChromeMessage({ action: 'reloadtaball' });
-        },
-
-    },
-    {
-        id: 'gotolefttab',
-        function: (option) => {
-            sendChromeMessage({ action: 'gotolefttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
-        },
-
-    },
-    {
-        id: 'gotorighttab',
-        function: (option) => {
-            sendChromeMessage({ action: 'gotorighttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
-        },
-
-    },
-    {
-        id: 'gotolefttabwithloop',
-        function: (option) => {
-            sendChromeMessage({ action: 'gotolefttabwithloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
-        },
-
-    },
-    {
-        id: 'gotorighttabwithloop',
-        function: (option) => {
-            sendChromeMessage({ action: 'gotorighttabwithloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
-        },
-
-    },
-    {
-        id: 'gotomostlefttab',
-        function: (option) => {
-            sendChromeMessage({ action: 'gotomostlefttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
-        },
-
-    },
-    {
-        id: 'gotomostrighttab',
-        function: (option) => {
-            sendChromeMessage({ action: 'gotomostrighttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
-        },
-
-    },
-    {
-        id: 'gotoprevioustab',
-        function: (option) => {
-            sendChromeMessage({ action: 'gotoprevioustab', shouldPreventContextMenu: option.shouldPreventContextMenu });
-        },
-
-    },
-    {
-        id: 'gotoprevioustabloop',
-        function: (option) => {
-            sendChromeMessage({ action: 'gotoprevioustabloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
-        },
-
-    },
-    {
-        id: 'gotonexttab',
-        function: (option) => {
-            sendChromeMessage({ action: 'gotonexttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
-        },
-
-    },
-    {
-        id: 'gotonexttabloop',
-        function: (option) => {
-            sendChromeMessage({ action: 'gotonexttabloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
-        },
-
-    },
-    {
-        id: 'addbookmark',
-        function: () => {
-            sendChromeMessage({ action: 'addbookmark', bookmark: { title: document.title, url: document.location.href } });
-        },
-
-    },
-    {
-        id: 'upsertbookmark',
-        function: () => {
-            sendChromeMessage({ action: 'upsertbookmark', bookmark: { title: document.title, url: document.location.href } });
-        },
-
-    },
-    {
-        id: 'deletebookmark',
-        function: () => {
-            sendChromeMessage({ action: 'deletebookmark', bookmark: { url: document.location.href } });
-        },
-
-    },
-    {
-        id: 'createwindow',
-        function: () => {
-            sendChromeMessage({ action: 'createwindow' });
-        },
-
-    },
-    {
-        id: 'closewindow',
-        function: () => {
-            sendChromeMessage({ action: 'closewindow' });
-        },
-
-    },
-    {
-        id: 'closewindowall',
-        function: () => {
-            sendChromeMessage({ action: 'closewindowall' });
-        },
-
-    },
-    {
-        id: 'maximizewindow',
-        function: () => {
-            sendChromeMessage({ action: 'maximizewindow' });
-        },
-
-    },
-    {
-        id: 'minimizewindow',
-        function: () => {
-            sendChromeMessage({ action: 'minimizewindow' });
-        },
-
-    },
-    {
-        id: 'fullscreenwindow',
-        function: () => {
-            sendChromeMessage({ action: 'fullscreenwindow' });
-        },
-
-    },
-    {
-        id: 'copyurl',
-        function: () => {
-            if (isInRootWindow()) {
-                if (navigator.clipboard) {
-                    navigator.clipboard.writeText(document.location.href).then(() => { });
-                    alert(`${chrome.i18n.getMessage('messageCopied')}\n ${document.location.href}`);
-                }
-                else {
-                    alert(chrome.i18n.getMessage('messageCopyError'));
-                }
-            }
-            else {
-                getRootWindow().postMessage({
-                    extensionId: chrome.runtime.id,
-                    type: 'execute-action',
-                    action: 'copyurl',
-                    option: undefined,
+            },
+            {
+                id: 'scrolldown',
+                function: (option) => {
+                    if (isInRootWindow()) {
+                        const element = option.target || document.documentElement;
+                        if (scrollDownElement(element)) {
+                            window.scrollBy({ top: 0.8 * window.innerHeight, behavior: 'auto' });
+                        }
+                    }
+                    else {
+                        if (scrollDownElement(option.target)) {
+                            option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
+                            getRootWindow().postMessage({
+                                extensionId: chrome.runtime.id,
+                                type: 'execute-action',
+                                action: 'scrolldown',
+                                option: option,
+                            },
+                                '*');
+                        }
+                    }
                 },
-                    '*');
-            }
-        },
-
-    },
-    {
-        id: 'copytitle',
-        function: () => {
-            if (isInRootWindow()) {
-                if (navigator.clipboard) {
-                    navigator.clipboard.writeText(document.title).then(() => { });
-                    alert(`${chrome.i18n.getMessage('messageCopied')}\n ${document.title}`);
-                }
-                else {
-                    alert(chrome.i18n.getMessage('messageCopyError'));
-                }
-            }
-            else {
-                getRootWindow().postMessage({
-                    extensionId: chrome.runtime.id,
-                    type: 'execute-action',
-                    action: 'copytitle',
-                    option: undefined,
+            },
+            {
+                id: 'scrollleft',
+                function: (option) => {
+                    if (isInRootWindow()) {
+                        const element = option.target || document.documentElement;
+                        if (scrollLeftElement(element)) {
+                            window.scrollBy({ left: -0.8 * window.innerWidth, behavior: 'auto' });
+                        }
+                    }
+                    else {
+                        if (scrollLeftElement(option.target)) {
+                            option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
+                            getRootWindow().postMessage({
+                                extensionId: chrome.runtime.id,
+                                type: 'execute-action',
+                                action: 'scrollleft',
+                                option: option,
+                            },
+                                '*');
+                        }
+                    }
                 },
-                    '*');
+            },
+            {
+                id: 'scrollright',
+                function: (option) => {
+                    if (isInRootWindow()) {
+                        const element = option.target || document.documentElement;
+                        if (scrollRightElement(element)) {
+                            window.scrollBy({ left: 0.8 * window.innerWidth, behavior: 'auto' });
+                        }
+                    }
+                    else {
+                        if (scrollRightElement(option.target)) {
+                            option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
+                            getRootWindow().postMessage({
+                                extensionId: chrome.runtime.id,
+                                type: 'execute-action',
+                                action: 'scrollright',
+                                option: option,
+                            },
+                                '*');
+                        }
+                    }
+                },
+            },
+            {
+                id: 'scrolltotop',
+                function: (option) => {
+                    if (isInRootWindow()) {
+                        const element = option.target || document.documentElement;
+                        if (scrollTopElement(element)) {
+                            window.scroll({ top: 0, behavior: 'auto' });
+                        }
+                    }
+                    else {
+                        if (scrollTopElement(option.target)) {
+                            option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
+                            getRootWindow().postMessage({
+                                extensionId: chrome.runtime.id,
+                                type: 'execute-action',
+                                action: 'scrolltotop',
+                                option: option,
+                            },
+                                '*');
+                        }
+                    }
+                },
+            },
+            {
+                id: 'scrolltobottom',
+                function: (option) => {
+                    if (isInRootWindow()) {
+                        const element = option.target || document.documentElement;
+                        if (scrollBottomElement(element)) {
+                            window.scroll({ top: document.documentElement.scrollHeight, behavior: 'auto' });
+                        }
+                    }
+                    else {
+                        if (scrollBottomElement(option.target)) {
+                            option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
+                            getRootWindow().postMessage({
+                                extensionId: chrome.runtime.id,
+                                type: 'execute-action',
+                                action: 'scrolltobottom',
+                                option: option,
+                            },
+                                '*');
+                        }
+                    }
+                },
+            },
+            {
+                id: 'scrolltoleftmost',
+                function: (option) => {
+                    if (isInRootWindow()) {
+                        const element = option.target || document.documentElement;
+                        if (scrollLeftmostElement(element)) {
+                            window.scroll({ left: 0, behavior: 'auto' });
+                        }
+                    }
+                    else {
+                        if (scrollLeftmostElement(option.target)) {
+                            option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
+                            getRootWindow().postMessage({
+                                extensionId: chrome.runtime.id,
+                                type: 'execute-action',
+                                action: 'scrolltoleftmost',
+                                option: option,
+                            },
+                                '*');
+                        }
+                    }
+                },
+            },
+            {
+                id: 'scrolltorightmost',
+                function: (option) => {
+                    if (isInRootWindow()) {
+                        const element = option.target || document.documentElement;
+                        if (scrollRightmostElement(element)) {
+                            window.scroll({ left: document.documentElement.scrollWidth, behavior: 'auto' });
+                        }
+                    }
+                    else {
+                        if (scrollRightmostElement(option.target)) {
+                            option.target = undefined;  // Remove live HTMLElement as it is not accessible from another window
+                            getRootWindow().postMessage({
+                                extensionId: chrome.runtime.id,
+                                type: 'execute-action',
+                                action: 'scrolltorightmost',
+                                option: option,
+                            },
+                                '*');
+                        }
+                    }
+                },
+            },
+        ],
+    },
+    {
+        id: 'actionCategoryTabManipulation',
+        actions: [
+            {
+                id: 'createtab',
+                function: () => {
+                    sendChromeMessage({ action: 'createtab' });
+                },
+            },
+            {
+                id: 'closetab',
+                function: () => {
+                    sendChromeMessage({ action: 'closetab' });
+                },
+            },
+            {
+                id: 'closetableftall',
+                function: () => {
+                    sendChromeMessage({ action: 'closetableftall' });
+                },
+            },
+            {
+                id: 'closetabrightall',
+                function: () => {
+                    sendChromeMessage({ action: 'closetabrightall' });
+                },
+            },
+            {
+                id: 'closetabotherall',
+                function: () => {
+                    sendChromeMessage({ action: 'closetabotherall' });
+                },
+            },
+            {
+                id: 'reopenclosedtab',
+                function: () => {
+                    sendChromeMessage({ action: 'reopenclosedtab' });
+                },
+            },
+            {
+                id: 'reloadtab',
+                function: () => {
+                    sendChromeMessage({ action: 'reloadtab' });
+                },
+            },
+            {
+                id: 'reloadtabhard',
+                function: () => {
+                    sendChromeMessage({ action: 'reloadtabhard' });
+                },
+            },
+            {
+                id: 'reloadtaball',
+                function: () => {
+                    sendChromeMessage({ action: 'reloadtaball' });
+                },
+            },
+            {
+                id: 'addtabtogroup',
+                function: () => {
+                    sendChromeMessage({ action: 'addtabtogroup' });
+                },
+            },
+            {
+                id: 'removetabfromgroup',
+                function: () => {
+                    sendChromeMessage({ action: 'removetabfromgroup' });
+                },
+            },
+            {
+                id: 'duplicatetab',
+                function: () => {
+                    sendChromeMessage({ action: 'duplicatetab' });
+                },
+            },
+            {
+                id: 'pintab',
+                function: () => {
+                    sendChromeMessage({ action: 'pintab' });
+                },
+            },
+            {
+                id: 'mutetab',
+                function: () => {
+                    sendChromeMessage({ action: 'mutetab' });
+                },
+            },
+            {
+                id: 'unmutetab',
+                function: () => {
+                    sendChromeMessage({ action: 'unmutetab' });
+                },
+            },
+            {
+                id: 'mutetabtoggle',
+                function: () => {
+                    sendChromeMessage({ action: 'mutetabtoggle' });
+                },
+            },
+            {
+                id: 'mutetaball',
+                function: () => {
+                    sendChromeMessage({ action: 'mutetaball' });
+                },
+            },
+            {
+                id: 'unmutetaball',
+                function: () => {
+                    sendChromeMessage({ action: 'unmutetaball' });
+                },
+            },
+            {
+                id: 'zoomin',
+                function: () => {
+                    sendChromeMessage({ action: 'zoomin' });
+                },
+            },
+            {
+                id: 'zoomout',
+                function: () => {
+                    sendChromeMessage({ action: 'zoomout' });
+                },
+            },
+            {
+                id: 'zoomdefault',
+                function: () => {
+                    sendChromeMessage({ action: 'zoomdefault' });
+                },
+            },
+        ]
+    },
+    {
+        id: 'actionCategoryTabMove',
+        actions: [
+            {
+                id: 'gotolefttab',
+                function: (option) => {
+                    sendChromeMessage({ action: 'gotolefttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
+                },
+            },
+            {
+                id: 'gotorighttab',
+                function: (option) => {
+                    sendChromeMessage({ action: 'gotorighttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
+                },
+            },
+            {
+                id: 'gotolefttabwithloop',
+                function: (option) => {
+                    sendChromeMessage({ action: 'gotolefttabwithloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
+                },
+            },
+            {
+                id: 'gotorighttabwithloop',
+                function: (option) => {
+                    sendChromeMessage({ action: 'gotorighttabwithloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
+                },
+            },
+            {
+                id: 'gotomostlefttab',
+                function: (option) => {
+                    sendChromeMessage({ action: 'gotomostlefttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
+                },
+            },
+            {
+                id: 'gotomostrighttab',
+                function: (option) => {
+                    sendChromeMessage({ action: 'gotomostrighttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
+                },
+            },
+            {
+                id: 'gotoprevioustab',
+                function: (option) => {
+                    sendChromeMessage({ action: 'gotoprevioustab', shouldPreventContextMenu: option.shouldPreventContextMenu });
+                },
+            },
+            {
+                id: 'gotoprevioustabloop',
+                function: (option) => {
+                    sendChromeMessage({ action: 'gotoprevioustabloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
+                },
+            },
+            {
+                id: 'gotonexttab',
+                function: (option) => {
+                    sendChromeMessage({ action: 'gotonexttab', shouldPreventContextMenu: option.shouldPreventContextMenu });
+                },
+            },
+            {
+                id: 'gotonexttabloop',
+                function: (option) => {
+                    sendChromeMessage({ action: 'gotonexttabloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
+                },
+            },
+        ]
+    },
+    {
+        id: 'actionCategoryWindow',
+        actions: [
+            {
+                id: 'createwindow',
+                function: () => {
+                    sendChromeMessage({ action: 'createwindow' });
+                },
+            },
+            {
+                id: 'closewindow',
+                function: () => {
+                    sendChromeMessage({ action: 'closewindow' });
+                },
+            },
+            {
+                id: 'closewindowall',
+                function: () => {
+                    sendChromeMessage({ action: 'closewindowall' });
+                },
+            },
+            {
+                id: 'maximizewindow',
+                function: () => {
+                    sendChromeMessage({ action: 'maximizewindow' });
+                },
+            },
+            {
+                id: 'minimizewindow',
+                function: () => {
+                    sendChromeMessage({ action: 'minimizewindow' });
+                },
+            },
+            {
+                id: 'fullscreenwindow',
+                function: () => {
+                    sendChromeMessage({ action: 'fullscreenwindow' });
+                },
+            },
+        ]
+    },
+    {
+        id: 'actionCategoryBookmark',
+        actions: [
+            {
+                id: 'addbookmark',
+                function: () => {
+                    sendChromeMessage({ action: 'addbookmark', bookmark: { title: document.title, url: document.location.href } });
+                },
+            },
+            {
+                id: 'upsertbookmark',
+                function: () => {
+                    sendChromeMessage({ action: 'upsertbookmark', bookmark: { title: document.title, url: document.location.href } });
+                },
+            },
+            {
+                id: 'deletebookmark',
+                function: () => {
+                    sendChromeMessage({ action: 'deletebookmark', bookmark: { url: document.location.href } });
+                },
+            },
+        ]
+    },
+    {
+        id: 'actionCategoryLink',
+        actions: [
+            {
+                id: 'openlinkinnwetab',
+                function: (option) => {
+                    if (option.url) {
+                        sendChromeMessage({ action: 'openlinkinnwetab', url: option.url });
+                    }
+                },
+            },
+            {
+                id: 'openlinkinnwetabandactivate',
+                function: (option) => {
+                    if (option.url) {
+                        sendChromeMessage({ action: 'openlinkinnwetabandactivate', url: option.url });
+                    }
+                },
+            },
+            {
+                id: 'openlinkinnwewindow',
+                function: (option) => {
+                    if (option.url) {
+                        sendChromeMessage({ action: 'openlinkinnwewindow', url: option.url });
+                    }
+                },
+            },
+            {
+                id: 'openlinkinnwewindowandactivate',
+                function: (option) => {
+                    if (option.url) {
+                        sendChromeMessage({ action: 'openlinkinnwewindowandactivate', url: option.url });
+                    }
+                },
+            },
+            {
+                id: 'openimageinnewtab',
+                function: (option) => {
+                    if (option.src) {
+                        sendChromeMessage({ action: 'openlinkinnwetab', url: option.src });
+                    }
+                },
+            },
+            {
+                id: 'openimageinnewtabandactivate',
+                function: (option) => {
+                    if (option.src) {
+                        sendChromeMessage({ action: 'openlinkinnwetabandactivate', url: option.src });
+                    }
+                },
+            },
+            {
+                id: 'openimageinnewwindow',
+                function: (option) => {
+                    if (option.src) {
+                        sendChromeMessage({ action: 'openlinkinnwewindow', url: option.src });
+                    }
+                },
+            },
+            {
+                id: 'openimageinnewwindowandactivate',
+                function: (option) => {
+                    if (option.src) {
+                        sendChromeMessage({ action: 'openlinkinnwewindowandactivate', url: option.src });
+                    }
+                },
+            },
+        ]
+    },
+    {
+        id: 'actionCategoryMisc',
+        actions: [
+            {
+                id: 'copyurl',
+                function: () => {
+                    if (isInRootWindow()) {
+                        if (navigator.clipboard) {
+                            navigator.clipboard.writeText(document.location.href).then(() => { });
+                            alert(`${chrome.i18n.getMessage('messageCopied')}\n ${document.location.href}`);
+                        }
+                        else {
+                            alert(chrome.i18n.getMessage('messageCopyError'));
+                        }
+                    }
+                    else {
+                        getRootWindow().postMessage({
+                            extensionId: chrome.runtime.id,
+                            type: 'execute-action',
+                            action: 'copyurl',
+                            option: undefined,
+                        },
+                            '*');
+                    }
+                },
+            },
+            {
+                id: 'copytitle',
+                function: () => {
+                    if (isInRootWindow()) {
+                        if (navigator.clipboard) {
+                            navigator.clipboard.writeText(document.title).then(() => { });
+                            alert(`${chrome.i18n.getMessage('messageCopied')}\n ${document.title}`);
+                        }
+                        else {
+                            alert(chrome.i18n.getMessage('messageCopyError'));
+                        }
+                    }
+                    else {
+                        getRootWindow().postMessage({
+                            extensionId: chrome.runtime.id,
+                            type: 'execute-action',
+                            action: 'copytitle',
+                            option: undefined,
+                        },
+                            '*');
+                    }
+                },
+            },
+            {
+                id: 'openoptionspage',
+                function: () => {
+                    sendChromeMessage({ action: 'openoptionspage' });
+                },
+
+            },
+            {
+                id: 'disableextension',
+                function: () => {
+                    window.postMessage({ extensionId: chrome.runtime.id, type: 'disable-mousegesture' }, '*');
+                }
             }
-        },
-
+        ]
     },
-    {
-        id: 'mutetab',
-        function: () => {
-            sendChromeMessage({ action: 'mutetab' });
-        },
-
-    },
-    {
-        id: 'unmutetab',
-        function: () => {
-            sendChromeMessage({ action: 'unmutetab' });
-        },
-
-    },
-    {
-        id: 'mutetabtoggle',
-        function: () => {
-            sendChromeMessage({ action: 'mutetabtoggle' });
-        },
-
-    },
-    {
-        id: 'mutetaball',
-        function: () => {
-            sendChromeMessage({ action: 'mutetaball' });
-        },
-
-    },
-    {
-        id: 'unmutetaball',
-        function: () => {
-            sendChromeMessage({ action: 'unmutetaball' });
-        },
-
-    },
-    {
-        id: 'zoomin',
-        function: () => {
-            sendChromeMessage({ action: 'zoomin' });
-        },
-
-    },
-    {
-        id: 'zoomout',
-        function: () => {
-            sendChromeMessage({ action: 'zoomout' });
-        },
-
-    },
-    {
-        id: 'zoomdefault',
-        function: () => {
-            sendChromeMessage({ action: 'zoomdefault' });
-        },
-
-    },
-    {
-        id: 'openlinkinnwetab',
-        function: (option) => {
-            if (option.url) {
-                sendChromeMessage({ action: 'openlinkinnwetab', url: option.url });
-            }
-        },
-
-    },
-    {
-        id: 'openlinkinnwetabandactivate',
-        function: (option) => {
-            if (option.url) {
-                sendChromeMessage({ action: 'openlinkinnwetabandactivate', url: option.url });
-            }
-        },
-
-    },
-    {
-        id: 'openlinkinnwewindow',
-        function: (option) => {
-            if (option.url) {
-                sendChromeMessage({ action: 'openlinkinnwewindow', url: option.url });
-            }
-        },
-
-    },
-    {
-        id: 'openlinkinnwewindowandactivate',
-        function: (option) => {
-            if (option.url) {
-                sendChromeMessage({ action: 'openlinkinnwewindowandactivate', url: option.url });
-            }
-        },
-
-    },
-    {
-        id: 'openimageinnewtab',
-        function: (option) => {
-            if (option.src) {
-                sendChromeMessage({ action: 'openlinkinnwetab', url: option.src });
-            }
-        },
-
-    },
-    {
-        id: 'openimageinnewtabandactivate',
-        function: (option) => {
-            if (option.src) {
-                sendChromeMessage({ action: 'openlinkinnwetabandactivate', url: option.src });
-            }
-        },
-
-    },
-    {
-        id: 'openimageinnewwindow',
-        function: (option) => {
-            if (option.src) {
-                sendChromeMessage({ action: 'openlinkinnwewindow', url: option.src });
-            }
-        },
-
-    },
-    {
-        id: 'openimageinnewwindowandactivate',
-        function: (option) => {
-            if (option.src) {
-                sendChromeMessage({ action: 'openlinkinnwewindowandactivate', url: option.src });
-            }
-        },
-
-    },
-    {
-        id: 'openoptionspage',
-        function: () => {
-            sendChromeMessage({ action: 'openoptionspage' });
-        },
-
-    },
-    {
-        id: 'disableextension',
-        function: () => {
-            window.postMessage({ extensionId: chrome.runtime.id, type: 'disable-mousegesture' }, '*');
-        }
-    }
 ];
 
 /**
@@ -660,7 +661,14 @@ const mouseGestureAction = [
  * @param {ActionOption} actionOption - The options for the action.
  */
 function executeAction(id, actionOption) {
-    const action = mouseGestureAction.find((action) => action.id === id);
+    if (id === 'optionsSelectOptionNone') {
+        return;
+    }
+
+    const actions = mouseGestureActionCategories.map((category) => category.actions).reduce((previousValue, currentValue) => {
+        return previousValue.concat(currentValue);
+    });
+    const action = actions.find((action) => action.id === id);
     if (action && action.function) {
         action.function(actionOption);
     }
@@ -670,11 +678,11 @@ function executeAction(id, actionOption) {
 }
 
 /**
- * @summary Get the list of action IDs.
- * @returns {string[]} - The list of action IDs.
+ * @summary Get the list of mouse gesture action categories.
+ * @returns {MouseGestureActionCategory[]} - The list of action categories.
  */
-function getGestureActionIdList() {
-    return mouseGestureAction.map((action) => action.id);
+function getGestureActionCategories() {
+    return mouseGestureActionCategories;
 }
 
 /**

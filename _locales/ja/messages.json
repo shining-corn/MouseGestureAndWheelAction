@@ -2,11 +2,17 @@
     "extensionDescription": {
         "message": "マウスジェスチャー、右クリック＋ホイール、ロッカージェスチャーによるブラウザの操作。"
     },
+    "actionCategoryHistory": {
+        "message": "履歴"
+    },
     "back": {
         "message": "戻る"
     },
     "forward": {
         "message": "進む"
+    },
+    "actionCategoryScroll": {
+        "message": "スクロール"
     },
     "scrollup": {
         "message": "上にスクロール"
@@ -31,6 +37,9 @@
     },
     "scrolltorightmost": {
         "message": "一番右にスクロール"
+    },
+    "actionCategoryTabManipulation": {
+        "message": "タブの操作"
     },
     "createtab": {
         "message": "新しいタブ"
@@ -71,6 +80,33 @@
     "reloadtaball": {
         "message": "すべてのタブを再読み込み"
     },
+    "mutetab": {
+        "message": "タブをミュート"
+    },
+    "unmutetab": {
+        "message": "タブのミュートを解除"
+    },
+    "mutetabtoggle": {
+        "message": "タブのミュートを切り替え"
+    },
+    "mutetaball": {
+        "message": "すべてのタブをミュート"
+    },
+    "unmutetaball": {
+        "message": "すべてのタブをミュート解除"
+    },
+    "zoomin": {
+        "message": "ズームイン"
+    },
+    "zoomout": {
+        "message": "ズームアウト"
+    },
+    "zoomdefault": {
+        "message": "ズームをリセット"
+    },
+    "actionCategoryTabMove": {
+        "message": "タブの移動"
+    },
     "gotolefttab": {
         "message": "左のタブに移動"
     },
@@ -101,17 +137,8 @@
     "gotonexttabloop": {
         "message": "次のタブに進む（ループする）"
     },
-    "openoptionspage": {
-        "message": "オプションを開く"
-    },
-    "addbookmark": {
-        "message": "ブックマークバーに追加"
-    },
-    "upsertbookmark": {
-        "message": "ブックマークを追加"
-    },
-    "deletebookmark": {
-        "message": "ブックマークを削除"
+    "actionCategoryWindow": {
+        "message": "ウィンドウ"
     },
     "createwindow": {
         "message": "新しいウィンドウ"
@@ -131,38 +158,20 @@
     "fullscreenwindow": {
         "message": "フルスクリーン"
     },
-    "copyurl": {
-        "message": "URLをコピー"
+    "actionCategoryBookmark": {
+        "message": "ブックマーク"
     },
-    "copytitle": {
-        "message": "タイトルをコピー"
+    "addbookmark": {
+        "message": "ブックマークバーに追加"
     },
-    "mutetab": {
-        "message": "タブをミュート"
+    "upsertbookmark": {
+        "message": "ブックマークを追加"
     },
-    "unmutetab": {
-        "message": "タブのミュートを解除"
+    "deletebookmark": {
+        "message": "ブックマークを削除"
     },
-    "mutetabtoggle": {
-        "message": "タブのミュートを切り替え"
-    },
-    "mutetaball": {
-        "message": "すべてのタブをミュート"
-    },
-    "unmutetaball": {
-        "message": "すべてのタブをミュート解除"
-    },
-    "zoomin": {
-        "message": "ズームイン"
-    },
-    "zoomout": {
-        "message": "ズームアウト"
-    },
-    "zoomdefault": {
-        "message": "ズームをリセット"
-    },
-    "disableextension": {
-        "message": "このタブでこの拡張機能を無効化"
+    "actionCategoryLink": {
+        "message": "リンク"
     },
     "openlinkinnwetab": {
         "message": "リンクを新しいタブで開く"
@@ -187,6 +196,24 @@
     },
     "openimageinnewwindowandactivate": {
         "message": "画像を新しいウィンドウで開いてアクティブにする"
+    },
+    "actionCategoryMisc": {
+        "message": "その他"
+    },
+    "copyurl": {
+        "message": "URLをコピー"
+    },
+    "copytitle": {
+        "message": "タイトルをコピー"
+    },
+    "openoptionspage": {
+        "message": "オプションを開く"
+    },
+    "disableextension": {
+        "message": "このタブでこの拡張機能を無効化"
+    },
+    "actionCategoryCustomUrl": {
+        "message": "カスタムURL"
     },
     "opencustomurl": {
         "message": "カスタムURLを開く"
@@ -392,11 +419,11 @@
     "optionsHintOpenLinkInNewTab": {
         "message": "マウスの中央ボタン（ホイール）でリンクをクリックするとリンク先を新しいタブで開く"
     },
-    "hideHintPermanently": {
-        "message": "ヒントを永続的に非表示にする"
-    },
     "optionsHintHorizontalScroll": {
         "message": "shiftキーを押しながらマウスホイールを回転させると横スクロール"
+    },
+    "hideHintPermanently": {
+        "message": "ヒントを永続的に非表示にする"
     },
     "optionsAddMouseGestureDescription": {
         "message": "マウスの右ボタンを押しながらマウスを移動または左クリック"

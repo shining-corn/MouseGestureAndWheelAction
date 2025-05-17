@@ -2,11 +2,17 @@
     "extensionDescription": {
         "message": "Mouse gestures, right-click + wheel and rocker gesture to control the browser."
     },
+    "actionCategoryHistory": {
+        "message": "History"
+    },
     "back": {
         "message": "Go back"
     },
     "forward": {
         "message": "Go forward"
+    },
+    "actionCategoryScroll": {
+        "message": "Scroll"
     },
     "scrollup": {
         "message": "Scroll up"
@@ -31,6 +37,9 @@
     },
     "scrolltorightmost": {
         "message": "Scroll to the rightmost"
+    },
+    "actionCategoryTabManipulation": {
+        "message": "Tab Manipulation"
     },
     "createtab": {
         "message": "New tab"
@@ -71,6 +80,33 @@
     "reloadtaball": {
         "message": "Reload all tabs"
     },
+    "mutetab": {
+        "message": "Mute"
+    },
+    "unmutetab": {
+        "message": "Unmute"
+    },
+    "mutetabtoggle": {
+        "message": "Toggle mute"
+    },
+    "mutetaball": {
+        "message": "Mute all tabs"
+    },
+    "unmutetaball": {
+        "message": "Unmute all tabs"
+    },
+    "zoomin": {
+        "message": "Zoom in"
+    },
+    "zoomout": {
+        "message": "Zoom out"
+    },
+    "zoomdefault": {
+        "message": "Reset to default zoom level"
+    },
+    "actionCategoryTabMove": {
+        "message": "Tab Move"
+    },
     "gotolefttab": {
         "message": "Go to left tab"
     },
@@ -101,17 +137,8 @@
     "gotonexttabloop": {
         "message": "Go to next tab (loop)"
     },
-    "openoptionspage": {
-        "message": "Open options"
-    },
-    "addbookmark": {
-        "message": "Add to bookmarks bar"
-    },
-    "upsertbookmark": {
-        "message": "Add bookmark"
-    },
-    "deletebookmark": {
-        "message": "Delete bookmark"
+    "actionCategoryWindow": {
+        "message": "Window"
     },
     "createwindow": {
         "message": "New window"
@@ -131,38 +158,20 @@
     "fullscreenwindow": {
         "message": "Fullscreen"
     },
-    "copyurl": {
-        "message": "Copy url"
+    "actionCategoryBookmark": {
+        "message": "Bookmark"
     },
-    "copytitle": {
-        "message": "Copy title"
+    "addbookmark": {
+        "message": "Add to bookmarks bar"
     },
-    "mutetab": {
-        "message": "Mute"
+    "upsertbookmark": {
+        "message": "Add bookmark"
     },
-    "unmutetab": {
-        "message": "Unmute"
+    "deletebookmark": {
+        "message": "Delete bookmark"
     },
-    "mutetabtoggle": {
-        "message": "Toggle mute"
-    },
-    "mutetaball": {
-        "message": "Mute all tabs"
-    },
-    "unmutetaball": {
-        "message": "Unmute all tabs"
-    },
-    "zoomin": {
-        "message": "Zoom in"
-    },
-    "zoomout": {
-        "message": "Zoom out"
-    },
-    "zoomdefault": {
-        "message": "Reset to default zoom level"
-    },
-    "disableextension": {
-        "message": "Disable this extension on this tab"
+    "actionCategoryLink": {
+        "message": "Link"
     },
     "openlinkinnwetab": {
         "message": "Open link in new tab"
@@ -187,6 +196,24 @@
     },
     "openimageinnewwindowandactivate": {
         "message": "Open image in new window and activate"
+    },
+    "actionCategoryMisc": {
+        "message": "Misc"
+    },
+    "copyurl": {
+        "message": "Copy url"
+    },
+    "copytitle": {
+        "message": "Copy title"
+    },
+    "openoptionspage": {
+        "message": "Open options"
+    },
+    "disableextension": {
+        "message": "Disable this extension on this tab"
+    },
+    "actionCategoryCustomUrl": {
+        "message": "Custom URL"
     },
     "opencustomurl": {
         "message": "Open custom URL"

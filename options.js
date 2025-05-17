@@ -367,31 +367,53 @@ class MouseGestureController {
  * @summary Append gesture action options to select element.
  * @param {ExtensionOptions} options 
  * @param {HTMLElement} selectElement 
- * @param {string} selectedOption 
+ * @param {string} selectedOptionId 
  */
-function appendGestureActionOptionsToSelectElement(options, selectElement, selectedOption) {
-    const actionIdList = getGestureActionIdList();
-    for (const id of actionIdList) {
-        const optionElement = document.createElement('option');
-        optionElement.value = id;
-        optionElement.dataset.i18n = id || 'optionsSelectOptionNone';
-        if (selectedOption === id) {
-            optionElement.selected = true;
+function appendGestureActionOptionsToSelectElement(options, selectElement, selectedOptionId) {
+    // Add "None" option
+    const noneOptionElement = document.createElement('option');
+    noneOptionElement.value = 'optionsSelectOptionNone';
+    noneOptionElement.dataset.i18n = 'optionsSelectOptionNone';
+    if (selectedOptionId === noneOptionElement.value) {
+        noneOptionElement.selected = true;
+    }
+    selectElement.appendChild(noneOptionElement);
+
+    // Add embeded options
+    const categories = getGestureActionCategories();
+    for (const category of categories) {
+        const categoryElement = document.createElement('optgroup');
+        categoryElement.label = chrome.i18n.getMessage(category.id);
+
+        for (const id of category.actions.map((action) => action.id)) {
+            const optionElement = document.createElement('option');
+            optionElement.value = id;
+            optionElement.dataset.i18n = id || 'optionsSelectOptionNone';
+            if (selectedOptionId === id) {
+                optionElement.selected = true;
+            }
+            categoryElement.appendChild(optionElement);
         }
-        selectElement.appendChild(optionElement);
+
+        selectElement.appendChild(categoryElement);
     }
 
-    // Custom URL
-    if (Object.prototype.toString.call(options.customUrlSettings) === '[object Array]') {
+    // Add custom URL options
+    if (Object.prototype.toString.call(options.customUrlSettings) === '[object Array]' && options.customUrlSettings.length > 0) {
+        const customUrlCategoryElement = document.createElement('optgroup');
+        customUrlCategoryElement.label = chrome.i18n.getMessage('actionCategoryCustomUrl');
+
         for (const customUrl of options.customUrlSettings) {
             const optionElement = document.createElement('option');
             optionElement.value = `customurl:${customUrl.id}`;
             optionElement.innerText = `${chrome.i18n.getMessage('openCustomUrl')}:${customUrl.id}`;
-            if (selectedOption === optionElement.value) {
+            if (selectedOptionId === optionElement.value) {
                 optionElement.selected = true;
             }
-            selectElement.appendChild(optionElement);
+            customUrlCategoryElement.appendChild(optionElement);
         }
+
+        selectElement.appendChild(customUrlCategoryElement);
     }
 }
 
