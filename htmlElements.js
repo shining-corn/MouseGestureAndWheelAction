@@ -296,7 +296,7 @@ class ShowArrowsElement {
                 this.#arrowsArea.style.backgroundColor = 'rgba(0, 0, 0, 0)';
             }
             else {
-                this.#arrowsArea.style.backgroundColor = this.#options.backgroundColor;
+                this.#arrowsArea.style.backgroundColor = this.#options.gestureBackgroundColor;
             }
 
             this.#arrowsArea.style.fontSize = `${this.#options.gestureArrowFontSize}px`;
