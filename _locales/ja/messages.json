@@ -59,6 +59,9 @@
     "closetab": {
         "message": "タブを閉じる"
     },
+    "closetabandmovetoprevioustab": {
+        "message": "タブを閉じて前のタブに移動"
+    },
     "closetableftall": {
         "message": "左側のタブをすべて閉じる"
     },

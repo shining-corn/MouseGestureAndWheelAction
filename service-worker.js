@@ -207,6 +207,21 @@ class MouseGestureService {
                             chrome.tabs.remove(sender.tab.id);
                         })();
                         break;
+                    case 'closetabandmovetoprevioustab':
+                        (async () => {
+                            const tab = await chrome.tabs.query({ windowId: sender.tab.windowId });
+                            if (tab.length === 1) {
+                                if (this.#options.addNewTabOnLastTabClose) {
+                                    chrome.tabs.create({ windowId: sender.tab.windowId, url: 'chrome://newtab' });
+                                }
+                            }
+                            else {
+                                this.goToPreviousTab(sender, false, request.shouldPreventContextMenu);
+                            }
+
+                            chrome.tabs.remove(sender.tab.id);
+                        })();
+                        break;
                     case 'closetableftall':
                         (async () => {
                             const tabs = await chrome.tabs.query({ currentWindow: true });

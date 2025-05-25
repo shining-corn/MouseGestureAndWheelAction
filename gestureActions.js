@@ -276,6 +276,12 @@ const mouseGestureActionCategories = [
                 },
             },
             {
+                id: 'closetabandmovetoprevioustab',
+                function: () => {
+                    sendChromeMessage({ action: 'closetabandmovetoprevioustab' });
+                },
+            },
+            {
                 id: 'closetableftall',
                 function: () => {
                     sendChromeMessage({ action: 'closetableftall' });
