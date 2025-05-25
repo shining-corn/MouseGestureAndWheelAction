@@ -503,19 +503,52 @@ const mouseGestureActionCategories = [
             {
                 id: 'addbookmark',
                 function: () => {
-                    sendChromeMessage({ action: 'addbookmark', bookmark: { title: document.title, url: document.location.href } });
+                    if (isInRootWindow()) {
+                        sendChromeMessage({ action: 'addbookmark', bookmark: { title: document.title, url: document.location.href } });
+                    }
+                    else {
+                        getRootWindow().postMessage({
+                            extensionId: chrome.runtime.id,
+                            type: 'execute-action',
+                            action: 'addbookmark',
+                            option: undefined,
+                        },
+                            '*');
+                    }
                 },
             },
             {
                 id: 'upsertbookmark',
                 function: () => {
-                    sendChromeMessage({ action: 'upsertbookmark', bookmark: { title: document.title, url: document.location.href } });
+                    if (isInRootWindow()) {
+                        sendChromeMessage({ action: 'upsertbookmark', bookmark: { title: document.title, url: document.location.href } });
+                    }
+                    else {
+                        getRootWindow().postMessage({
+                            extensionId: chrome.runtime.id,
+                            type: 'execute-action',
+                            action: 'upsertbookmark',
+                            option: undefined,
+                        },
+                            '*');
+                    }
                 },
             },
             {
                 id: 'deletebookmark',
                 function: () => {
-                    sendChromeMessage({ action: 'deletebookmark', bookmark: { url: document.location.href } });
+                    if (isInRootWindow()) {
+                        sendChromeMessage({ action: 'deletebookmark', bookmark: { url: document.location.href } });
+                    }
+                    else {
+                        getRootWindow().postMessage({
+                            extensionId: chrome.runtime.id,
+                            type: 'execute-action',
+                            action: 'deletebookmark',
+                            option: undefined,
+                        },
+                            '*');
+                    }
                 },
             },
         ]
