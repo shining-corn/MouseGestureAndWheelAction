@@ -139,7 +139,7 @@
           </div>
           <div>
             <label><input type="checkbox" id="add-new-tab-on-last-tab-close"><span
-              data-i18n="optionsAddNewTabOnLastTabClose"></span></label>
+                data-i18n="optionsAddNewTabOnLastTabClose"></span></label>
           </div>
         </div>
       </div>
@@ -194,40 +194,51 @@
       </summary>
       <div class="indent" style="margin-top: 1em;">
         <div style="display: flex">
-          <div style="width: 8em;"><span data-i18n="optionsLineColor"></span></div>
+          <div style="width: 10em;">
+            <label>
+              <input type="checkbox" id="enabled-gesture-line">
+              <span data-i18n="optionsLine"></span>
+            </label>
+          </div>
+          <div style="width: 4em; text-align: right; margin-right: 0.5em;"><span data-i18n="optionsColor"></span></div>
           <div><input id="color-line"></div>
-          <div style="width: 13em;"></div>
-          <div style="margin-left: 1em;"><label><input type="checkbox" id="hide-gesture-line"><span
-                data-i18n="optionsHide"></span></label></div>
         </div>
-        <div style="display: flex">
-          <div style="width: 8em;"><span data-i18n="optionsArrowColor" style="display:block; width: 8em;"></span></div>
-          <div><input id="color-arrow"></div>
-          <div style="margin-left: 1em; width: 8em;" data-i18n="optionsFontSize"></div>
-          <div style="width: 4em;"><input type="number" id="font-size-arrow" min="1" max="999" style="width: 2.5rem;">
+        <div style="display: flex; margin-top: 0.5em;">
+          <div style="width: 10em;">
+            <label><input type="checkbox" id="enabled-gesture-arrow"><span data-i18n="optionsArrow"></span></label>
           </div>
-          <div style="margin-left: 1em;"><label><input type="checkbox" id="hide-gesture-arrow"><span
-                data-i18n="optionsHide"></span></label></div>
-        </div>
-        <div style="display: flex">
-          <div style="width: 8em;"><span data-i18n="optionsTextColor" style="display:block; width: 8em;"></span></div>
-          <div><input id="color-text"></div>
-          <div style="margin-left: 1em; width: 8em;" data-i18n="optionsFontSize"></div>
-          <div style="width: 4em;"><input type="number" id="font-size-text" min="1" max="999" style="width: 2.5rem;">
+          <div style="width: 4em; text-align: right;"><span data-i18n="optionsColor"></span></div>
+          <div style="margin-left: 0.5em;"><input id="color-arrow"></div>
+          <div style="margin-left: 4em; width: 8em; text-align: right;" data-i18n="optionsFontSize"></div>
+          <div style="width: 4em; margin-left: 0.5em;">
+            <input type="number" id="font-size-arrow" min="1" max="999" style="width: 2.5rem;">
           </div>
-          <div style="margin-left: 1em;"><label><input type="checkbox" id="hide-gesture-text"><span
-                data-i18n="optionsHide"></span></label></div>
         </div>
-        <div style="display: flex">
-          <div style="width: 8em;"><span data-i18n="optionsBackgroundColor" style="display:block; width: 8em;"></span>
+        <div style="display: flex; margin-top: 0.5em;">
+          <div style="width: 10em;">
+            <label>
+              <input type="checkbox" id="enabled-gesture-text">
+              <span data-i18n="optionsText"></span>
+            </label>
           </div>
-          <div><input id="color-background"></div>
-          <div style="width: 13em;"></div>
-          <div style="margin-left: 1em;"><label><input type="checkbox" id="hide-gesture-background"><span
-                data-i18n="optionsHide"></span></label></div>
+          <div style="width: 4em; text-align: right;"><span data-i18n="optionsColor"></span></div>
+          <div style="margin-left: 0.5em;"><input id="color-text"></div>
+          <div style="margin-left: 4em; width: 8em; text-align: right;" data-i18n="optionsFontSize"></div>
+          <div style="width: 4em; margin-left: 0.5em;">
+            <input type="number" id="font-size-text" min="1" max="999" style="width: 2.5rem;">
+          </div>
         </div>
-        <br>
-        <button id="color-save"><span data-i18n="optionsSave"></span></button>
+        <div style="display: flex; margin-top: 0.5em;">
+          <div style="width: 10em;">
+            <label>
+              <input type="checkbox" id="enabled-gesture-background">
+              <span data-i18n="optionsBackground"></span>
+            </label>
+          </div>
+          <div style="width: 4em; text-align: right;"><span data-i18n="optionsColor"></span></div>
+          <div style="margin-left: 0.5em;"><input id="color-background"></div>
+        </div>
+        <button id="color-save" style="margin-top: 1em;"><span data-i18n="optionsSave"></span></button>
       </div>
     </details>
 

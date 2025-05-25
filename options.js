@@ -774,10 +774,10 @@ function renderAppearanceOptions(options) {
     lineColorElement.value = options.gestureLineColor;
     lineColorElement.disabled = options.hideGestureLine;
 
-    const hideGestureLineElement = document.getElementById('hide-gesture-line');
-    hideGestureLineElement.checked = options.hideGestureLine;
-    hideGestureLineElement.addEventListener('change', () => {
-        lineColorElement.disabled = hideGestureLineElement.checked;
+    const enabledGestureLineElement = document.getElementById('enabled-gesture-line');
+    enabledGestureLineElement.checked = !options.hideGestureLine;
+    enabledGestureLineElement.addEventListener('change', () => {
+        lineColorElement.disabled = !enabledGestureLineElement.checked;
     });
 
     const arrowColorElement = document.getElementById('color-arrow');
@@ -791,11 +791,11 @@ function renderAppearanceOptions(options) {
         arrowFontSizeElement.value = arrowFontSizeElement.value.slice(0, 3);
     });
 
-    const hideGestureArrowElement = document.getElementById('hide-gesture-arrow');
-    hideGestureArrowElement.checked = options.hideGestureArrow;
-    hideGestureArrowElement.addEventListener('change', () => {
-        arrowColorElement.disabled = hideGestureArrowElement.checked;
-        arrowFontSizeElement.disabled = hideGestureArrowElement.checked;
+    const enabledGestureArrowElement = document.getElementById('enabled-gesture-arrow');
+    enabledGestureArrowElement.checked = !options.hideGestureArrow;
+    enabledGestureArrowElement.addEventListener('change', () => {
+        arrowColorElement.disabled = !enabledGestureArrowElement.checked;
+        arrowFontSizeElement.disabled = !enabledGestureArrowElement.checked;
     });
 
     const textColorElement = document.getElementById('color-text');
@@ -809,36 +809,36 @@ function renderAppearanceOptions(options) {
         textFontSizeElement.value = textFontSizeElement.value.slice(0, 3);
     });
 
-    const hideGestureTextElement = document.getElementById('hide-gesture-text');
-    hideGestureTextElement.checked = options.hideGestureText;
-    hideGestureTextElement.addEventListener('change', () => {
-        textColorElement.disabled = hideGestureTextElement.checked;
-        textFontSizeElement.disabled = hideGestureTextElement.checked;
+    const enabledGestureTextElement = document.getElementById('enabled-gesture-text');
+    enabledGestureTextElement.checked = !options.hideGestureText;
+    enabledGestureTextElement.addEventListener('change', () => {
+        textColorElement.disabled = !enabledGestureTextElement.checked;
+        textFontSizeElement.disabled = !enabledGestureTextElement.checked;
     });
 
     const backgroundColorElement = document.getElementById('color-background');
     backgroundColorElement.value = options.gestureBackgroundColor;
     backgroundColorElement.disabled = options.hideGestureBackground;
 
-    const hideGestureBackgroundElement = document.getElementById('hide-gesture-background');
-    hideGestureBackgroundElement.checked = options.hideGestureBackground;
-    hideGestureBackgroundElement.addEventListener('change', () => {
-        backgroundColorElement.disabled = hideGestureBackgroundElement.checked;
+    const enabledGestureBackgroundElement = document.getElementById('enabled-gesture-background');
+    enabledGestureBackgroundElement.checked = !options.hideGestureBackground;
+    enabledGestureBackgroundElement.addEventListener('change', () => {
+        backgroundColorElement.disabled = !enabledGestureBackgroundElement.checked;
     });
 
     const saveButtonElement = document.getElementById('color-save');
     saveButtonElement.addEventListener('click', () => {
         (async () => {
             const lineColor = lineColorElement.value;
-            const hideLine = hideGestureLineElement.checked;
+            const hideLine =!enabledGestureLineElement.checked;
             const arrowColor = arrowColorElement.value;
             const arrowSize = parseInt(arrowFontSizeElement.value);
-            const hideArrow = hideGestureArrowElement.checked;
+            const hideArrow = !enabledGestureArrowElement.checked;
             const textColor = textColorElement.value;
             const textSize = parseInt(textFontSizeElement.value);
-            const hideText = hideGestureTextElement.checked;
+            const hideText = !enabledGestureTextElement.checked;
             const backgroundColor = backgroundColorElement.value;
-            const hideBackground = hideGestureBackgroundElement.checked;
+            const hideBackground = !enabledGestureBackgroundElement.checked;
 
             await options.setGestureAppearance(lineColor, hideLine, arrowColor, arrowSize, hideArrow, textColor, textSize, hideText, backgroundColor, hideBackground);
 

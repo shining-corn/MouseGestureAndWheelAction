@@ -353,23 +353,23 @@
     "optionsPageTitleAppearance": {
         "message": "マウスジェスチャーの外観"
     },
-    "optionsLineColor": {
-        "message": "線の色"
+    "optionsLine": {
+        "message": "線"
     },
-    "optionsArrowColor": {
-        "message": "矢印の色"
+    "optionsArrow": {
+        "message": "矢印"
     },
-    "optionsTextColor": {
-        "message": "テキストの色"
+    "optionsText": {
+        "message": "テキスト"
     },
-    "optionsBackgroundColor": {
-        "message": "背景の色"
+    "optionsBackground": {
+        "message": "背景"
+    },
+    "optionsColor": {
+        "message": "色"
     },
     "optionsFontSize": {
         "message": "フォントサイズ"
-    },
-    "optionsHide": {
-        "message": "非表示"
     },
     "optionsPageTitleExportImport": {
         "message": "エクスポート・インポート"

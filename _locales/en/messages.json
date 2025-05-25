@@ -353,23 +353,23 @@
     "optionsPageTitleAppearance": {
         "message": "Mouse Gesture Appearance"
     },
-    "optionsLineColor": {
-        "message": "Line Color"
+    "optionsLine": {
+        "message": "Line"
     },
-    "optionsArrowColor": {
-        "message": "Arrow Color"
+    "optionsArrow": {
+        "message": "Arrow"
     },
-    "optionsTextColor": {
-        "message": "Text Color"
+    "optionsText": {
+        "message": "Text"
     },
-    "optionsBackgroundColor": {
-        "message": "Background Color"
+    "optionsColor": {
+        "message": "Color"
+    },
+    "optionsBackground": {
+        "message": "Background"
     },
     "optionsFontSize": {
         "message": "Font Size"
-    },
-    "optionsHide": {
-        "message": "Hide"
     },
     "optionsPageTitleExportImport": {
         "message": "Export/Import"
