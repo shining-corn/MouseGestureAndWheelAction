@@ -372,7 +372,7 @@ class MouseGestureController {
 function appendGestureActionOptionsToSelectElement(options, selectElement, selectedOptionId) {
     // Add "None" option
     const noneOptionElement = document.createElement('option');
-    noneOptionElement.value = 'optionsSelectOptionNone';
+    noneOptionElement.value = '';
     noneOptionElement.dataset.i18n = 'optionsSelectOptionNone';
     if (selectedOptionId === noneOptionElement.value) {
         noneOptionElement.selected = true;

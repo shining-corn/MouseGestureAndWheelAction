@@ -661,7 +661,7 @@ const mouseGestureActionCategories = [
  * @param {ActionOption} actionOption - The options for the action.
  */
 function executeAction(id, actionOption) {
-    if (id === 'optionsSelectOptionNone') {
+    if (id === '') {
         return;
     }
 
