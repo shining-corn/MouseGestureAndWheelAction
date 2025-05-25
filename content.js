@@ -305,6 +305,22 @@ class MouseGestureAndWheelActionClient {
                     }
                 }
             }
+            else if (this.#onMouseGesture && ((event.buttons && 2) === 0)) {
+                // Process for cases where the right button mouse-up event could not be supplemented
+                const actionOption = this.getActionOptions();
+                command = this.#options.getGestureAction(this.#arrows);
+                processAction(this.#options, command, actionOption);
+
+                getRootWindow().postMessage({
+                    extensionId: chrome.runtime.id,
+                    type: 'reset-gesture',
+                }, '*');
+                this.doneGesture();
+
+                this.#url = undefined;
+                this.#src = undefined;
+                this.#onMouseGesture = false;
+            }
         }, {
             capture: true  // Measures against stopImmediatePropagation() of other scripts on the WEB site
         });
