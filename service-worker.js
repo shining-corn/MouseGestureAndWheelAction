@@ -690,6 +690,10 @@ class MouseGestureService {
         }
     });
 
+    chrome.action.onClicked.addListener((tab) => {
+        chrome.runtime.openOptionsPage();
+    });
+
     let options = new ExtensionOptions();
     (async () => { await options.loadFromStrageLocal(); })();
     (new MouseGestureService(options)).start(); // If execute this in the async function, it rarely causes an error "Could not establish connection. Receiving end does not exist." in `chrome.runtime.sendMessage()` in content.js, so execute it in the immediate function.
