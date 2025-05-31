@@ -11,32 +11,32 @@
     "forward": {
         "message": "進む"
     },
-    "actionCategoryScroll": {
-        "message": "スクロール"
+    "actionCategoryLink": {
+        "message": "リンク"
     },
-    "scrollup": {
-        "message": "上にスクロール"
+    "openlinkinnwetab": {
+        "message": "リンクを新しいタブで開く"
     },
-    "scrolldown": {
-        "message": "下にスクロール"
+    "openlinkinnwetabandactivate": {
+        "message": "リンクを新しいタブで開いてアクティブにする"
     },
-    "scrollleft": {
-        "message": "左にスクロール"
+    "openlinkinnwewindow": {
+        "message": "リンクを新しいウィンドウで開く"
     },
-    "scrollright": {
-        "message": "右にスクロール"
+    "openlinkinnwewindowandactivate": {
+        "message": "リンクを新しいウィンドウで開いてアクティブにする"
     },
-    "scrolltotop": {
-        "message": "一番上にスクロール"
+    "openimageinnewtab": {
+        "message": "画像を新しいタブで開く"
     },
-    "scrolltobottom": {
-        "message": "一番下にスクロール"
+    "openimageinnewtabandactivate": {
+        "message": "画像を新しいタブで開いてアクティブにする"
     },
-    "scrolltoleftmost": {
-        "message": "一番左にスクロール"
+    "openimageinnewwindow": {
+        "message": "画像を新しいウィンドウで開く"
     },
-    "scrolltorightmost": {
-        "message": "一番右にスクロール"
+    "openimageinnewwindowandactivate": {
+        "message": "画像を新しいウィンドウで開いてアクティブにする"
     },
     "actionCategoryTabManipulation": {
         "message": "タブの操作"
@@ -137,6 +137,45 @@
     "gotonexttabloop": {
         "message": "次のタブに進む（ループする）"
     },
+    "actionCategoryBookmark": {
+        "message": "ブックマーク"
+    },
+    "addbookmark": {
+        "message": "ブックマークバーに追加"
+    },
+    "upsertbookmark": {
+        "message": "ブックマークを追加"
+    },
+    "deletebookmark": {
+        "message": "ブックマークを削除"
+    },
+    "actionCategoryScroll": {
+        "message": "スクロール"
+    },
+    "scrollup": {
+        "message": "上にスクロール"
+    },
+    "scrolldown": {
+        "message": "下にスクロール"
+    },
+    "scrollleft": {
+        "message": "左にスクロール"
+    },
+    "scrollright": {
+        "message": "右にスクロール"
+    },
+    "scrolltotop": {
+        "message": "一番上にスクロール"
+    },
+    "scrolltobottom": {
+        "message": "一番下にスクロール"
+    },
+    "scrolltoleftmost": {
+        "message": "一番左にスクロール"
+    },
+    "scrolltorightmost": {
+        "message": "一番右にスクロール"
+    },
     "actionCategoryWindow": {
         "message": "ウィンドウ"
     },
@@ -157,45 +196,6 @@
     },
     "fullscreenwindow": {
         "message": "フルスクリーン"
-    },
-    "actionCategoryBookmark": {
-        "message": "ブックマーク"
-    },
-    "addbookmark": {
-        "message": "ブックマークバーに追加"
-    },
-    "upsertbookmark": {
-        "message": "ブックマークを追加"
-    },
-    "deletebookmark": {
-        "message": "ブックマークを削除"
-    },
-    "actionCategoryLink": {
-        "message": "リンク"
-    },
-    "openlinkinnwetab": {
-        "message": "リンクを新しいタブで開く"
-    },
-    "openlinkinnwetabandactivate": {
-        "message": "リンクを新しいタブで開いてアクティブにする"
-    },
-    "openlinkinnwewindow": {
-        "message": "リンクを新しいウィンドウで開く"
-    },
-    "openlinkinnwewindowandactivate": {
-        "message": "リンクを新しいウィンドウで開いてアクティブにする"
-    },
-    "openimageinnewtab": {
-        "message": "画像を新しいタブで開く"
-    },
-    "openimageinnewtabandactivate": {
-        "message": "画像を新しいタブで開いてアクティブにする"
-    },
-    "openimageinnewwindow": {
-        "message": "画像を新しいウィンドウで開く"
-    },
-    "openimageinnewwindowandactivate": {
-        "message": "画像を新しいウィンドウで開いてアクティブにする"
     },
     "actionCategoryMisc": {
         "message": "その他"

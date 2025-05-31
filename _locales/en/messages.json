@@ -11,32 +11,32 @@
     "forward": {
         "message": "Go forward"
     },
-    "actionCategoryScroll": {
-        "message": "Scroll"
+    "actionCategoryLink": {
+        "message": "Link"
     },
-    "scrollup": {
-        "message": "Scroll up"
+    "openlinkinnwetab": {
+        "message": "Open link in new tab"
     },
-    "scrolldown": {
-        "message": "Scroll down"
+    "openlinkinnwetabandactivate": {
+        "message": "Open link in new tab and activate"
     },
-    "scrollleft": {
-        "message": "Scroll left"
+    "openlinkinnwewindow": {
+        "message": "Open link in new window"
     },
-    "scrollright": {
-        "message": "Scroll right"
+    "openlinkinnwewindowandactivate": {
+        "message": "Open link in new window and activate"
     },
-    "scrolltotop": {
-        "message": "Scroll to top"
+    "openimageinnewtab": {
+        "message": "Open image in new tab"
     },
-    "scrolltobottom": {
-        "message": "Scroll to bottom"
+    "openimageinnewtabandactivate": {
+        "message": "Open image in new tab and activate"
     },
-    "scrolltoleftmost": {
-        "message": "Scroll to the leftmost"
+    "openimageinnewwindow": {
+        "message": "Open image in new window"
     },
-    "scrolltorightmost": {
-        "message": "Scroll to the rightmost"
+    "openimageinnewwindowandactivate": {
+        "message": "Open image in new window and activate"
     },
     "actionCategoryTabManipulation": {
         "message": "Tab Manipulation"
@@ -137,6 +137,45 @@
     "gotonexttabloop": {
         "message": "Go to next tab (loop)"
     },
+    "actionCategoryBookmark": {
+        "message": "Bookmark"
+    },
+    "addbookmark": {
+        "message": "Add to bookmarks bar"
+    },
+    "upsertbookmark": {
+        "message": "Add bookmark"
+    },
+    "deletebookmark": {
+        "message": "Delete bookmark"
+    },
+    "actionCategoryScroll": {
+        "message": "Scroll"
+    },
+    "scrollup": {
+        "message": "Scroll up"
+    },
+    "scrolldown": {
+        "message": "Scroll down"
+    },
+    "scrollleft": {
+        "message": "Scroll left"
+    },
+    "scrollright": {
+        "message": "Scroll right"
+    },
+    "scrolltotop": {
+        "message": "Scroll to top"
+    },
+    "scrolltobottom": {
+        "message": "Scroll to bottom"
+    },
+    "scrolltoleftmost": {
+        "message": "Scroll to the leftmost"
+    },
+    "scrolltorightmost": {
+        "message": "Scroll to the rightmost"
+    },
     "actionCategoryWindow": {
         "message": "Window"
     },
@@ -157,45 +196,6 @@
     },
     "fullscreenwindow": {
         "message": "Fullscreen"
-    },
-    "actionCategoryBookmark": {
-        "message": "Bookmark"
-    },
-    "addbookmark": {
-        "message": "Add to bookmarks bar"
-    },
-    "upsertbookmark": {
-        "message": "Add bookmark"
-    },
-    "deletebookmark": {
-        "message": "Delete bookmark"
-    },
-    "actionCategoryLink": {
-        "message": "Link"
-    },
-    "openlinkinnwetab": {
-        "message": "Open link in new tab"
-    },
-    "openlinkinnwetabandactivate": {
-        "message": "Open link in new tab and activate"
-    },
-    "openlinkinnwewindow": {
-        "message": "Open link in new window"
-    },
-    "openlinkinnwewindowandactivate": {
-        "message": "Open link in new window and activate"
-    },
-    "openimageinnewtab": {
-        "message": "Open image in new tab"
-    },
-    "openimageinnewtabandactivate": {
-        "message": "Open image in new tab and activate"
-    },
-    "openimageinnewwindow": {
-        "message": "Open image in new window"
-    },
-    "openimageinnewwindowandactivate": {
-        "message": "Open image in new window and activate"
     },
     "actionCategoryMisc": {
         "message": "Misc"
