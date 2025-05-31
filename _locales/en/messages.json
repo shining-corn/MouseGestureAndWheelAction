@@ -141,7 +141,7 @@
         "message": "Hard reload"
     },
     "reloadtaball": {
-        "message": "Reload all tabs"
+        "message": "Reload all tabs in the same  window"
     },
     "actionCategoryBookmark": {
         "message": "Bookmark"

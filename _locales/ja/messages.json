@@ -141,7 +141,7 @@
         "message": "再読み込み（キャッシュ無視）"
     },
     "reloadtaball": {
-        "message": "すべてのタブを再読み込み"
+        "message": "同じウィンドウのすべてのタブを再読み込み"
     },
     "actionCategoryBookmark": {
         "message": "ブックマーク"
