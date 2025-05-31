@@ -59,9 +59,6 @@
     "closetab": {
         "message": "Close tab"
     },
-    "closetabandmovetoprevioustab": {
-        "message": "Close tab and move to previous tab"
-    },
     "closetableftall": {
         "message": "Close tabs to the left"
     },

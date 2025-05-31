@@ -200,16 +200,6 @@ class MouseGestureService {
                     case 'closetab':
                         (async () => {
                             const tab = await chrome.tabs.query({ windowId: sender.tab.windowId });
-                            if (tab.length === 1 && this.#options.addNewTabOnLastTabClose) {
-                                chrome.tabs.create({ windowId: sender.tab.windowId, url: 'chrome://newtab' });
-                            }
-
-                            chrome.tabs.remove(sender.tab.id);
-                        })();
-                        break;
-                    case 'closetabandmovetoprevioustab':
-                        (async () => {
-                            const tab = await chrome.tabs.query({ windowId: sender.tab.windowId });
                             if (tab.length === 1) {
                                 if (this.#options.addNewTabOnLastTabClose) {
                                     chrome.tabs.create({ windowId: sender.tab.windowId, url: 'chrome://newtab' });
