@@ -136,6 +136,11 @@ class MouseGestureService {
      * @type {number | undefined}
      */
     #lastCreatedGroupId = undefined;
+    
+    /**
+     * @type {number | undefined}
+     */
+    #indexToInsertCreatedTab = undefined;
 
     /**
      * @type {TabActivateHistoryContainer[]}
@@ -156,6 +161,10 @@ class MouseGestureService {
     start() {
         this.processTabHistory();
 
+        chrome.tabs.onActivated.addListener(() => {
+            this.#indexToInsertCreatedTab = undefined;
+        });
+
         chrome.runtime.onMessage.addListener(
             (request, sender) => {
                 if (!request || request.extensionId !== chrome.runtime.id) {
@@ -164,7 +173,12 @@ class MouseGestureService {
 
                 switch (request.action) {
                     case 'createtab':
-                        chrome.tabs.create({ active: true });
+                        chrome.tabs.create({
+                            active: true,
+                            windowId: sender.tab.windowId,
+                            openerTabId: sender.tab.id,
+                            index: this.#getIndexToInsertCreatedTab(sender.tab.index),
+                        });
                         break;
                     case 'addtabtogroup':
                         (async () => {
@@ -530,7 +544,9 @@ class MouseGestureService {
                             chrome.tabs.create({
                                 url: request.url,
                                 active: false,
-                                index: sender.tab.index + 1
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: this.#getIndexToInsertCreatedTab(sender.tab.index),
                             });
                         })();
                         break;
@@ -539,7 +555,9 @@ class MouseGestureService {
                             chrome.tabs.create({
                                 url: request.url,
                                 active: true,
-                                index: sender.tab.index + 1
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: this.#getIndexToInsertCreatedTab(sender.tab.index),
                             });
                         })();
                         break;
@@ -685,6 +703,22 @@ class MouseGestureService {
                 container.shouldPreventAddHistory = true;
             }
         }
+    }
+
+    /**
+     * @summary Gets the index to insert a newly created tab.
+     * @param {number} index - The index of the tab that was active when the new tab was created.
+     * @returns {number} - The index to insert the newly created tab.
+     */
+    #getIndexToInsertCreatedTab(index) {
+        if (this.#indexToInsertCreatedTab === undefined) {
+            this.#indexToInsertCreatedTab = index + 1;
+        }
+        else {
+            this.#indexToInsertCreatedTab++;
+        }
+
+        return this.#indexToInsertCreatedTab;
     }
 }
 
