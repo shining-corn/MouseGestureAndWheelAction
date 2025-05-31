@@ -38,23 +38,8 @@
     "openimageinnewwindowandactivate": {
         "message": "画像を新しいウィンドウで開いてアクティブにする"
     },
-    "actionCategoryTabManipulation": {
-        "message": "タブの操作"
-    },
-    "createtab": {
-        "message": "新しいタブ"
-    },
-    "addtabtogroup": {
-        "message": "タブをグループに追加"
-    },
-    "removetabfromgroup": {
-        "message": "タブをグループから削除"
-    },
-    "duplicatetab": {
-        "message": "タブを複製"
-    },
-    "pintab": {
-        "message": "タブを固定"
+    "actionCategoryTabOpenClose": {
+        "message": "タブの開閉"
     },
     "closetab": {
         "message": "タブを閉じる"
@@ -71,14 +56,23 @@
     "reopenclosedtab": {
         "message": "閉じたタブを開く"
     },
-    "reloadtab": {
-        "message": "再読み込み"
+    "createtab": {
+        "message": "新しいタブ"
     },
-    "reloadtabhard": {
-        "message": "再読み込み（キャッシュ無視）"
+    "duplicatetab": {
+        "message": "タブを複製"
     },
-    "reloadtaball": {
-        "message": "すべてのタブを再読み込み"
+    "actionCategoryTabManipulation": {
+        "message": "タブの操作"
+    },
+    "pintab": {
+        "message": "タブを固定"
+    },
+    "addtabtogroup": {
+        "message": "タブをグループに追加"
+    },
+    "removetabfromgroup": {
+        "message": "タブをグループから削除"
     },
     "mutetab": {
         "message": "タブをミュート"
@@ -136,6 +130,18 @@
     },
     "gotonexttabloop": {
         "message": "次のタブに進む（ループする）"
+    },
+    "actionCategoryReload": {
+        "message": "再読み込み"
+    },
+    "reloadtab": {
+        "message": "再読み込み"
+    },
+    "reloadtabhard": {
+        "message": "再読み込み（キャッシュ無視）"
+    },
+    "reloadtaball": {
+        "message": "すべてのタブを再読み込み"
     },
     "actionCategoryBookmark": {
         "message": "ブックマーク"

@@ -141,14 +141,8 @@ const mouseGestureActionCategories = [
         ]
     },
     {
-        id: 'actionCategoryTabManipulation',
+        id: 'actionCategoryTabOpenClose',
         actions: [
-            {
-                id: 'createtab',
-                function: () => {
-                    sendChromeMessage({ action: 'createtab' });
-                },
-            },
             {
                 id: 'closetab',
                 function: () => {
@@ -180,21 +174,26 @@ const mouseGestureActionCategories = [
                 },
             },
             {
-                id: 'reloadtab',
+                id: 'createtab',
                 function: () => {
-                    sendChromeMessage({ action: 'reloadtab' });
+                    sendChromeMessage({ action: 'createtab' });
                 },
             },
             {
-                id: 'reloadtabhard',
+                id: 'duplicatetab',
                 function: () => {
-                    sendChromeMessage({ action: 'reloadtabhard' });
+                    sendChromeMessage({ action: 'duplicatetab' });
                 },
             },
+        ]
+    },
+    {
+        id: 'actionCategoryTabManipulation',
+        actions: [
             {
-                id: 'reloadtaball',
+                id: 'pintab',
                 function: () => {
-                    sendChromeMessage({ action: 'reloadtaball' });
+                    sendChromeMessage({ action: 'pintab' });
                 },
             },
             {
@@ -207,18 +206,6 @@ const mouseGestureActionCategories = [
                 id: 'removetabfromgroup',
                 function: () => {
                     sendChromeMessage({ action: 'removetabfromgroup' });
-                },
-            },
-            {
-                id: 'duplicatetab',
-                function: () => {
-                    sendChromeMessage({ action: 'duplicatetab' });
-                },
-            },
-            {
-                id: 'pintab',
-                function: () => {
-                    sendChromeMessage({ action: 'pintab' });
                 },
             },
             {
@@ -332,6 +319,30 @@ const mouseGestureActionCategories = [
                 id: 'gotonexttabloop',
                 function: (option) => {
                     sendChromeMessage({ action: 'gotonexttabloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
+                },
+            },
+        ]
+    },
+    {
+        id: 'actionCategoryReload',
+        actions: [
+            
+            {
+                id: 'reloadtab',
+                function: () => {
+                    sendChromeMessage({ action: 'reloadtab' });
+                },
+            },
+            {
+                id: 'reloadtabhard',
+                function: () => {
+                    sendChromeMessage({ action: 'reloadtabhard' });
+                },
+            },
+            {
+                id: 'reloadtaball',
+                function: () => {
+                    sendChromeMessage({ action: 'reloadtaball' });
                 },
             },
         ]

@@ -38,23 +38,8 @@
     "openimageinnewwindowandactivate": {
         "message": "Open image in new window and activate"
     },
-    "actionCategoryTabManipulation": {
-        "message": "Tab Manipulation"
-    },
-    "createtab": {
-        "message": "New tab"
-    },
-    "addtabtogroup": {
-        "message": "Add tab to group"
-    },
-    "removetabfromgroup": {
-        "message": "Remove tab from group"
-    },
-    "duplicatetab": {
-        "message": "Duplicate tab"
-    },
-    "pintab": {
-        "message": "Pin tab"
+    "actionCategoryTabOpenClose": {
+        "message": "Tab Open/Close"
     },
     "closetab": {
         "message": "Close tab"
@@ -71,14 +56,23 @@
     "reopenclosedtab": {
         "message": "Reopen closed tab"
     },
-    "reloadtab": {
-        "message": "Reload"
+    "createtab": {
+        "message": "New tab"
     },
-    "reloadtabhard": {
-        "message": "Hard reload"
+    "duplicatetab": {
+        "message": "Duplicate tab"
     },
-    "reloadtaball": {
-        "message": "Reload all tabs"
+    "actionCategoryTabManipulation": {
+        "message": "Tab Manipulation"
+    },
+    "pintab": {
+        "message": "Pin tab"
+    },
+    "addtabtogroup": {
+        "message": "Add tab to group"
+    },
+    "removetabfromgroup": {
+        "message": "Remove tab from group"
     },
     "mutetab": {
         "message": "Mute"
@@ -136,6 +130,18 @@
     },
     "gotonexttabloop": {
         "message": "Go to next tab (loop)"
+    },
+    "actionCategoryReload": {
+        "message": "Reload"
+    },
+    "reloadtab": {
+        "message": "Reload"
+    },
+    "reloadtabhard": {
+        "message": "Hard reload"
+    },
+    "reloadtaball": {
+        "message": "Reload all tabs"
     },
     "actionCategoryBookmark": {
         "message": "Bookmark"
