@@ -45,8 +45,8 @@ function sendMessageToTabs(request, tabs) {
 }
 
 /**
- * @summary Go to a specific tab based on the current tab's ID and the distance to move.
- * @param {Tab[]} allTabs - All tabs in the current window.
+ * @summary Go to a specific tab based on the source tab's ID and the distance to move.
+ * @param {Tab[]} allTabs - All tabs.
  * @param {number} srcTabId - The ID of the source tab.
  * @param {number} distance - The distance to move (1 for right, -1 for left).
  * @param {boolean} isLoop - Whether to loop around when reaching the end of the tab list.
@@ -87,8 +87,8 @@ function goToTab(allTabs, srcTabId, distance, isLoop, shouldPreventContextMenu) 
 }
 
 /**
- * @summary Go to the most left tab in the current window.
- * @param {Tab[]} allTabs - All tabs in the current window.
+ * @summary Go to the most left tab.
+ * @param {Tab[]} allTabs - All tabs.
  * @param {boolean} shouldPreventContextMenu - Whether to prevent the context menu from appearing on the target tab.
  * @returns {boolean} - Returns true if the tab was successfully changed, false otherwise.
  */
@@ -103,8 +103,8 @@ function goToMostLeftTab(allTabs, shouldPreventContextMenu) {
 }
 
 /**
- * @summary Go to the most right tab in the current window.
- * @param {Tab[]} allTabs - All tabs in the current window.
+ * @summary Go to the most right tab.
+ * @param {Tab[]} allTabs - All tabs.
  * @param {boolean} shouldPreventContextMenu - Whether to prevent the context menu from appearing on the target tab.
  * @returns {boolean} - Returns true if the tab was successfully changed, false otherwise.
  */
@@ -228,7 +228,7 @@ class MouseGestureService {
                         break;
                     case 'closetableftall':
                         (async () => {
-                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
                             const i = tabs.findIndex((element) => element.id === sender.tab.id);
                             if (i !== -1) {
                                 for (const tab of tabs) {
@@ -244,7 +244,7 @@ class MouseGestureService {
                         break;
                     case 'closetabrightall':
                         (async () => {
-                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
                             const i = tabs.findIndex((element) => element.id === sender.tab.id);
                             if (i !== -1) {
                                 for (const tab of tabs) {
@@ -260,7 +260,7 @@ class MouseGestureService {
                         break;
                     case 'closetabotherall':
                         (async () => {
-                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
                             const i = tabs.findIndex((element) => element.id === sender.tab.id);
                             if (i !== -1) {
                                 for (const tab of tabs) {
@@ -291,7 +291,7 @@ class MouseGestureService {
                         break;
                     case 'reloadtaball':
                         (async () => {
-                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
                             for (const tab of tabs) {
                                 chrome.tabs.reload(tab.id);
                             }
@@ -299,37 +299,37 @@ class MouseGestureService {
                         break;
                     case 'gotolefttab':
                         (async () => {
-                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
                             goToTab(tabs, sender.tab.id, -1, false, request.shouldPreventContextMenu);
                         })();
                         break;
                     case 'gotorighttab':
                         (async () => {
-                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
                             goToTab(tabs, sender.tab.id, 1, false, request.shouldPreventContextMenu);
                         })();
                         break;
                     case 'gotolefttabwithloop':
                         (async () => {
-                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
                             goToTab(tabs, sender.tab.id, -1, true, request.byshouldPreventContextMenuwheel);
                         })();
                         break;
                     case 'gotorighttabwithloop':
                         (async () => {
-                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
                             goToTab(tabs, sender.tab.id, 1, true, request.shouldPreventContextMenu);
                         })();
                         break;
                     case 'gotomostlefttab':
                         (async () => {
-                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
                             goToMostLeftTab(tabs, request.shouldPreventContextMenu);
                         })();
                         break;
                     case 'gotomostrighttab':
                         (async () => {
-                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
                             goToMostRightTab(tabs, request.shouldPreventContextMenu);
                         })();
                         break;
@@ -421,7 +421,7 @@ class MouseGestureService {
                         break;
                     case 'closewindow':
                         {
-                            const window = chrome.windows.getCurrent();
+                            const window = chrome.windows.get(sender.tab.windowId);
                             window.then((w) => {
                                 (async () => {
                                     await chrome.windows.remove(w.id);
@@ -443,7 +443,7 @@ class MouseGestureService {
                         break;
                     case 'maximizewindow':
                         {
-                            const window = chrome.windows.getCurrent();
+                            const window = chrome.windows.get(sender.tab.windowId);
                             window.then((w) => {
                                 (async () => {
                                     if (w.state !== 'maximized') {
@@ -464,7 +464,7 @@ class MouseGestureService {
                         break;
                     case 'minimizewindow':
                         {
-                            const window = chrome.windows.getCurrent();
+                            const window = chrome.windows.get(sender.tab.windowId);
                             window.then((w) => {
                                 (async () => {
                                     await chrome.windows.update(w.id, { state: 'minimized' });
@@ -474,7 +474,7 @@ class MouseGestureService {
                         break;
                     case 'fullscreenwindow':
                         {
-                            const window = chrome.windows.getCurrent();
+                            const window = chrome.windows.get(sender.tab.windowId);
                             window.then((w) => {
                                 (async () => {
                                     if (w.state !== 'fullscreen') {
