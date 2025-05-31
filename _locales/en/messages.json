@@ -359,11 +359,11 @@
     "optionsText": {
         "message": "Text"
     },
-    "optionsColor": {
-        "message": "Color"
-    },
     "optionsBackground": {
         "message": "Background"
+    },
+    "optionsColor": {
+        "message": "Color"
     },
     "optionsFontSize": {
         "message": "Font Size"
