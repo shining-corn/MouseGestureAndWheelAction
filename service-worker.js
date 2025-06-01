@@ -136,7 +136,7 @@ class MouseGestureService {
      * @type {number | undefined}
      */
     #lastCreatedGroupId = undefined;
-    
+
     /**
      * @type {number | undefined}
      */
@@ -164,6 +164,17 @@ class MouseGestureService {
         chrome.tabs.onActivated.addListener(() => {
             this.#indexToInsertCreatedTab = undefined;
         });
+
+        // reset shouldPreventContextMenu when tab is deactivated
+        (() => {
+            let previousTabId = undefined;
+            chrome.tabs.onActivated.addListener((activeInfo) => {
+                if (previousTabId) {
+                    sendMessageToTabs({ type: 'reset-prevent-contextmenu' }, [{ id: previousTabId }]);
+                }
+                previousTabId = activeInfo.tabId;
+            });
+        })();
 
         chrome.runtime.onMessage.addListener(
             (request, sender) => {

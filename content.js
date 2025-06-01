@@ -110,11 +110,6 @@ class MouseGestureAndWheelActionClient {
     /**
      * @type {boolean}
      */
-    #onMouseGesture = false;
-
-    /**
-     * @type {boolean}
-     */
     #isRightButtonPressed = false;
 
     /**
@@ -140,18 +135,12 @@ class MouseGestureAndWheelActionClient {
             }
         });
 
-        window.addEventListener('blur', () => {
-            global.shouldPreventContextMenu = false;    // Disable context menu suppression when leaving a tab
-            this.resetGestureState();
-            this.#isRightButtonPressed = false;
-        });
-
         window.addEventListener('wheel', (event) => {
             if (!global.enabledExtension) {
                 return;
             }
 
-            const isWheelAction = () => this.#options.enabledWheelAction && (event.buttons === 2) && !this.#onMouseGesture;
+            const isWheelAction = () => this.#options.enabledWheelAction && (event.buttons === 2) && !global.onMouseGesture;
 
             if (isWheelAction()) {
                 if (checkHasExtensionBeenUpdated()) {
@@ -192,7 +181,7 @@ class MouseGestureAndWheelActionClient {
             }
 
             // Rocker Gesture
-            if (event.buttons === 3 && !this.#onMouseGesture) {
+            if (event.buttons === 3 && !global.onMouseGesture) {
                 if (checkHasExtensionBeenUpdated()) {
                     this.resetGestureState();
                     return;
@@ -228,7 +217,7 @@ class MouseGestureAndWheelActionClient {
                     event.preventDefault();
                     event.stopImmediatePropagation();
 
-                    this.#onMouseGesture = true;
+                    global.onMouseGesture = true;
                     this.#arrows += 'Click ';
                     getRootWindow().postMessage(
                         {
@@ -291,7 +280,7 @@ class MouseGestureAndWheelActionClient {
 
                     const direction = computeDirection(diffX, diffY);
                     if (direction && direction !== this.#previousDirection) {
-                        this.#onMouseGesture = true;
+                        global.onMouseGesture = true;
                         this.#arrows += direction;
                         getRootWindow().postMessage(
                             {
@@ -302,10 +291,12 @@ class MouseGestureAndWheelActionClient {
                             '*'
                         );
                         this.#previousDirection = direction;
+
+                        global.shouldPreventContextMenu = true;
                     }
                 }
             }
-            else if (this.#onMouseGesture && ((event.buttons && 2) === 0)) {
+            else if (global.onMouseGesture && ((event.buttons && 2) === 0)) {
                 // Process for cases where the right button mouse-up event could not be supplemented
                 const actionOption = this.getActionOptions();
                 command = this.#options.getGestureAction(this.#arrows);
@@ -319,7 +310,7 @@ class MouseGestureAndWheelActionClient {
 
                 this.#url = undefined;
                 this.#src = undefined;
-                this.#onMouseGesture = false;
+                global.onMouseGesture = false;
             }
         }, {
             capture: true  // Measures against stopImmediatePropagation() of other scripts on the WEB site
@@ -337,7 +328,7 @@ class MouseGestureAndWheelActionClient {
             // Mouse Gesture
             if (event.button === 2) {
                 if (this.#previousPoint) {
-                    if (this.#onMouseGesture) {
+                    if (global.onMouseGesture) {
                         event.preventDefault();
                         event.stopImmediatePropagation();
                         global.shouldPreventContextMenu = true;
@@ -358,7 +349,7 @@ class MouseGestureAndWheelActionClient {
 
                 this.#url = undefined;
                 this.#src = undefined;
-                this.#onMouseGesture = false;
+                global.onMouseGesture = false;
             }
         }, {
             capture: true  // Measures against stopImmediatePropagation() of other scripts on the WEB site
@@ -373,6 +364,9 @@ class MouseGestureAndWheelActionClient {
                 global.shouldPreventContextMenu = true;
                 this.#isRightButtonPressed = true;   // It should have been moved from another tab with the right button held down, so set it to true.
             }
+            else if (request.type === 'reset-prevent-contextmenu') {
+                global.shouldPreventContextMenu = false;
+            }
         });
 
         window.addEventListener('contextmenu', (event) => {
@@ -383,7 +377,7 @@ class MouseGestureAndWheelActionClient {
         });
 
         window.addEventListener('click', (event) => {
-            if (((event.button === 0) && this.#onMouseGesture) ||     // During mouse gesture
+            if (((event.button === 0) && global.onMouseGesture) ||     // During mouse gesture
                 ((event.button === 0) && (event.buttons === 2))      // During rocker gesture
             ) {
                 event.preventDefault();
@@ -432,7 +426,7 @@ class MouseGestureAndWheelActionClient {
         this.#src = undefined;
         this.#target = undefined;
         this.#rightClickCount = 0;
-        this.#onMouseGesture = false;
+        global.onMouseGesture = false;
     }
 
     /**

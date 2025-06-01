@@ -16,6 +16,7 @@ class InterIframeVariables {
      * @property {boolean} shouldPreventContextMenu - Flag to prevent context menu.
      * @property {string} selectedText - The selected text in the iframe.
      * @property {boolean} enabledExtension - Flag to enable or disable the extension.
+     * @property {boolean} onMouseGesture - Flag to indicate if mouse gesture is in progress.
      */
 
     /**
@@ -38,6 +39,7 @@ class InterIframeVariables {
             shouldPreventContextMenu: false,
             selectedText: undefined,
             enabledExtension: true,
+            onMouseGesture: false,
         };
 
         if (isInIFrame()) {
@@ -134,5 +136,22 @@ class InterIframeVariables {
      */
     get enabledExtension() {
         return this.#variables.enabledExtension;
+    }
+
+    /**
+     * @summary Sets onMouseGesture.
+     * @param {boolean} onMouseGesture - Whether a mouse gesture is in progress.
+     */
+    set onMouseGesture(on) {
+        this.#variables.onMouseGesture = on;
+        this.sync();
+    }
+
+    /**
+     * @summary Gets onMouseGesture.
+     * @returns {boolean} - Whether a mouse gesture is in progress.
+     */
+    get onMouseGesture() {
+        return this.#variables.onMouseGesture;
     }
 };
