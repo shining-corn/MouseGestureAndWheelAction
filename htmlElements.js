@@ -200,6 +200,12 @@ class ShowArrowsElement {
     #arrowsArea = undefined;
 
     /**
+     * @type {Window | undefined}
+     * @description The window in which the mouse gesture was initiated.
+     */
+    #windowMouseGestureWasInitiated = undefined;
+
+    /**
      * @constructor
      * @param {ExtensionOptions} options 
      */
@@ -254,9 +260,16 @@ class ShowArrowsElement {
             switch (event.data.type) {
                 case 'show-arrows':
                     this.showArrows(event.data.arrows);
+                    if (isInRootWindow() && this.#windowMouseGestureWasInitiated !== window) {
+                        this.#windowMouseGestureWasInitiated = event.source;
+                    }
                     break;
                 case 'reset-gesture':
                     this.reset();
+                    if (this.#windowMouseGestureWasInitiated) {
+                        this.#windowMouseGestureWasInitiated.postMessage({ extensionId: chrome.runtime.id, type: 'reset-gesture' }, '*');
+                        this.#windowMouseGestureWasInitiated = undefined;
+                    }
                     break;
             }
         });

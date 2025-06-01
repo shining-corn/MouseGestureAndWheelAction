@@ -17,6 +17,7 @@ class InterIframeVariables {
      * @property {string} selectedText - The selected text in the iframe.
      * @property {boolean} enabledExtension - Flag to enable or disable the extension.
      * @property {boolean} onMouseGesture - Flag to indicate if mouse gesture is in progress.
+     * @property {string} arrows - Mouse Gesture arrows.
      */
 
     /**
@@ -40,6 +41,7 @@ class InterIframeVariables {
             selectedText: undefined,
             enabledExtension: true,
             onMouseGesture: false,
+            arrows: '',
         };
 
         if (isInIFrame()) {
@@ -153,5 +155,22 @@ class InterIframeVariables {
      */
     get onMouseGesture() {
         return this.#variables.onMouseGesture;
+    }
+
+    /**
+     * @summary Sets arrows for mouse gestures.
+     * @param {string} arrows - The mouse gesture arrows.
+     */
+    set arrows(arrows) {
+        this.#variables.arrows = arrows;
+        this.sync();
+    }
+
+    /**
+     * @summary Gets arrows for mouse gestures.
+     * @returns {string} - The mouse gesture arrows.
+     */
+    get arrows() {
+        return this.#variables.arrows;
     }
 };

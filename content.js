@@ -83,11 +83,6 @@ class MouseGestureAndWheelActionClient {
     #gestureElement = undefined;
 
     /**
-     * @type {string}
-     */
-    #arrows = '';
-
-    /**
      * @type {string | undefined}
      */
     #url = undefined;
@@ -208,7 +203,7 @@ class MouseGestureAndWheelActionClient {
 
             // Mouse Gesture
             if (this.#options.enabledMouseGesture) {
-                if ((event.button === 0) && this.#previousPoint) {
+                if ((event.button === 0) && (this.#previousPoint || global.onMouseGesture)) {
                     if (checkHasExtensionBeenUpdated()) {
                         this.resetGestureState();
                         return;
@@ -218,12 +213,12 @@ class MouseGestureAndWheelActionClient {
                     event.stopImmediatePropagation();
 
                     global.onMouseGesture = true;
-                    this.#arrows += 'Click ';
+                    global.arrows += 'Click ';
                     getRootWindow().postMessage(
                         {
                             extensionId: chrome.runtime.id,
                             type: 'show-arrows',
-                            arrows: this.#arrows,
+                            arrows: global.arrows,
                         },
                         '*'
                     );
@@ -281,12 +276,12 @@ class MouseGestureAndWheelActionClient {
                     const direction = computeDirection(diffX, diffY);
                     if (direction && direction !== this.#previousDirection) {
                         global.onMouseGesture = true;
-                        this.#arrows += direction;
+                        global.arrows += direction;
                         getRootWindow().postMessage(
                             {
                                 extensionId: chrome.runtime.id,
                                 type: 'show-arrows',
-                                arrows: this.#arrows,
+                                arrows: global.arrows,
                             },
                             '*'
                         );
@@ -299,7 +294,7 @@ class MouseGestureAndWheelActionClient {
             else if (global.onMouseGesture && ((event.buttons && 2) === 0)) {
                 // Process for cases where the right button mouse-up event could not be supplemented
                 const actionOption = this.getActionOptions();
-                command = this.#options.getGestureAction(this.#arrows);
+                command = this.#options.getGestureAction(global.arrows);
                 processAction(this.#options, command, actionOption);
 
                 getRootWindow().postMessage({
@@ -334,7 +329,7 @@ class MouseGestureAndWheelActionClient {
 
                     const actionOption = this.getActionOptions();
                     setTimeout(() => {  // Use setTimeout to wait for global.shouldPreventContextMenu changes to be reflected in other frames
-                        const command = this.#options.getGestureAction(this.#arrows);
+                        const command = this.#options.getGestureAction(global.arrows);
                         processAction(this.#options, command, actionOption);
 
                         getRootWindow().postMessage({
@@ -406,7 +401,7 @@ class MouseGestureAndWheelActionClient {
             this.#gestureElement.reset();
             this.#hasGestureDrawn = false;
         }
-        this.#arrows = '';
+        global.arrows = '';
     }
 
     /**
@@ -419,7 +414,7 @@ class MouseGestureAndWheelActionClient {
             getRootWindow().postMessage({ extensionId: chrome.runtime.id, type: 'reset-gesture' }, `*`);
         }
 
-        this.#arrows = '';
+        global.arrows = '';
         this.#url = undefined;
         this.#src = undefined;
         this.#target = undefined;
