@@ -327,12 +327,10 @@ class MouseGestureAndWheelActionClient {
 
             // Mouse Gesture
             if (event.button === 2) {
-                if (this.#previousPoint) {
-                    if (global.onMouseGesture) {
-                        event.preventDefault();
-                        event.stopImmediatePropagation();
-                        global.shouldPreventContextMenu = true;
-                    }
+                if (global.onMouseGesture) {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                    global.shouldPreventContextMenu = true;
 
                     const actionOption = this.getActionOptions();
                     setTimeout(() => {  // Use setTimeout to wait for global.shouldPreventContextMenu changes to be reflected in other frames
