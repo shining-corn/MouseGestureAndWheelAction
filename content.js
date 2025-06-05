@@ -203,7 +203,7 @@ class MouseGestureAndWheelActionClient {
 
             // Mouse Gesture
             if (this.#options.enabledMouseGesture) {
-                if ((event.button === 0) && (this.#previousPoint || global.onMouseGesture)) {
+                if ((event.button === 0) && ((event.buttons & 2) === 2) && (this.#previousPoint || global.onMouseGesture)) {
                     if (checkHasExtensionBeenUpdated()) {
                         this.resetGestureState();
                         return;
@@ -291,10 +291,10 @@ class MouseGestureAndWheelActionClient {
                     }
                 }
             }
-            else if (global.onMouseGesture && ((event.buttons && 2) === 0)) {
-                // Process for cases where the right button mouse-up event could not be supplemented
+            else if (((event.buttons && 2) === 0) && (global.onMouseGesture)) {
+                // Handle a case where the right button mouse-up event has not been caught.
                 const actionOption = this.getActionOptions();
-                command = this.#options.getGestureAction(global.arrows);
+                const command = this.#options.getGestureAction(global.arrows);
                 processAction(this.#options, command, actionOption);
 
                 getRootWindow().postMessage({
