@@ -357,6 +357,19 @@ class ExtensionOptions {
         await chrome.storage.local.set({ 'options': this.#options });
     }
 
+    async setGoToOnCloseTab(to) {
+        if (!this.#options) {
+            await this.loadFromStrageLocal();
+        }
+
+        this.#options.goToOnCloseTab = to;
+        await chrome.storage.local.set({ 'options': this.#options });
+    }
+
+    get goToOnCloseTab() {
+        return this.#options?.goToOnCloseTab ?? 'auto';
+    }
+
     /**
      * @summary Get the rockerGestureLeftRight action.
      * @returns {string | undefined} The action for the left-right rocker gesture.

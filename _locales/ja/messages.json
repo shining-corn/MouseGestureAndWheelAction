@@ -314,6 +314,18 @@
     "optionsAddNewTabOnLastTabClose": {
         "message": "最後のタブを閉じたときに新しいタブを追加する"
     },
+    "optionsGoToOnCloseTab": {
+        "message": "タブを閉じたときの移動先"
+    },
+    "optionsGoToOnCloseTabNone": {
+        "message": "なし"
+    },
+    "optionsGoToOnCLoseTabPrevious": {
+        "message": "前のタブに移動"
+    },
+    "optionsGoToOnCloseTabLeft": {
+        "message": "左のタブに移動"
+    },
     "optionsPageTitleRockerGesture": {
         "message": "ロッカージェスチャー"
     },
@@ -442,6 +454,9 @@
     },
     "optionsSave": {
         "message": "保存"
+    },
+    "optionsEnabled": {
+        "message": "有効"
     },
     "optionsReset": {
         "message": "デフォルト設定に戻す"

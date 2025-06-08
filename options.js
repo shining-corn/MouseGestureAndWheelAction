@@ -599,6 +599,16 @@ function renderMouseGestureOptions(options) {
     addNewTabOnLastTabCloseElement.addEventListener('click', () => {
         options.setAddNewTabOnLastTabClose(addNewTabOnLastTabCloseElement.checked);
     });
+
+    const goToOnCloseTabElement = document.getElementById('go-to-on-close-tab');
+    const goToOnCloseTabOptionElement = goToOnCloseTabElement.querySelector(`option[value="${options.goToOnCloseTab ?? 'none'}"]`);
+    if (goToOnCloseTabOptionElement) {
+        goToOnCloseTabOptionElement.selected = true;
+    }
+    goToOnCloseTabElement.disabled = !options.enabledMouseGesture;
+    goToOnCloseTabElement.addEventListener('change', () => {
+        options.setGoToOnCloseTab(goToOnCloseTabElement.value);
+    });
 }
 
 /**

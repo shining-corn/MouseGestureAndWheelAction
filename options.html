@@ -123,25 +123,61 @@
 
       <div class="indent" style="margin-top: 2em;">
         <h3 data-i18n="optionsPageTitleMouseGestureDetails"></h3>
-        <div class="indent">
-          <div>
-            <label><input type="checkbox" id="right-double-click-to-context-menu"><span
-                data-i18n="optionsRightDoubleClickToContextMenu"></span></label>
-          </div>
-          <div>
-            <span data-i18n="optionsGestureStrokeLength"></span>
-            <input type="number" id="gesture-stroke-length" min="1" max="999" style="width: 2.5rem">
-            px
-          </div>
-          <div>
-            <span data-i18n="optionsPreviousTabHistorySize"></span>
-            <input type="number" id="previous-tab-history-size" min="1" max="9999" style="width: 3rem">
-          </div>
-          <div>
-            <label><input type="checkbox" id="add-new-tab-on-last-tab-close"><span
-                data-i18n="optionsAddNewTabOnLastTabClose"></span></label>
-          </div>
-        </div>
+        <table class="indent">
+          <tbody>
+            <tr>
+              <td>
+                <span data-i18n="optionsRightDoubleClickToContextMenu"></span>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="right-double-click-to-context-menu">
+                  <span data-i18n="optionsEnabled"></span>
+                </label>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-i18n="optionsGestureStrokeLength"></span>
+              </td>
+              <td>
+                <input type="number" id="gesture-stroke-length" min="1" max="999" style="width: 2.5rem">
+                px
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-i18n="optionsPreviousTabHistorySize"></span>
+              </td>
+              <td>
+                <input type="number" id="previous-tab-history-size" min="1" max="9999" style="width: 3rem">
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-i18n="optionsAddNewTabOnLastTabClose"></span>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="add-new-tab-on-last-tab-close">
+                  <span data-i18n="optionsEnabled"></span>
+                </label>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-i18n="optionsGoToOnCloseTab"></span>
+              </td>
+              <td>
+                <select id="go-to-on-close-tab">
+                  <option data-i18n="optionsGoToOnCloseTabNone" value="none"></option>
+                  <option data-i18n="optionsGoToOnCloseTabPrevious" value="previous"></option>
+                  <option data-i18n="optionsGoToOnCloseTabLeft" value="left"></option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 

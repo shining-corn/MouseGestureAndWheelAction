@@ -39,8 +39,10 @@ importScripts('./ExtensionOptions.js');
 function sendMessageToTabs(request, tabs) {
     request.extensionId = chrome.runtime.id;
     for (let tab of tabs) {
-        chrome.tabs.sendMessage(tab.id, request)
-            .then(() => { }).catch(() => { });
+        if (tab.id) {
+            chrome.tabs.sendMessage(tab.id, request)
+                .then(() => { }).catch(() => { });
+        }
     }
 }
 
@@ -224,14 +226,23 @@ class MouseGestureService {
                         break;
                     case 'closetab':
                         (async () => {
-                            const tab = await chrome.tabs.query({ windowId: sender.tab.windowId });
-                            if (tab.length === 1) {
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
+                            if (tabs.length === 1) {
                                 if (this.#options.addNewTabOnLastTabClose) {
                                     chrome.tabs.create({ windowId: sender.tab.windowId, url: 'chrome://newtab' });
                                 }
                             }
                             else {
-                                this.goToPreviousTab(sender, false, request.shouldPreventContextMenu);
+                                switch (this.#options.goToOnCloseTab) {
+                                    case 'previous':
+                                        this.goToPreviousTab(sender, false, false);
+                                        break;
+                                    case 'left':
+                                        goToTab(tabs, sender.tab.id, -1, false, false);
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
 
                             chrome.tabs.remove(sender.tab.id);
@@ -623,16 +634,34 @@ class MouseGestureService {
             }
         });
 
-        chrome.tabs.onDetached.addListener((tabId, detachInfo) => {
-            if (this.#tabActivateHistoryContainer[detachInfo.oldWindowId]) {
-                this.#tabActivateHistoryContainer[detachInfo.oldWindowId].history = this.#tabActivateHistoryContainer[detachInfo.oldWindowId].history.filter((elem) => elem !== tabId);
+        const cleanupHistory = (tabId, windowId) => {
+            // If the tab is detached orremoved, remove it from the history of the specified window
+            const container = this.#tabActivateHistoryContainer[windowId];
+            if (container) {
+                container.history = container.history.filter((elem, i) => {
+                    if ((elem === tabId) && i < container.index && (container.index > 0)) {
+                        container.index--;
+                    }
+                    return elem !== tabId
+                });
 
-                this.#tabActivateHistoryContainer[detachInfo.oldWindowId].history = this.#tabActivateHistoryContainer[detachInfo.oldWindowId].history.filter((elem, i, array) => i === 0 || elem !== array[i - 1]);
+                // Remove consecutive duplicates from the history
+                container.history = container.history.filter((elem, i, array) => {
+                    if ((i !== 0 && elem === array[i - 1]) && (i < container.index) && (container.index > 0)) {
+                        container.index--;
+                    }
+                    return i === 0 || elem !== array[i - 1];
+                });
 
-                if (this.#tabActivateHistoryContainer[detachInfo.oldWindowId].history.length === 0) {
-                    delete this.#tabActivateHistoryContainer[detachInfo.oldWindowId];
+                // If the history is empty, delete the container
+                if (this.#tabActivateHistoryContainer[windowId].history.length === 0) {
+                    delete this.#tabActivateHistoryContainer[windowId];
                 }
             }
+        }
+
+        chrome.tabs.onDetached.addListener((tabId, detachInfo) => {
+            cleanupHistory(tabId, detachInfo.oldWindowId);
         });
 
         chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
@@ -640,12 +669,7 @@ class MouseGestureService {
                 delete this.#tabActivateHistoryContainer[removeInfo.windowId];
             }
             else if (this.#tabActivateHistoryContainer[removeInfo.windowId]) {
-                this.#tabActivateHistoryContainer[removeInfo.windowId].history = this.#tabActivateHistoryContainer[removeInfo.windowId].history.filter((elem) => elem !== tabId);
-
-                this.#tabActivateHistoryContainer[removeInfo.windowId].history = this.#tabActivateHistoryContainer[removeInfo.windowId].history.filter((elem, i, array) => i === 0 || elem !== array[i - 1]);
-                if (this.#tabActivateHistoryContainer[removeInfo.windowId].history.length === 0) {
-                    delete this.#tabActivateHistoryContainer[removeInfo.windowId];
-                }
+                cleanupHistory(tabId, removeInfo.windowId);
             }
         });
     }

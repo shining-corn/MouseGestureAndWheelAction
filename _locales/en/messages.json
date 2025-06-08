@@ -314,6 +314,18 @@
     "optionsAddNewTabOnLastTabClose": {
         "message": "Add new tab when the last tab is closed"
     },
+    "optionsGoToOnCloseTab": {
+        "message": "Where to go when a tab is closed"
+    },
+    "optionsGoToOnCloseTabNone": {
+        "message": "None"
+    },
+    "optionsGoToOnCLoseTabPrevious": {
+        "message": "Go to previous tab"
+    },
+    "optionsGoToOnCloseTabLeft": {
+        "message": "Go to left tab"
+    },
     "optionsPageTitleRockerGesture": {
         "message": "Rocker Gesture"
     },
@@ -442,6 +454,9 @@
     },
     "optionsSave": {
         "message": "Save"
+    },
+    "optionsEnabled": {
+        "message": "Enabled"
     },
     "optionsReset": {
         "message": "Restore default settings"
