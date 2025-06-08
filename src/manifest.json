@@ -1,0 +1,45 @@
+{
+    "name": "Mouse Gesture and Wheel Action",
+    "version": "1.10.0",
+    "manifest_version": 3,
+    "description": "__MSG_extensionDescription__",
+    "default_locale": "en",
+    "icons": {
+        "16": "icon/16.png",
+        "48": "icon/48.png",
+        "128": "icon/128.png"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "http://*/*",
+                "https://*/*",
+                "file://*/*"
+            ],
+            "js": [
+                "utilities.js",
+                "InterIframeVariables.js",
+                "ExtensionOptions.js",
+                "gestureActions.js",
+                "htmlElements.js",
+                "content.js"
+            ],
+            "run_at": "document_start",
+            "all_frames": true,
+            "match_about_blank": true
+        }
+    ],
+    "background": {
+        "service_worker": "service-worker.js"
+    },
+    "permissions": [
+        "storage",
+        "sessions",
+        "bookmarks"
+    ],
+    "options_ui": {
+        "page": "options.html",
+        "open_in_tab": true
+    },
+    "action": {}
+}
