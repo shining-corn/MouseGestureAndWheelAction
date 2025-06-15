@@ -130,6 +130,21 @@ class MouseGestureAndWheelActionClient {
             }
         });
 
+        window.addEventListener('blur', () => {
+            if (!global.enabledExtension) {
+                return;
+            }
+
+            if (!isInRootWindow()) {
+                return;
+            }
+
+            // Reset the state when the tab loses focus
+            global.shouldPreventContextMenu = false;    // Disable context menu suppression when leaving a tab
+            this.resetGestureState();
+            this.#isRightButtonPressed = false;
+        });
+
         window.addEventListener('wheel', (event) => {
             if (!global.enabledExtension) {
                 return;
