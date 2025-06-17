@@ -123,19 +123,19 @@ class MouseGestureAndWheelActionClient {
     start() {
         this.disableExtensionByUrlCondition();
 
-        document.addEventListener("selectionchange", () => {
+        document.addEventListener("selectionchange", (event) => {
+            if (!event.isTrusted || !global.enabledExtension) {
+                return;
+            }
+
             const text = window.getSelection().toString();
             if (text) {
                 global.selectedText = text;
             }
         });
 
-        window.addEventListener('blur', () => {
-            if (!global.enabledExtension) {
-                return;
-            }
-
-            if (!isInRootWindow()) {
+        window.addEventListener('blur', (event) => {
+            if (!event.isTrusted || !global.enabledExtension) {
                 return;
             }
 
@@ -146,7 +146,7 @@ class MouseGestureAndWheelActionClient {
         });
 
         window.addEventListener('wheel', (event) => {
-            if (!global.enabledExtension) {
+            if (!event.isTrusted || !global.enabledExtension) {
                 return;
             }
 
@@ -167,7 +167,6 @@ class MouseGestureAndWheelActionClient {
             (async () => {
                 if (isWheelAction()) {
                     this.setActionOptionsFromElement(event.target);
-                    let action;
                     if (event.wheelDelta > 0) {
                         executeAction(this.#options.rightButtonAndWheelUp, this.getActionOptions());
                     }
@@ -182,7 +181,7 @@ class MouseGestureAndWheelActionClient {
         });
 
         window.addEventListener('mousedown', (event) => {
-            if (!global.enabledExtension) {
+            if (!event.isTrusted || !global.enabledExtension) {
                 return;
             }
 
@@ -257,7 +256,7 @@ class MouseGestureAndWheelActionClient {
         });
 
         window.addEventListener('mousemove', (event) => {
-            if (!global.enabledExtension) {
+            if (!event.isTrusted || !global.enabledExtension) {
                 return;
             }
 
@@ -327,7 +326,7 @@ class MouseGestureAndWheelActionClient {
         });
 
         window.addEventListener('mouseup', (event) => {
-            if (!global.enabledExtension) {
+            if (!event.isTrusted || !global.enabledExtension) {
                 return;
             }
 
@@ -378,6 +377,10 @@ class MouseGestureAndWheelActionClient {
         });
 
         window.addEventListener('contextmenu', (event) => {
+            if (!event.isTrusted || !global.enabledExtension) {
+                return;
+            }
+
             if (global.shouldPreventContextMenu) {
                 event.preventDefault();
             }
@@ -385,6 +388,10 @@ class MouseGestureAndWheelActionClient {
         });
 
         window.addEventListener('click', (event) => {
+            if (!event.isTrusted || !global.enabledExtension) {
+                return;
+            }
+            
             if (((event.button === 0) && global.onMouseGesture) ||     // During mouse gesture
                 ((event.button === 0) && (event.buttons === 2))      // During rocker gesture
             ) {
