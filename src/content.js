@@ -353,6 +353,10 @@ class MouseGestureAndWheelActionClient {
                         this.doneGesture();
                     }, 0);
                 }
+                else if (this.#hasGestureDrawn) {
+                    global.shouldPreventContextMenu = true;
+                    this.doneGesture();
+                }
 
                 this.#url = undefined;
                 this.#src = undefined;

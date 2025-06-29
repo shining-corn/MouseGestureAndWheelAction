@@ -122,7 +122,9 @@ class GestureElements {
      * @param {HTMLElement} targetElement - The target element to remove from.
      */
     removeFrom(targetElement) {
-        targetElement.removeChild(this.#backgroundElement);
+        if (targetElement && this.#backgroundElement && targetElement.contains(this.#backgroundElement)) {
+            targetElement.removeChild(this.#backgroundElement);
+        }
     }
 
     /**
