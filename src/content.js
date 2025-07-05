@@ -305,22 +305,6 @@ class MouseGestureAndWheelActionClient {
                     }
                 }
             }
-            else if (((event.buttons && 2) === 0) && (global.onMouseGesture)) {
-                // Handle a case where the right button mouse-up event has not been caught.
-                const actionOption = this.getActionOptions();
-                const command = this.#options.getGestureAction(global.arrows);
-                processAction(this.#options, command, actionOption);
-
-                getRootWindow().postMessage({
-                    extensionId: chrome.runtime.id,
-                    type: 'reset-gesture',
-                }, '*');
-                this.doneGesture();
-
-                this.#url = undefined;
-                this.#src = undefined;
-                global.onMouseGesture = false;
-            }
         }, {
             capture: true  // Measures against stopImmediatePropagation() of other scripts on the WEB site
         });
@@ -395,7 +379,7 @@ class MouseGestureAndWheelActionClient {
             if (!event.isTrusted || !global.enabledExtension) {
                 return;
             }
-            
+
             if (((event.button === 0) && global.onMouseGesture) ||     // During mouse gesture
                 ((event.button === 0) && (event.buttons === 2))      // During rocker gesture
             ) {
