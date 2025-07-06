@@ -326,7 +326,10 @@ class MouseGestureAndWheelActionClient {
                     global.shouldPreventContextMenu = true;
 
                     const actionOption = this.getActionOptions();
-                    setTimeout(() => {  // Use setTimeout to wait for global.shouldPreventContextMenu changes to be reflected in other frames
+
+                    // Use setTimeout to wait for global.shouldPreventContextMenu changes to be reflected in other frames
+                    // For example, prevent a context menu from appearing on a particular web site when a mouse gesture is initiated from the parent frame and the right button is released on the IFRAME of an advertisement.
+                    setTimeout(() => {
                         const command = this.#options.getGestureAction(global.arrows);
                         processAction(this.#options, command, actionOption);
 
