@@ -261,7 +261,7 @@ class ShowArrowsElement {
 
             switch (event.data.type) {
                 case 'show-arrows':
-                    this.showArrows(event.data.arrows);
+                    this.showArrows(global.arrows);
                     if (isInRootWindow() && this.#windowMouseGestureWasInitiated !== window) {
                         this.#windowMouseGestureWasInitiated = event.source;
                     }

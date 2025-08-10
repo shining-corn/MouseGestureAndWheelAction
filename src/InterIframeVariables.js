@@ -63,7 +63,9 @@ class InterIframeVariables {
                 case 'mouse-extension-sync':
                     this.#variables = event.data.variables;
                     if (isInRootWindow()) {
-                        this.sync();    // Synchronize variables received from one iframe to all iframes.
+                        setTimeout(() => {
+                            this.sync(event.source); // Synchronize arrows received from root window to all iframes.
+                        }, 0);
                     }
                     break;
             }
@@ -80,8 +82,14 @@ class InterIframeVariables {
     /**
      * @summary Synchronizes the variables with all registered windows.
      */
-    sync() {
+    sync(sourceWindow) {
+        if (this.#syncTargets.length === 0) {
+            return;
+        }
         for (const w of this.#syncTargets) {
+            if (sourceWindow && w !== sourceWindow) {
+                continue; // Skip the source window if provided
+            }
             w.postMessage(
                 { extensionId: chrome.runtime.id, type: 'mouse-extension-sync', variables: this.#variables },
                 '*'

@@ -14,6 +14,8 @@
 
 const global = new InterIframeVariables();
 
+let childWindows = [];
+
 /**
  * @summary Processes the action based on the provided action string and options.
  * @description If the action string starts with 'customurl:', it processes a custom URL action.
@@ -181,6 +183,31 @@ class MouseGestureAndWheelActionClient {
         });
 
         window.addEventListener('mousedown', (event) => {
+
+            if (event.button === 2) { // Right mouse button
+                event.preventDefault(); // Prevent context menu from appearing
+
+                console.log('Right click detected:', event);
+
+                if (isInIFrame()) {
+                    const rootWindow = getRootWindow();
+                    const message = {
+                        type: 'rightClick',
+                        origin: window.location.origin,
+                    };
+                    rootWindow.postMessage(message, '*');
+                    console.log('Send message to root window:', message);
+                }
+                else {
+                    for (const c of childWindows) {
+                        c.window.postMessage({
+                            type: 'root',
+                        },
+                            '*'); //window.location.origin);
+                    }
+                }
+            }
+
             if (!event.isTrusted || !global.enabledExtension) {
                 return;
             }
@@ -232,7 +259,6 @@ class MouseGestureAndWheelActionClient {
                         {
                             extensionId: chrome.runtime.id,
                             type: 'show-arrows',
-                            arrows: global.arrows,
                         },
                         '*'
                     );
@@ -295,7 +321,6 @@ class MouseGestureAndWheelActionClient {
                             {
                                 extensionId: chrome.runtime.id,
                                 type: 'show-arrows',
-                                arrows: global.arrows,
                             },
                             '*'
                         );
@@ -310,6 +335,11 @@ class MouseGestureAndWheelActionClient {
         });
 
         window.addEventListener('mouseup', (event) => {
+
+            if (event.buttons === 2) { // Right mouse button is pressed
+                event.preventDefault(); // Prevent context menu from appearing
+            }
+
             if (!event.isTrusted || !global.enabledExtension) {
                 return;
             }
@@ -338,7 +368,7 @@ class MouseGestureAndWheelActionClient {
                             type: 'reset-gesture',
                         }, '*');
                         this.doneGesture();
-                    }, 0);
+                    }, 30);
                 }
                 else if (this.#hasGestureDrawn) {
                     global.shouldPreventContextMenu = true;
@@ -394,6 +424,22 @@ class MouseGestureAndWheelActionClient {
         });
 
         window.addEventListener('message', (event) => {
+            if (event.data.type === 'rightClick') {
+                const message = event.data;
+                console.log('Received message from child window:', message);
+                if (childWindows.find(c => c.origin === message.origin)) {
+                    return; // Already handled this origin
+                }
+                childWindows.push({
+                    window: event.source,
+                    origin: message.origin
+                });
+                console.log(childWindows);
+            }
+            else if (event.data.type === 'root') {
+                console.log('Received root message:', event.data, isInRootWindow() ? 'in root window' : 'in iframe');
+            }
+
             if (event.data.extensionId === chrome.runtime.id && event.data.type === 'disable-mousegesture') {
                 global.enabledExtension = false;
             }
