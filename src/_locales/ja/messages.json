@@ -347,6 +347,9 @@
     "optionsCustomUrlDescription2": {
         "message": "「カスタムURL」を実行すると設定したURLを開きます。URLの{}はマウスジェスチャーを実行する直前に選択した文字列に置換されます。"
     },
+    "optionsCustomUrlDescription3": {
+        "message": "URLの{url}はマウスジェスチャーを実行したページのURLに置換されます。"
+    },
     "optionsPageTableHeadCustomUrlId": {
         "message": "ID"
     },

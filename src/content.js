@@ -29,11 +29,13 @@ function processAction(extensionOptions, action, actionOption) {
             const text = global.selectedText;
             const id = action.substring(10);
             const setting = extensionOptions.getCustomUrlSetting(id);
-            const hasPlaceholder = setting && setting.customUrl.indexOf('{}') !== -1;
+            const hasSelectedTextPlaceholder = setting && setting.customUrl.indexOf('{}') !== -1;
 
-            if (text || !hasPlaceholder) {
+            if (text || !hasSelectedTextPlaceholder) {
                 if (setting) {
-                    const url = setting.customUrl.replace(/\{\}/ig, encodeURI(text));
+                    const url = setting.customUrl
+                        .replace(/\{\}/ig, encodeURI(text))
+                        .replace(/\{\s*?url\s*?\}/ig, encodeURI(window.location.href));
                     if (setting.openInNewTab) {
                         sendChromeMessage({ action: 'openlinkinnwetabandactivate', url: url });
                     }

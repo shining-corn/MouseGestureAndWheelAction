@@ -347,6 +347,9 @@
     "optionsCustomUrlDescription2": {
         "message": "Executing \"Custom URL\" opens the configured URL. The {} in the URL is replaced by the string selected just before the mouse gesture is executed."
     },
+    "optionsCustomUrlDescription3": {
+        "message": "The {url} in the URL is replaced with the URL of the page where the mouse gesture was executed."
+    },
     "optionsPageTableHeadCustomUrlId": {
         "message": "ID"
     },
