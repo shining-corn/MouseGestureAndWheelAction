@@ -38,7 +38,7 @@ class ExtensionOptions {
      * @constructor
      */
     constructor() {
-        chrome.storage.local.onChanged.addListener((event) => {
+        chrome.storage.sync.onChanged.addListener((event) => {
             if (event.options && event.options.newValue) {
                 this.#options = event.options.newValue;
             }
@@ -49,7 +49,7 @@ class ExtensionOptions {
      * @summary Loads the options from Chrome's local storage.
      */
     async loadFromStrageLocal() {
-        const result = await chrome.storage.local.get(['options']);
+        const result = await chrome.storage.sync.get(['options']);
         if (result.options) {
             this.#options = result.options;
         }
@@ -82,7 +82,7 @@ class ExtensionOptions {
                 ],
             };
 
-            await chrome.storage.local.set({ options: this.#options });
+            await chrome.storage.sync.set({ options: this.#options });
         }
     }
 
@@ -109,7 +109,7 @@ class ExtensionOptions {
             ];
         }
 
-        await chrome.storage.local.set({ options: this.#options });
+        await chrome.storage.sync.set({ options: this.#options });
     }
 
     /**
@@ -120,7 +120,7 @@ class ExtensionOptions {
         if (options) {
             this.#options = options;
 
-            await chrome.storage.local.set({ 'options': this.#options });
+            await chrome.storage.sync.set({ 'options': this.#options });
         }
     }
 
@@ -182,7 +182,7 @@ class ExtensionOptions {
             this.#options.gestureSettings.push(newGesture);
         }
 
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -198,7 +198,7 @@ class ExtensionOptions {
         if (i !== -1) {
             this.#options.gestureSettings.splice(i, 1);
 
-            await chrome.storage.local.set({ 'options': this.#options });
+            await chrome.storage.sync.set({ 'options': this.#options });
         }
     }
 
@@ -220,7 +220,7 @@ class ExtensionOptions {
         }
 
         this.#options.enabledWheelAction = enabled;
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -241,7 +241,7 @@ class ExtensionOptions {
         }
 
         this.#options.rightButtonAndWheelUp = action;
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -262,7 +262,7 @@ class ExtensionOptions {
         }
 
         this.#options.rightButtonAndWheelDown = action;
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -283,7 +283,7 @@ class ExtensionOptions {
         }
 
         this.#options.enabledMouseGesture = enabled;
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -304,7 +304,7 @@ class ExtensionOptions {
         }
 
         this.#options.rightDoubleClickToContextMenu = enabled;
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -329,7 +329,7 @@ class ExtensionOptions {
         }
 
         this.#options.mouseGestureStrokeLength = length;
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -354,7 +354,7 @@ class ExtensionOptions {
         }
 
         this.#options.previousTabHistorySize = size;
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     async setGoToOnCloseTab(to) {
@@ -363,7 +363,7 @@ class ExtensionOptions {
         }
 
         this.#options.goToOnCloseTab = to;
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     get goToOnCloseTab() {
@@ -392,7 +392,7 @@ class ExtensionOptions {
      */
     async setAddNewTabOnLastTabClose(enabled) {
         this.#options.addNewTabOnLastTabClose = enabled;
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -405,7 +405,7 @@ class ExtensionOptions {
         }
 
         this.#options.rockerGestureLeftRight = action;
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -426,7 +426,7 @@ class ExtensionOptions {
         }
 
         this.#options.rockerGestureRightLeft = action;
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -460,7 +460,7 @@ class ExtensionOptions {
 
         this.#options.customUrlSettings = customUrlSettings;
 
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -599,7 +599,7 @@ class ExtensionOptions {
         this.#options.gestureBackgroundColor = backgroundColor;
         this.#options.hideGestureBackground = hideBackground;
 
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -621,7 +621,7 @@ class ExtensionOptions {
 
         this.#options.disableExtensionSettings = disableExtensionSettings;
 
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -643,6 +643,6 @@ class ExtensionOptions {
 
         this.#options.hideHintPermanently = hide;
 
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 }
