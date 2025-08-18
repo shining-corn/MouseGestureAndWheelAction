@@ -404,7 +404,7 @@ class BookMarkEditDialogElements {
             if (request && request.extensionId === chrome.runtime.id && request.type === 'upsertbookmarkresponse') {
                 (async () => {
                     if (!this.#targetElement) {
-                        const data = await chrome.storage.local.get(['defaultBookmarkFolder']);
+                        const data = await chrome.storage.sync.get(['defaultBookmarkFolder']);
                         this.addDialog(request.bookmarks, request.existsBookmark, data ? data.defaultBookmarkFolder : undefined);
                     }
                 })();
@@ -711,6 +711,6 @@ class BookMarkEditDialogElements {
      * @param {string} folderId - The ID of the folder to set as default.
      */
     setDefaultBookmarkFolder(folderId) {
-        chrome.storage.local.set({ defaultBookmarkFolder: folderId }).then();
+        chrome.storage.sync.set({ defaultBookmarkFolder: folderId }).then();
     }
 }
