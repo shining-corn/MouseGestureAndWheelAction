@@ -384,7 +384,7 @@ class MouseGestureService {
 
                             const existingBookmarks = await chrome.bookmarks.search({ url: request.bookmark.url });
                             if (existingBookmarks.length === 0) {
-                                const data = await chrome.storage.local.get(['defaultBookmarkFolder']);
+                                const data = await chrome.storage.sync.get(['defaultBookmarkFolder']);
                                 if (data && data.defaultBookmarkFolder) {
                                     request.bookmark.parentId = data.defaultBookmarkFolder;
                                 }
