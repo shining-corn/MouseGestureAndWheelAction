@@ -25,7 +25,7 @@
 /**
  * @class ExtensionOptions
  * @description This class manages the extension's options and settings.
- * It provides methods to load, save, and manipulate the options stored in Chrome's local storage.
+ * It provides methods to load, save, and manipulate the options stored in Chrome's sync storage.
  * It also listens for changes in the storage and updates the options accordingly.
  */
 class ExtensionOptions {
@@ -46,9 +46,9 @@ class ExtensionOptions {
     }
 
     /**
-     * @summary Loads the options from Chrome's local storage.
+     * @summary Loads the options from Chrome's sync storage.
      */
-    async loadFromStrageLocal() {
+    async loadFromStrage() {
         const result = await chrome.storage.sync.get(['options']);
         if (result.options) {
             this.#options = result.options;
@@ -162,7 +162,7 @@ class ExtensionOptions {
      **/
     async upsertGesture(gesture, action) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStrage();
         }
 
         const newGesture = {
@@ -191,7 +191,7 @@ class ExtensionOptions {
      **/
     async removeGesture(gesture) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStrage();
         }
 
         const i = this.#options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
@@ -216,7 +216,7 @@ class ExtensionOptions {
      */
     async setEnabledWheelAction(enabled) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStrage();
         }
 
         this.#options.enabledWheelAction = enabled;
@@ -237,7 +237,7 @@ class ExtensionOptions {
      */
     async setRightClickWheelUpAction(action) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStrage();
         }
 
         this.#options.rightButtonAndWheelUp = action;
@@ -258,7 +258,7 @@ class ExtensionOptions {
      */
     async setRightClickWheelDownAction(action) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStrage();
         }
 
         this.#options.rightButtonAndWheelDown = action;
@@ -279,7 +279,7 @@ class ExtensionOptions {
      */
     async setEnabledMouseGesture(enabled) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStrage();
         }
 
         this.#options.enabledMouseGesture = enabled;
@@ -300,7 +300,7 @@ class ExtensionOptions {
      */
     async setRightDoubleClickToContextMenu(enabled) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStrage();
         }
 
         this.#options.rightDoubleClickToContextMenu = enabled;
@@ -325,7 +325,7 @@ class ExtensionOptions {
      */
     async setMouseGestureStrokeLength(length) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStrage();
         }
 
         this.#options.mouseGestureStrokeLength = length;
@@ -350,7 +350,7 @@ class ExtensionOptions {
      */
     async setPreviousTabHistorySize(size) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStrage();
         }
 
         this.#options.previousTabHistorySize = size;
@@ -359,7 +359,7 @@ class ExtensionOptions {
 
     async setGoToOnCloseTab(to) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStrage();
         }
 
         this.#options.goToOnCloseTab = to;
@@ -401,7 +401,7 @@ class ExtensionOptions {
      */
     async setRockerGestureLeftRight(action) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStrage();
         }
 
         this.#options.rockerGestureLeftRight = action;
@@ -422,7 +422,7 @@ class ExtensionOptions {
      */
     async setRockerGestureRightLeft(action) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStrage();
         }
 
         this.#options.rockerGestureRightLeft = action;
@@ -455,7 +455,7 @@ class ExtensionOptions {
      */
     async setCustomUrlSettings(customUrlSettings) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStrage();
         }
 
         this.#options.customUrlSettings = customUrlSettings;
@@ -582,7 +582,7 @@ class ExtensionOptions {
      */
     async setGestureAppearance(lineColor, hideLine, arrowColor, arrowFontSize, hideArrow, textColor, textFontSize, hideText, backgroundColor, hideBackground) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStrage();
         }
 
         this.#options.gestureLineColor = lineColor;
@@ -616,7 +616,7 @@ class ExtensionOptions {
      */
     async setDisableExtensionSettings(disableExtensionSettings) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStrage();
         }
 
         this.#options.disableExtensionSettings = disableExtensionSettings;
@@ -638,7 +638,7 @@ class ExtensionOptions {
      */
     async setHideHintPermanently(hide) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStrage();
         }
 
         this.#options.hideHintPermanently = hide;

@@ -598,7 +598,7 @@ class MouseGestureAndWheelActionClient {
 
 (async () => {
     let options = new ExtensionOptions();
-    await options.loadFromStrageLocal();
+    await options.loadFromStrage();
     new MouseGestureAndWheelActionClient(options).start();
     if (isInRootWindow()) {
         new ShowArrowsElement(options);

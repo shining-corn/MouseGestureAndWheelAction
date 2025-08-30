@@ -1132,7 +1132,7 @@ function translate(element) {
 
 (async () => {
     let options = new ExtensionOptions();
-    await options.loadFromStrageLocal();
+    await options.loadFromStrage();
     await options.createDefaultCustomUrlSettingsIfNotExist();
     render(options);
     translate(document.body);
