@@ -46,44 +46,59 @@ class ExtensionOptions {
     }
 
     /**
-     * @summary Loads the options from Chrome's sync storage.
+     * @summary Loads the options from storage.
      */
-    async loadFromStrage() {
-        const result = await chrome.storage.sync.get(['options']);
-        if (result.options) {
-            this.#options = result.options;
+    async loadFromStorage() {
+        // First, check if options exist in sync storage
+        const syncResult = await chrome.storage.sync.get(['options']);
+        if (syncResult && syncResult.options && Object.keys(syncResult.options).length !== 0) {
+            this.#options = syncResult.options;
+            return;
         }
-        else {
-            this.#options = {
-                enabledWheelAction: true,
-                rightButtonAndWheelUp: 'gotolefttab',
-                rightButtonAndWheelDown: 'gotorighttab',
 
-                enabledMouseGesture: true,
-                gestureSettings: [
-                    { gesture: 'Click ', action: 'openlinkinnwetabandactivate' },
-                    { gesture: '←', action: 'back' },
-                    { gesture: '→', action: 'forward' },
-                    { gesture: '↑', action: 'scrollup' },
-                    { gesture: '↓', action: 'scrolldown' },
-                    { gesture: '→↑', action: 'scrolltotop' },
-                    { gesture: '→↓', action: 'scrolltobottom' },
-                    { gesture: '↓→', action: 'closetab' },
-                    { gesture: '↓←', action: 'reopenclosedtab' },
-                    { gesture: '↑↓', action: 'reloadtab' },
-                    { gesture: '↑↓↑', action: 'reloadtabhard' },
-                    { gesture: '↑←', action: 'gotolefttabwithloop' },
-                    { gesture: '↑→', action: 'gotorighttabwithloop' },
-                    { gesture: '↑←↓', action: 'gotomostlefttab' },
-                    { gesture: '↑→↓', action: 'gotomostrighttab' },
-                    { gesture: '←↑', action: 'upsertbookmark' },
-                    { gesture: '←↓', action: 'deletebookmark' },
-                    { gesture: '←→', action: 'mutetabtoggle' },
-                ],
-            };
-
-            await chrome.storage.sync.set({ options: this.#options });
+        // If options don't exist in sync storage, try to load them from local storage
+        const localResult = await chrome.storage.local.get(['options']);
+        if (localResult && localResult.options && Object.keys(localResult.options).length !== 0) {
+            this.#options = localResult.options;
+            return;
         }
+
+        // If options don't exist in both storages, create default options
+        this.#options = this.#createDefaultGestureSettings();
+        await chrome.storage.sync.set({ options: this.#options });
+    }
+
+    /**
+     * @summary Creates default gesture settings if they don't exist.
+     */
+    #createDefaultGestureSettings() {
+        return {
+            enabledWheelAction: true,
+            rightButtonAndWheelUp: 'gotolefttab',
+            rightButtonAndWheelDown: 'gotorighttab',
+
+            enabledMouseGesture: true,
+            gestureSettings: [
+                { gesture: 'Click ', action: 'openlinkinnwetabandactivate' },
+                { gesture: '←', action: 'back' },
+                { gesture: '→', action: 'forward' },
+                { gesture: '↑', action: 'scrollup' },
+                { gesture: '↓', action: 'scrolldown' },
+                { gesture: '→↑', action: 'scrolltotop' },
+                { gesture: '→↓', action: 'scrolltobottom' },
+                { gesture: '↓→', action: 'closetab' },
+                { gesture: '↓←', action: 'reopenclosedtab' },
+                { gesture: '↑↓', action: 'reloadtab' },
+                { gesture: '↑↓↑', action: 'reloadtabhard' },
+                { gesture: '↑←', action: 'gotolefttabwithloop' },
+                { gesture: '↑→', action: 'gotorighttabwithloop' },
+                { gesture: '↑←↓', action: 'gotomostlefttab' },
+                { gesture: '↑→↓', action: 'gotomostrighttab' },
+                { gesture: '←↑', action: 'upsertbookmark' },
+                { gesture: '←↓', action: 'deletebookmark' },
+                { gesture: '←→', action: 'mutetabtoggle' },
+            ],
+        };
     }
 
     /**
@@ -162,7 +177,7 @@ class ExtensionOptions {
      **/
     async upsertGesture(gesture, action) {
         if (!this.#options) {
-            await this.loadFromStrage();
+            await this.loadFromStorage();
         }
 
         const newGesture = {
@@ -191,7 +206,7 @@ class ExtensionOptions {
      **/
     async removeGesture(gesture) {
         if (!this.#options) {
-            await this.loadFromStrage();
+            await this.loadFromStorage();
         }
 
         const i = this.#options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
@@ -216,7 +231,7 @@ class ExtensionOptions {
      */
     async setEnabledWheelAction(enabled) {
         if (!this.#options) {
-            await this.loadFromStrage();
+            await this.loadFromStorage();
         }
 
         this.#options.enabledWheelAction = enabled;
@@ -237,7 +252,7 @@ class ExtensionOptions {
      */
     async setRightClickWheelUpAction(action) {
         if (!this.#options) {
-            await this.loadFromStrage();
+            await this.loadFromStorage();
         }
 
         this.#options.rightButtonAndWheelUp = action;
@@ -258,7 +273,7 @@ class ExtensionOptions {
      */
     async setRightClickWheelDownAction(action) {
         if (!this.#options) {
-            await this.loadFromStrage();
+            await this.loadFromStorage();
         }
 
         this.#options.rightButtonAndWheelDown = action;
@@ -279,7 +294,7 @@ class ExtensionOptions {
      */
     async setEnabledMouseGesture(enabled) {
         if (!this.#options) {
-            await this.loadFromStrage();
+            await this.loadFromStorage();
         }
 
         this.#options.enabledMouseGesture = enabled;
@@ -300,7 +315,7 @@ class ExtensionOptions {
      */
     async setRightDoubleClickToContextMenu(enabled) {
         if (!this.#options) {
-            await this.loadFromStrage();
+            await this.loadFromStorage();
         }
 
         this.#options.rightDoubleClickToContextMenu = enabled;
@@ -325,7 +340,7 @@ class ExtensionOptions {
      */
     async setMouseGestureStrokeLength(length) {
         if (!this.#options) {
-            await this.loadFromStrage();
+            await this.loadFromStorage();
         }
 
         this.#options.mouseGestureStrokeLength = length;
@@ -350,7 +365,7 @@ class ExtensionOptions {
      */
     async setPreviousTabHistorySize(size) {
         if (!this.#options) {
-            await this.loadFromStrage();
+            await this.loadFromStorage();
         }
 
         this.#options.previousTabHistorySize = size;
@@ -359,7 +374,7 @@ class ExtensionOptions {
 
     async setGoToOnCloseTab(to) {
         if (!this.#options) {
-            await this.loadFromStrage();
+            await this.loadFromStorage();
         }
 
         this.#options.goToOnCloseTab = to;
@@ -401,7 +416,7 @@ class ExtensionOptions {
      */
     async setRockerGestureLeftRight(action) {
         if (!this.#options) {
-            await this.loadFromStrage();
+            await this.loadFromStorage();
         }
 
         this.#options.rockerGestureLeftRight = action;
@@ -422,7 +437,7 @@ class ExtensionOptions {
      */
     async setRockerGestureRightLeft(action) {
         if (!this.#options) {
-            await this.loadFromStrage();
+            await this.loadFromStorage();
         }
 
         this.#options.rockerGestureRightLeft = action;
@@ -455,7 +470,7 @@ class ExtensionOptions {
      */
     async setCustomUrlSettings(customUrlSettings) {
         if (!this.#options) {
-            await this.loadFromStrage();
+            await this.loadFromStorage();
         }
 
         this.#options.customUrlSettings = customUrlSettings;
@@ -582,7 +597,7 @@ class ExtensionOptions {
      */
     async setGestureAppearance(lineColor, hideLine, arrowColor, arrowFontSize, hideArrow, textColor, textFontSize, hideText, backgroundColor, hideBackground) {
         if (!this.#options) {
-            await this.loadFromStrage();
+            await this.loadFromStorage();
         }
 
         this.#options.gestureLineColor = lineColor;
@@ -616,7 +631,7 @@ class ExtensionOptions {
      */
     async setDisableExtensionSettings(disableExtensionSettings) {
         if (!this.#options) {
-            await this.loadFromStrage();
+            await this.loadFromStorage();
         }
 
         this.#options.disableExtensionSettings = disableExtensionSettings;
@@ -638,7 +653,7 @@ class ExtensionOptions {
      */
     async setHideHintPermanently(hide) {
         if (!this.#options) {
-            await this.loadFromStrage();
+            await this.loadFromStorage();
         }
 
         this.#options.hideHintPermanently = hide;
