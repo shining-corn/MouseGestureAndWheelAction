@@ -439,7 +439,7 @@ function render(options) {
 function renderResetButton() {
     const resetButtonElement = document.getElementById('reset-button');
     resetButtonElement.addEventListener('click', (async () => {
-        await chrome.storage.local.remove('options');
+        await chrome.storage.sync.remove('options');
         window.location.reload();
     }));
 }
@@ -1132,7 +1132,7 @@ function translate(element) {
 
 (async () => {
     let options = new ExtensionOptions();
-    await options.loadFromStrageLocal();
+    await options.loadFromStorage();
     await options.createDefaultCustomUrlSettingsIfNotExist();
     render(options);
     translate(document.body);

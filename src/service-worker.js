@@ -384,7 +384,7 @@ class MouseGestureService {
 
                             const existingBookmarks = await chrome.bookmarks.search({ url: request.bookmark.url });
                             if (existingBookmarks.length === 0) {
-                                const data = await chrome.storage.local.get(['defaultBookmarkFolder']);
+                                const data = await chrome.storage.sync.get(['defaultBookmarkFolder']);
                                 if (data && data.defaultBookmarkFolder) {
                                     request.bookmark.parentId = data.defaultBookmarkFolder;
                                 }
@@ -769,6 +769,6 @@ class MouseGestureService {
     });
 
     let options = new ExtensionOptions();
-    (async () => { await options.loadFromStrageLocal(); })();
+    (async () => { await options.loadFromStorage(); })();
     (new MouseGestureService(options)).start(); // If execute this in the async function, it rarely causes an error "Could not establish connection. Receiving end does not exist." in `chrome.runtime.sendMessage()` in content.js, so execute it in the immediate function.
 })();
