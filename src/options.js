@@ -728,6 +728,14 @@ function renderCustomUrlOptions(options) {
         saveCustomUrl(options);
     });
     customUrlOptionsControlsElement.appendChild(saveButtonElement);
+
+    const shouldTrimSelectedTextElement = document.getElementById('should-trim-selected-text');
+    if (shouldTrimSelectedTextElement) {
+        shouldTrimSelectedTextElement.checked = options.shouldTrimSelectedText;
+        shouldTrimSelectedTextElement.addEventListener('change', async () => {
+            await options.setShouldTrimSelectedText(shouldTrimSelectedTextElement.checked);
+        });
+    }
 }
 
 /**

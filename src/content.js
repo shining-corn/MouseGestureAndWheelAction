@@ -26,7 +26,8 @@ let childWindows = [];
 function processAction(extensionOptions, action, actionOption) {
     if (action) {
         if (action.startsWith('customurl:')) {
-            const text = global.selectedText;
+            const shouldTrimSelectedText = extensionOptions.shouldTrimSelectedText;
+            const text = shouldTrimSelectedText ? global.selectedText.trim() : global.selectedText;
             const id = action.substring(10);
             const setting = extensionOptions.getCustomUrlSetting(id);
             const hasSelectedTextPlaceholder = setting && setting.customUrl.indexOf('{}') !== -1;
