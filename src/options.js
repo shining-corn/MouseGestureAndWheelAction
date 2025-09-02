@@ -440,6 +440,7 @@ function renderResetButton() {
     const resetButtonElement = document.getElementById('reset-button');
     resetButtonElement.addEventListener('click', (async () => {
         await chrome.storage.sync.remove('options');
+        await chrome.storage.local.remove('options');
         window.location.reload();
     }));
 }
