@@ -121,6 +121,11 @@ class ExtensionOptions {
                     customUrl: 'https://www.youtube.com/results?search_query={}',
                     openInNewTab: true,
                 },
+                {
+                    id: `${chrome.i18n.getMessage('strCustomUrlGoToSelectedUrl')}`,
+                    customUrl: '{}',
+                    openInNewTab: true,
+                }
             ];
         }
 
@@ -134,7 +139,6 @@ class ExtensionOptions {
     async setOptions(options) {
         if (options) {
             this.#options = options;
-
             await chrome.storage.sync.set({ 'options': this.#options });
         }
     }
@@ -212,7 +216,6 @@ class ExtensionOptions {
         const i = this.#options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
         if (i !== -1) {
             this.#options.gestureSettings.splice(i, 1);
-
             await chrome.storage.sync.set({ 'options': this.#options });
         }
     }
@@ -233,7 +236,6 @@ class ExtensionOptions {
         if (!this.#options) {
             await this.loadFromStorage();
         }
-
         this.#options.enabledWheelAction = enabled;
         await chrome.storage.sync.set({ 'options': this.#options });
     }
@@ -254,7 +256,6 @@ class ExtensionOptions {
         if (!this.#options) {
             await this.loadFromStorage();
         }
-
         this.#options.rightButtonAndWheelUp = action;
         await chrome.storage.sync.set({ 'options': this.#options });
     }
@@ -275,7 +276,6 @@ class ExtensionOptions {
         if (!this.#options) {
             await this.loadFromStorage();
         }
-
         this.#options.rightButtonAndWheelDown = action;
         await chrome.storage.sync.set({ 'options': this.#options });
     }
@@ -296,7 +296,6 @@ class ExtensionOptions {
         if (!this.#options) {
             await this.loadFromStorage();
         }
-
         this.#options.enabledMouseGesture = enabled;
         await chrome.storage.sync.set({ 'options': this.#options });
     }
@@ -317,7 +316,6 @@ class ExtensionOptions {
         if (!this.#options) {
             await this.loadFromStorage();
         }
-
         this.#options.rightDoubleClickToContextMenu = enabled;
         await chrome.storage.sync.set({ 'options': this.#options });
     }
@@ -330,7 +328,6 @@ class ExtensionOptions {
         if (typeof this.#options?.mouseGestureStrokeLength === 'number' && this.#options.mouseGestureStrokeLength) {
             return this.#options.mouseGestureStrokeLength;
         }
-
         return 16;
     }
 
@@ -342,7 +339,6 @@ class ExtensionOptions {
         if (!this.#options) {
             await this.loadFromStorage();
         }
-
         this.#options.mouseGestureStrokeLength = length;
         await chrome.storage.sync.set({ 'options': this.#options });
     }
@@ -355,7 +351,6 @@ class ExtensionOptions {
         if (typeof this.#options?.previousTabHistorySize === 'number' && this.#options.previousTabHistorySize) {
             return this.#options.previousTabHistorySize;
         }
-
         return 4096;
     }
 
@@ -367,7 +362,6 @@ class ExtensionOptions {
         if (!this.#options) {
             await this.loadFromStorage();
         }
-
         this.#options.previousTabHistorySize = size;
         await chrome.storage.sync.set({ 'options': this.#options });
     }
@@ -376,7 +370,6 @@ class ExtensionOptions {
         if (!this.#options) {
             await this.loadFromStorage();
         }
-
         this.#options.goToOnCloseTab = to;
         await chrome.storage.sync.set({ 'options': this.#options });
     }
@@ -418,7 +411,6 @@ class ExtensionOptions {
         if (!this.#options) {
             await this.loadFromStorage();
         }
-
         this.#options.rockerGestureLeftRight = action;
         await chrome.storage.sync.set({ 'options': this.#options });
     }
@@ -439,7 +431,6 @@ class ExtensionOptions {
         if (!this.#options) {
             await this.loadFromStorage();
         }
-
         this.#options.rockerGestureRightLeft = action;
         await chrome.storage.sync.set({ 'options': this.#options });
     }
@@ -472,9 +463,27 @@ class ExtensionOptions {
         if (!this.#options) {
             await this.loadFromStorage();
         }
-
         this.#options.customUrlSettings = customUrlSettings;
+        await chrome.storage.sync.set({ 'options': this.#options });
+    }
 
+    /**
+     * @summary Get the option to trim selected text.
+     * @returns {boolean} Whether the feature is enabled.
+     */
+    get shouldTrimSelectedText() {
+        return this.#options?.shouldTrimSelectedText ?? false;
+    }
+
+    /**
+     * @summary Set the option to trim selected text.
+     * @param {boolean} enabled - Whether the feature is enabled.
+     */
+    async setShouldTrimSelectedText(enabled) {
+        if (!this.#options) {
+            await this.loadFromStorage();
+        }
+        this.#options.shouldTrimSelectedText = enabled;
         await chrome.storage.sync.set({ 'options': this.#options });
     }
 
@@ -486,7 +495,6 @@ class ExtensionOptions {
         if (typeof this.#options?.gestureLineColor === 'string' && this.#options.gestureLineColor) {
             return this.#options.gestureLineColor;
         }
-
         return 'rgba(128, 128, 255, 0.9)';
     }
 
@@ -506,7 +514,6 @@ class ExtensionOptions {
         if (typeof this.#options?.gestureArrowColor === 'string' && this.#options.gestureArrowColor) {
             return this.#options.gestureArrowColor;
         }
-
         return 'rgba(239, 239, 255, 0.9)';
     }
 
@@ -518,7 +525,6 @@ class ExtensionOptions {
         if (typeof this.#options?.gestureArrowFontSize === 'number' && this.#options.gestureArrowFontSize) {
             return this.#options.gestureArrowFontSize;
         }
-
         return 64;
     }
 
@@ -538,7 +544,6 @@ class ExtensionOptions {
         if (typeof this.#options?.gestureFontColor === 'string' && this.#options.gestureFontColor) {
             return this.#options.gestureFontColor;
         }
-
         return 'rgba(239, 239, 255, 0.9)';
     }
 
@@ -550,7 +555,6 @@ class ExtensionOptions {
         if (typeof this.#options?.gestureTextFontSize === 'number' && this.#options.gestureTextFontSize) {
             return this.#options.gestureTextFontSize;
         }
-
         return 24;
     }
 
@@ -570,7 +574,6 @@ class ExtensionOptions {
         if (typeof this.#options?.gestureBackgroundColor === 'string' && this.#options.gestureBackgroundColor) {
             return this.#options.gestureBackgroundColor;
         }
-
         return 'rgba(0, 0, 32, 0.9)';
     }
 
@@ -633,9 +636,7 @@ class ExtensionOptions {
         if (!this.#options) {
             await this.loadFromStorage();
         }
-
         this.#options.disableExtensionSettings = disableExtensionSettings;
-
         await chrome.storage.sync.set({ 'options': this.#options });
     }
 
@@ -655,9 +656,7 @@ class ExtensionOptions {
         if (!this.#options) {
             await this.loadFromStorage();
         }
-
         this.#options.hideHintPermanently = hide;
-
         await chrome.storage.sync.set({ 'options': this.#options });
     }
 }

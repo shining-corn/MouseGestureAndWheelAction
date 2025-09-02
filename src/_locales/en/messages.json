@@ -266,6 +266,9 @@
     "strOk": {
         "message": "OK"
     },
+    "strCustomUrlGoToSelectedUrl": {
+        "message": "Go to selected URL"
+    },
     "optionsPageTitle": {
         "message": "Mouse Gesture and Wheel Action Options"
     },
@@ -349,6 +352,9 @@
     },
     "optionsCustomUrlDescription3": {
         "message": "The {url} in the URL is replaced with the URL of the page where the mouse gesture was executed."
+    },
+    "optionsShouldTrimSelectedText": {
+        "message": "Trim whitespace from selected text when using custom URL"
     },
     "optionsPageTableHeadCustomUrlId": {
         "message": "ID"

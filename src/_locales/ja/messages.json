@@ -266,6 +266,9 @@
     "strOk": {
         "message": "OK"
     },
+    "strCustomUrlGoToSelectedUrl": {
+        "message": "選択したURLに移動"
+    },
     "optionsPageTitle": {
         "message": "Mouse Gesture and Wheel Action 設定"
     },
@@ -349,6 +352,9 @@
     },
     "optionsCustomUrlDescription3": {
         "message": "URLの{url}はマウスジェスチャーを実行したページのURLに置換されます。"
+    },
+    "optionsShouldTrimSelectedText": {
+        "message": "カスタムURL使用時に選択テキストの前後の空白を削除する"
     },
     "optionsPageTableHeadCustomUrlId": {
         "message": "ID"
