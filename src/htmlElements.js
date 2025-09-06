@@ -53,8 +53,6 @@ function createArrangementElement(arrangement) {
     const element = document.createElement('div');
     element.style.all = 'revert';
 
-    console.log(123, arrangement);////
-
     switch (arrangement) {
         case 'top-left':
             element.style.position = 'absolute';
@@ -315,6 +313,16 @@ class ShowArrowsElement {
         this.#arrowsArea.style.height = 'fit-content';
         this.#arrowsArea.style.overflowWrap = 'anywhere';
         this.#arrowsArea.style.pointerEvents = 'none';
+
+        this.#options.addOnChangedCallback(() => {
+            this.#backgroundElement.removeChild(this.#arrangementElement);
+            this.#arrangementElement.removeChild(this.#actionNameArea);
+            this.#arrangementElement.removeChild(this.#arrowsArea);
+            this.#arrangementElement = createArrangementElement(this.#options.showArrowsPosition);
+            this.#arrangementElement.appendChild(this.#actionNameArea);
+            this.#arrangementElement.appendChild(this.#arrowsArea);
+            this.#backgroundElement.appendChild(this.#arrangementElement);
+        });
 
         window.addEventListener('message', (event) => {
             if (event.data.extensionId !== chrome.runtime.id) {
