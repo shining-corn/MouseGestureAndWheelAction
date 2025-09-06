@@ -190,8 +190,6 @@ class MouseGestureAndWheelActionClient {
             if (event.button === 2) { // Right mouse button
                 event.preventDefault(); // Prevent context menu from appearing
 
-                console.log('Right click detected:', event);
-
                 if (isInIFrame()) {
                     const rootWindow = getRootWindow();
                     const message = {
@@ -199,7 +197,6 @@ class MouseGestureAndWheelActionClient {
                         origin: window.location.origin,
                     };
                     rootWindow.postMessage(message, '*');
-                    console.log('Send message to root window:', message);
                 }
                 else {
                     for (const c of childWindows) {
@@ -429,7 +426,6 @@ class MouseGestureAndWheelActionClient {
         window.addEventListener('message', (event) => {
             if (event.data.type === 'rightClick') {
                 const message = event.data;
-                console.log('Received message from child window:', message);
                 if (childWindows.find(c => c.origin === message.origin)) {
                     return; // Already handled this origin
                 }
@@ -437,10 +433,6 @@ class MouseGestureAndWheelActionClient {
                     window: event.source,
                     origin: message.origin
                 });
-                console.log(childWindows);
-            }
-            else if (event.data.type === 'root') {
-                console.log('Received root message:', event.data, isInRootWindow() ? 'in root window' : 'in iframe');
             }
 
             if (event.data.extensionId === chrome.runtime.id && event.data.type === 'disable-mousegesture') {

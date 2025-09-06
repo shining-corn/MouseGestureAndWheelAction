@@ -49,6 +49,66 @@ function createBackgroundElement(isCentering) {
     return element;
 }
 
+function createPositionElement(arrangement) {
+    const element = document.createElement('div');
+    element.style.all = 'revert';
+
+    switch (arrangement) {
+        case 'top-left':
+            element.style.position = 'absolute';
+            element.style.top = '0';
+            element.style.left = '0';
+            break;
+        case 'top':
+            element.style.position = 'absolute';
+            element.style.top = '0';
+            element.style.left = '50%';
+            element.style.transform = 'translateX(-50%)';
+            break;
+        case 'top-right':
+            element.style.position = 'absolute';
+            element.style.top = '0';
+            element.style.right = '0';
+            break;
+        case 'left':
+            element.style.position = 'absolute';
+            element.style.top = '50%';
+            element.style.left = '0';
+            element.style.transform = 'translateY(-50%)';
+            break;
+        case 'right':
+            element.style.position = 'absolute';
+            element.style.top = '50%';
+            element.style.right = '0';
+            element.style.transform = 'translateY(-50%)';
+            break;
+        case 'bottom-left':
+            element.style.position = 'absolute';
+            element.style.bottom = '0';
+            element.style.left = '0';
+            break;
+        case 'bottom':
+            element.style.position = 'absolute';
+            element.style.bottom = '0';
+            element.style.left = '50%';
+            element.style.transform = 'translateX(-50%)';
+            break;
+        case 'bottom-right':
+            element.style.position = 'absolute';
+            element.style.bottom = '0';
+            element.style.right = '0';
+            break;
+        case 'center': /* fall through */
+        default:
+            element.style.maxWidth = '100vw';
+            element.style.width = 'fit-content';
+            element.style.height = 'fit-content';
+            break;
+    }
+
+    return element;
+}
+
 /**
  * @summary Create a centering element.
  * @returns The created element.
@@ -189,7 +249,7 @@ class ShowArrowsElement {
     /**
      * @type {HTMLElement | undefined}
      */
-    #centeringElement = undefined;
+    #actionNameAndArrowsElement = undefined;
 
     /**
      * @type {HTMLElement | undefined}
@@ -219,13 +279,15 @@ class ShowArrowsElement {
         this.#backgroundElement.style.backgroundColor = 'transparent';
         this.#backgroundElement.style.pointerEvents = 'none'; // 特定のIFRAME（主にブラウザゲーム）でマウスジェスチャ可能にするために必要
 
-        this.#centeringElement = createCenteringElement();
-        this.#backgroundElement.appendChild(this.#centeringElement);
-        this.#centeringElement.style.textAlign = 'center';
-        this.#centeringElement.style.pointerEvents = 'none';
+        this.#actionNameAndArrowsElement = createPositionElement(options.showArrowsPosition);
+        this.#backgroundElement.appendChild(this.#actionNameAndArrowsElement);
+        this.#actionNameAndArrowsElement.style.textAlign = 'center';
+        this.#actionNameAndArrowsElement.style.pointerEvents = 'none';
 
         this.#actionNameArea = document.createElement('div');
-        this.#centeringElement.appendChild(this.#actionNameArea);
+        if (!this.#options.hideGestureText) {
+            this.#actionNameAndArrowsElement.appendChild(this.#actionNameArea);
+        }
         this.#actionNameArea.style.all = 'revert';
         this.#actionNameArea.style.width = 'fit-content';
         this.#actionNameArea.style.height = 'fit-content';
@@ -238,7 +300,9 @@ class ShowArrowsElement {
         this.#actionNameArea.style.pointerEvents = 'none';
 
         this.#arrowsArea = document.createElement('div');
-        this.#centeringElement.appendChild(this.#arrowsArea);
+        if (!this.#options.hideGestureArrow) {
+            this.#actionNameAndArrowsElement.appendChild(this.#arrowsArea);
+        }
         this.#arrowsArea.style.all = 'revert';
         this.#arrowsArea.style.fontWeight = 'bold';
         this.#arrowsArea.style.left = '0';
@@ -253,6 +317,33 @@ class ShowArrowsElement {
         this.#arrowsArea.style.height = 'fit-content';
         this.#arrowsArea.style.overflowWrap = 'anywhere';
         this.#arrowsArea.style.pointerEvents = 'none';
+
+        this.#options.addOnChangedCallback(() => {
+            if (!this.#backgroundElement || !this.#actionNameAndArrowsElement || !this.#arrowsArea) {
+                return;
+            }
+
+            // Remove elements
+            if (this.#backgroundElement.contains(this.#actionNameAndArrowsElement)) {
+                this.#backgroundElement.removeChild(this.#actionNameAndArrowsElement);
+            }
+            if (this.#actionNameAndArrowsElement.contains(this.#actionNameArea)) {
+                this.#actionNameAndArrowsElement.removeChild(this.#actionNameArea);
+            }
+            if (this.#actionNameAndArrowsElement.contains(this.#arrowsArea)) {
+                this.#actionNameAndArrowsElement.removeChild(this.#arrowsArea);
+            }
+
+            // Create new elements and append them
+            this.#actionNameAndArrowsElement = createPositionElement(this.#options.showArrowsPosition);
+            if (!this.#options.hideGestureText) {
+                this.#actionNameAndArrowsElement.appendChild(this.#actionNameArea);
+            }
+            if (!this.#options.hideGestureArrow) {
+                this.#actionNameAndArrowsElement.appendChild(this.#arrowsArea);
+            }
+            this.#backgroundElement.appendChild(this.#actionNameAndArrowsElement);
+        });
 
         window.addEventListener('message', (event) => {
             if (event.data.extensionId !== chrome.runtime.id) {
@@ -334,8 +425,10 @@ class ShowArrowsElement {
             this.#arrowsArea.style.marginTop = '10px';
         }
         else {
-            this.#actionNameArea.style.display = 'none';
-            this.#arrowsArea.style.marginTop = '35px';
+            if (!this.#options.hideGestureText) {
+                this.#actionNameArea.style.display = 'none';
+                this.#arrowsArea.style.marginTop = '35px';
+            }
         }
     }
 

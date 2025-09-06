@@ -845,6 +845,14 @@ function renderAppearanceOptions(options) {
         backgroundColorElement.disabled = !enabledGestureBackgroundElement.checked;
     });
 
+    const showArrowsPositionElement = document.getElementById('show-arrows-position');
+    if (showArrowsPositionElement) {
+        const value = options.showArrowsPosition;
+        for (const opt of showArrowsPositionElement.options) {
+            opt.selected = (opt.value === value);
+        }
+    }
+
     const saveButtonElement = document.getElementById('color-save');
     saveButtonElement.addEventListener('click', () => {
         (async () => {
@@ -858,8 +866,9 @@ function renderAppearanceOptions(options) {
             const hideText = !enabledGestureTextElement.checked;
             const backgroundColor = backgroundColorElement.value;
             const hideBackground = !enabledGestureBackgroundElement.checked;
+            const showArrowsPosition = showArrowsPositionElement.value;
 
-            await options.setGestureAppearance(lineColor, hideLine, arrowColor, arrowSize, hideArrow, textColor, textSize, hideText, backgroundColor, hideBackground);
+            await options.setGestureAppearance(lineColor, hideLine, arrowColor, arrowSize, hideArrow, textColor, textSize, hideText, backgroundColor, hideBackground, showArrowsPosition);
 
             window.alert(chrome.i18n.getMessage('messageSucceededInSave'));
             window.location.reload();
