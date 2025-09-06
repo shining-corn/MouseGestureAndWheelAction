@@ -240,10 +240,10 @@
         "message": "拡張機能がバージョンアップされたため、この画面ではマウスジェスチャーが動作しなくなりました。\n画面をリロードしてください。"
     },
     "strBookmarkDialogTitleAdd": {
-        "message": "ブックマークを追加"  
+        "message": "ブックマークを追加"
     },
     "strBookmarkDialogTitleEdit": {
-        "message": "ブックマークを編集"  
+        "message": "ブックマークを編集"
     },
     "strBookmarkDialogName": {
         "message": "名前"
@@ -394,6 +394,36 @@
     },
     "optionsFontSize": {
         "message": "フォントサイズ"
+    },
+    "optionsShowArrowsPositionLabel": {
+        "message": "矢印・テキストの表示位置"
+    },
+    "optionsShowArrowsPositionTopLeft": {
+        "message": "左上"
+    },
+    "optionsShowArrowsPositionTop": {
+        "message": "上"
+    },
+    "optionsShowArrowsPositionTopRight": {
+        "message": "右上"
+    },
+    "optionsShowArrowsPositionLeft": {
+        "message": "左"
+    },
+    "optionsShowArrowsPositionCenter": {
+        "message": "中央"
+    },
+    "optionsShowArrowsPositionRight": {
+        "message": "右"
+    },
+    "optionsShowArrowsPositionBottomLeft": {
+        "message": "左下"
+    },
+    "optionsShowArrowsPositionBottom": {
+        "message": "下"
+    },
+    "optionsShowArrowsPositionBottomRight": {
+        "message": "右下"
     },
     "optionsPageTitleExportImport": {
         "message": "エクスポート・インポート"

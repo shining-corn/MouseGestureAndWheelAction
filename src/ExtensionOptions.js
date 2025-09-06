@@ -584,6 +584,13 @@ class ExtensionOptions {
     get hideGestureBackground() {
         return this.#options?.hideGestureBackground ?? false;
     }
+    /**
+     * @summary Get the showArrowsPosition option.
+     * @returns {string} ShowArrowsElement position.
+     */
+    get showArrowsPosition() {
+        return this.#options?.showArrowsPosition || 'center';
+    }
 
     /**
      * @summary Sets the appearance of the gesture.
@@ -598,7 +605,7 @@ class ExtensionOptions {
      * @param {string} backgroundColor 
      * @param {boolean} hideBackground 
      */
-    async setGestureAppearance(lineColor, hideLine, arrowColor, arrowFontSize, hideArrow, textColor, textFontSize, hideText, backgroundColor, hideBackground) {
+    async setGestureAppearance(lineColor, hideLine, arrowColor, arrowFontSize, hideArrow, textColor, textFontSize, hideText, backgroundColor, hideBackground, showArrowsPosition) {
         if (!this.#options) {
             await this.loadFromStorage();
         }
@@ -616,6 +623,8 @@ class ExtensionOptions {
 
         this.#options.gestureBackgroundColor = backgroundColor;
         this.#options.hideGestureBackground = hideBackground;
+
+        this.#options.showArrowsPosition = showArrowsPosition;
 
         await chrome.storage.sync.set({ 'options': this.#options });
     }
