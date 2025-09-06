@@ -49,7 +49,7 @@ function createBackgroundElement(isCentering) {
     return element;
 }
 
-function createArrangementElement(arrangement) {
+function createPositionElement(arrangement) {
     const element = document.createElement('div');
     element.style.all = 'revert';
 
@@ -249,7 +249,7 @@ class ShowArrowsElement {
     /**
      * @type {HTMLElement | undefined}
      */
-    #arrangementElement = undefined;
+    #actionNameAndArrowsElement = undefined;
 
     /**
      * @type {HTMLElement | undefined}
@@ -279,13 +279,15 @@ class ShowArrowsElement {
         this.#backgroundElement.style.backgroundColor = 'transparent';
         this.#backgroundElement.style.pointerEvents = 'none'; // 特定のIFRAME（主にブラウザゲーム）でマウスジェスチャ可能にするために必要
 
-        this.#arrangementElement = createArrangementElement(options.showArrowsPosition);
-        this.#backgroundElement.appendChild(this.#arrangementElement);
-        this.#arrangementElement.style.textAlign = 'center';
-        this.#arrangementElement.style.pointerEvents = 'none';
+        this.#actionNameAndArrowsElement = createPositionElement(options.showArrowsPosition);
+        this.#backgroundElement.appendChild(this.#actionNameAndArrowsElement);
+        this.#actionNameAndArrowsElement.style.textAlign = 'center';
+        this.#actionNameAndArrowsElement.style.pointerEvents = 'none';
 
         this.#actionNameArea = document.createElement('div');
-        this.#arrangementElement.appendChild(this.#actionNameArea);
+        if (!this.#options.hideGestureText) {
+            this.#actionNameAndArrowsElement.appendChild(this.#actionNameArea);
+        }
         this.#actionNameArea.style.all = 'revert';
         this.#actionNameArea.style.width = 'fit-content';
         this.#actionNameArea.style.height = 'fit-content';
@@ -298,7 +300,9 @@ class ShowArrowsElement {
         this.#actionNameArea.style.pointerEvents = 'none';
 
         this.#arrowsArea = document.createElement('div');
-        this.#arrangementElement.appendChild(this.#arrowsArea);
+        if (!this.#options.hideGestureArrow) {
+            this.#actionNameAndArrowsElement.appendChild(this.#arrowsArea);
+        }
         this.#arrowsArea.style.all = 'revert';
         this.#arrowsArea.style.fontWeight = 'bold';
         this.#arrowsArea.style.left = '0';
@@ -315,13 +319,30 @@ class ShowArrowsElement {
         this.#arrowsArea.style.pointerEvents = 'none';
 
         this.#options.addOnChangedCallback(() => {
-            this.#backgroundElement.removeChild(this.#arrangementElement);
-            this.#arrangementElement.removeChild(this.#actionNameArea);
-            this.#arrangementElement.removeChild(this.#arrowsArea);
-            this.#arrangementElement = createArrangementElement(this.#options.showArrowsPosition);
-            this.#arrangementElement.appendChild(this.#actionNameArea);
-            this.#arrangementElement.appendChild(this.#arrowsArea);
-            this.#backgroundElement.appendChild(this.#arrangementElement);
+            if (!this.#backgroundElement || !this.#actionNameAndArrowsElement || !this.#arrowsArea) {
+                return;
+            }
+
+            // Remove elements
+            if (this.#backgroundElement.contains(this.#actionNameAndArrowsElement)) {
+                this.#backgroundElement.removeChild(this.#actionNameAndArrowsElement);
+            }
+            if (this.#actionNameAndArrowsElement.contains(this.#actionNameArea)) {
+                this.#actionNameAndArrowsElement.removeChild(this.#actionNameArea);
+            }
+            if (this.#actionNameAndArrowsElement.contains(this.#arrowsArea)) {
+                this.#actionNameAndArrowsElement.removeChild(this.#arrowsArea);
+            }
+
+            // Create new elements and append them
+            this.#actionNameAndArrowsElement = createPositionElement(this.#options.showArrowsPosition);
+            if (!this.#options.hideGestureText) {
+                this.#actionNameAndArrowsElement.appendChild(this.#actionNameArea);
+            }
+            if (!this.#options.hideGestureArrow) {
+                this.#actionNameAndArrowsElement.appendChild(this.#arrowsArea);
+            }
+            this.#backgroundElement.appendChild(this.#actionNameAndArrowsElement);
         });
 
         window.addEventListener('message', (event) => {
@@ -404,8 +425,10 @@ class ShowArrowsElement {
             this.#arrowsArea.style.marginTop = '10px';
         }
         else {
-            this.#actionNameArea.style.display = 'none';
-            this.#arrowsArea.style.marginTop = '35px';
+            if (!this.#options.hideGestureText) {
+                this.#actionNameArea.style.display = 'none';
+                this.#arrowsArea.style.marginTop = '35px';
+            }
         }
     }
 
