@@ -49,11 +49,13 @@ function createBackgroundElement(isCentering) {
     return element;
 }
 
-function createPositionElement(arrangement) {
+function createPositionElement(position) {
     const element = document.createElement('div');
     element.style.all = 'revert';
+    element.style.width = 'fit-content';
+    element.style.height = 'fit-content';
 
-    switch (arrangement) {
+    switch (position) {
         case 'top-left':
             element.style.position = 'absolute';
             element.style.top = '0';
@@ -75,6 +77,10 @@ function createPositionElement(arrangement) {
             element.style.top = '50%';
             element.style.left = '0';
             element.style.transform = 'translateY(-50%)';
+            break;
+        case 'center': /* fall through */
+        default:
+            element.style.maxWidth = '100vw';
             break;
         case 'right':
             element.style.position = 'absolute';
@@ -98,13 +104,47 @@ function createPositionElement(arrangement) {
             element.style.bottom = '0';
             element.style.right = '0';
             break;
+    }
+
+    return element;
+}
+
+function createArrowsAreaElement(options) {
+    const element = document.createElement('div');
+
+    element.style.all = 'revert';
+    element.style.fontWeight = 'bold';
+    switch (options.showArrowsPosition) {
+        case 'top-left': /* fall through */
+        case 'left': /* fall through */
+        case 'bottom-left':
+            element.style.marginRight = 'auto';
+            element.style.textAlign = 'left';
+            break;
+        case 'top': /* fall through */
         case 'center': /* fall through */
+        case 'bottom':
         default:
-            element.style.maxWidth = '100vw';
-            element.style.width = 'fit-content';
-            element.style.height = 'fit-content';
+            element.style.marginRight = 'auto';
+            element.style.marginLeft = 'auto';
+            element.style.textAlign = 'center';
+            break;
+        case 'top-right': /* fall through */
+        case 'right': /* fall through */
+        case 'bottom-right':
+            element.style.marginLeft = 'auto';
+            element.style.textAlign = 'right';
             break;
     }
+    element.style.border = 'none';
+    element.style.lineHeight = '1';
+    element.style.fontFamily = 'monospace';
+    element.style.backgroundColor = options.gestureBackgroundColor;
+    element.style.maxWidth = '100vw';
+    element.style.width = 'fit-content';
+    element.style.height = 'fit-content';
+    element.style.overflowWrap = 'anywhere';
+    element.style.pointerEvents = 'none';
 
     return element;
 }
@@ -279,9 +319,8 @@ class ShowArrowsElement {
         this.#backgroundElement.style.backgroundColor = 'transparent';
         this.#backgroundElement.style.pointerEvents = 'none'; // 特定のIFRAME（主にブラウザゲーム）でマウスジェスチャ可能にするために必要
 
-        this.#actionNameAndArrowsElement = createPositionElement(options.showArrowsPosition);
+        this.#actionNameAndArrowsElement = createPositionElement(this.#options.showArrowsPosition);
         this.#backgroundElement.appendChild(this.#actionNameAndArrowsElement);
-        this.#actionNameAndArrowsElement.style.textAlign = 'center';
         this.#actionNameAndArrowsElement.style.pointerEvents = 'none';
 
         this.#actionNameArea = document.createElement('div');
@@ -298,28 +337,15 @@ class ShowArrowsElement {
         this.#actionNameArea.style.backgroundColor = this.#options.gestureBackgroundColor;
         this.#actionNameArea.style.display = 'none';
         this.#actionNameArea.style.pointerEvents = 'none';
+        this.#actionNameArea.style.whiteSpace = 'nowrap';
 
-        this.#arrowsArea = document.createElement('div');
-        if (!this.#options.hideGestureArrow) {
+        this.#arrowsArea = createArrowsAreaElement(this.#options);
+        if (!options.hideGestureArrow) {
             this.#actionNameAndArrowsElement.appendChild(this.#arrowsArea);
         }
-        this.#arrowsArea.style.all = 'revert';
-        this.#arrowsArea.style.fontWeight = 'bold';
-        this.#arrowsArea.style.left = '0';
-        this.#arrowsArea.style.right = '0';
-        this.#arrowsArea.style.margin = 'auto';
-        this.#arrowsArea.style.border = 'none';
-        this.#arrowsArea.style.lineHeight = '1';
-        this.#arrowsArea.style.fontFamily = 'monospace';
-        this.#arrowsArea.style.backgroundColor = this.#options.gestureBackgroundColor;
-        this.#arrowsArea.style.maxWidth = 'calc(100vw - 64px)';
-        this.#arrowsArea.style.width = 'fit-content';
-        this.#arrowsArea.style.height = 'fit-content';
-        this.#arrowsArea.style.overflowWrap = 'anywhere';
-        this.#arrowsArea.style.pointerEvents = 'none';
 
         this.#options.addOnChangedCallback(() => {
-            if (!this.#backgroundElement || !this.#actionNameAndArrowsElement || !this.#arrowsArea) {
+            if (!this.#backgroundElement || !this.#actionNameAndArrowsElement) {
                 return;
             }
 
@@ -327,18 +353,13 @@ class ShowArrowsElement {
             if (this.#backgroundElement.contains(this.#actionNameAndArrowsElement)) {
                 this.#backgroundElement.removeChild(this.#actionNameAndArrowsElement);
             }
-            if (this.#actionNameAndArrowsElement.contains(this.#actionNameArea)) {
-                this.#actionNameAndArrowsElement.removeChild(this.#actionNameArea);
-            }
-            if (this.#actionNameAndArrowsElement.contains(this.#arrowsArea)) {
-                this.#actionNameAndArrowsElement.removeChild(this.#arrowsArea);
-            }
 
             // Create new elements and append them
             this.#actionNameAndArrowsElement = createPositionElement(this.#options.showArrowsPosition);
             if (!this.#options.hideGestureText) {
                 this.#actionNameAndArrowsElement.appendChild(this.#actionNameArea);
             }
+            this.#arrowsArea = createArrowsAreaElement(this.#options);
             if (!this.#options.hideGestureArrow) {
                 this.#actionNameAndArrowsElement.appendChild(this.#arrowsArea);
             }
@@ -421,14 +442,11 @@ class ShowArrowsElement {
             else if (action) {
                 this.#actionNameArea.innerText = chrome.i18n.getMessage(action);
             }
-            this.#actionNameArea.style.display = 'inline';
-            this.#arrowsArea.style.marginTop = '10px';
+            this.#actionNameArea.style.display = 'block';
         }
         else {
-            if (!this.#options.hideGestureText) {
-                this.#actionNameArea.style.display = 'none';
-                this.#arrowsArea.style.marginTop = '35px';
-            }
+            this.#actionNameArea.innerText = '　';
+            this.#actionNameArea.style.backgroundColor = 'rgba(0, 0, 0, 0)';
         }
     }
 
