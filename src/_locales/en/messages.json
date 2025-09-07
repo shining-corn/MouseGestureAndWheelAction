@@ -240,10 +240,10 @@
         "message": "Because the extension has been updated, mouse gestures no longer work on this screen.\nPlease reload the web page."
     },
     "strBookmarkDialogTitleAdd": {
-        "message": "Add Bookmark"  
+        "message": "Add Bookmark"
     },
     "strBookmarkDialogTitleEdit": {
-        "message": "Edit Bookmark"  
+        "message": "Edit Bookmark"
     },
     "strBookmarkDialogName": {
         "message": "Name"
@@ -381,7 +381,7 @@
         "message": "Line"
     },
     "optionsArrow": {
-        "message": "Arrow"
+        "message": "Arrows"
     },
     "optionsText": {
         "message": "Text"
@@ -394,6 +394,36 @@
     },
     "optionsFontSize": {
         "message": "Font Size"
+    },
+    "optionsShowArrowsPositionLabel": {
+        "message": "Arrows and Text Position"
+    },
+    "optionsShowArrowsPositionTopLeft": {
+        "message": "Top Left"
+    },
+    "optionsShowArrowsPositionTop": {
+        "message": "Top"
+    },
+    "optionsShowArrowsPositionTopRight": {
+        "message": "Top Right"
+    },
+    "optionsShowArrowsPositionLeft": {
+        "message": "Left"
+    },
+    "optionsShowArrowsPositionCenter": {
+        "message": "Center"
+    },
+    "optionsShowArrowsPositionRight": {
+        "message": "Right"
+    },
+    "optionsShowArrowsPositionBottomLeft": {
+        "message": "Bottom Left"
+    },
+    "optionsShowArrowsPositionBottom": {
+        "message": "Bottom"
+    },
+    "optionsShowArrowsPositionBottomRight": {
+        "message": "Bottom Right"
     },
     "optionsPageTitleExportImport": {
         "message": "Export/Import"
