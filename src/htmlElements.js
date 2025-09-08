@@ -127,6 +127,10 @@ function createActionNameAreaElement(options) {
     element.style.display = 'none';
     element.style.pointerEvents = 'none';
     element.style.whiteSpace = 'nowrap';
+    element.style.color = options.gestureFontColor;
+    element.style.backgroundColor = options.gestureBackgroundColor;
+    element.style.fontSize = `${options.gestureTextFontSize}px`;
+    element.style.padding = `${Math.floor(options.gestureTextFontSize) / 3}px`;
 
     return element;
 }
@@ -167,6 +171,10 @@ function createArrowsAreaElement(options) {
     element.style.height = 'fit-content';
     element.style.overflowWrap = 'anywhere';
     element.style.pointerEvents = 'none';
+    element.style.color = options.gestureArrowColor;
+    element.style.backgroundColor = options.gestureBackgroundColor;
+    element.style.fontSize = `${options.gestureArrowFontSize}px`;
+    element.style.padding = `${Math.floor(options.gestureArrowFontSize / 8)}px`;
 
     return element;
 }
@@ -340,30 +348,6 @@ class ShowArrowsElement {
         this.#backgroundElement.style.zIndex = 16777270;
         this.#backgroundElement.style.backgroundColor = 'transparent';
         this.#backgroundElement.style.pointerEvents = 'none'; // Needed to enable mouse gestures in certain IFRAMEs (mainly browser games)
-        this.#createActionNameAreaElementAndArrowsElement();
-
-        // Processing when options are changed
-        this.#options.addOnChangedCallback(() => {
-            if (!this.#backgroundElement || !this.#actionNameAndArrowsElement) {
-                return;
-            }
-            if (this.#backgroundElement.contains(this.#actionNameAndArrowsElement)) {
-                this.#backgroundElement.removeChild(this.#actionNameAndArrowsElement);
-            }
-            this.#createActionNameAreaElementAndArrowsElement();
-        });
-
-        // Processing when the window size is changed
-        const resizeObserver = new ResizeObserver(() => {
-            if (!this.#backgroundElement || !this.#actionNameAndArrowsElement) {
-                return;
-            }
-            if (this.#backgroundElement.contains(this.#actionNameAndArrowsElement)) {
-                this.#backgroundElement.removeChild(this.#actionNameAndArrowsElement);
-            }
-            this.#createActionNameAreaElementAndArrowsElement();
-        });
-        resizeObserver.observe(document.body);
 
         window.addEventListener('message', (event) => {
             if (event.data.extensionId !== chrome.runtime.id) {
@@ -394,40 +378,7 @@ class ShowArrowsElement {
      */
     showArrows(arrows) {
         if (this.#arrows.length === 0) {
-            if (this.#options.hideGestureText) {
-                this.#actionNameArea.style.color = 'rgba(0, 0, 0, 0)';
-            }
-            else {
-                this.#actionNameArea.style.color = this.#options.gestureFontColor;
-            }
-
-            if (this.#options.hideGestureBackground || this.#options.hideGestureText) {
-                this.#actionNameArea.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-            }
-            else {
-                this.#actionNameArea.style.backgroundColor = this.#options.gestureBackgroundColor;
-            }
-
-            this.#actionNameArea.style.fontSize = `${this.#options.gestureTextFontSize}px`;
-            this.#actionNameArea.style.padding = `${Math.floor(this.#options.gestureTextFontSize) / 3}px`;
-
-            if (this.#options.hideGestureArrow) {
-                this.#arrowsArea.style.color = 'rgba(0, 0, 0, 0)';
-            }
-            else {
-                this.#arrowsArea.style.color = this.#options.gestureArrowColor;
-            }
-
-            if (this.#options.hideGestureBackground || this.#options.hideGestureArrow) {
-                this.#arrowsArea.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-            }
-            else {
-                this.#arrowsArea.style.backgroundColor = this.#options.gestureBackgroundColor;
-            }
-
-            this.#arrowsArea.style.fontSize = `${this.#options.gestureArrowFontSize}px`;
-            this.#arrowsArea.style.padding = `${Math.floor(this.#options.gestureArrowFontSize / 8)}px`;
-
+            this.#createActionNameAreaElementAndArrowsElement();
             document.body.appendChild(this.#backgroundElement);
         }
         this.#arrows = arrows;
@@ -450,16 +401,8 @@ class ShowArrowsElement {
     }
 
     /**
-     * @summary Reset the ShowArrowsElement.
+     * @summary Create the action name area and arrows area elements.
      */
-    reset() {
-        if (this.#arrows) {
-            this.#arrows = '';
-            this.#arrowsArea.innerText = this.#arrows;
-            document.body.removeChild(this.#backgroundElement);
-        }
-    }
-
     #createActionNameAreaElementAndArrowsElement() {
         this.#actionNameAndArrowsElement = createPositionElement(this.#options.showArrowsPosition);
         this.#backgroundElement.appendChild(this.#actionNameAndArrowsElement);
@@ -473,6 +416,22 @@ class ShowArrowsElement {
         this.#arrowsArea = createArrowsAreaElement(this.#options);
         if (!this.#options.hideGestureArrow) {
             this.#actionNameAndArrowsElement.appendChild(this.#arrowsArea);
+        }
+    }
+
+    /**
+     * @summary Reset the ShowArrowsElement.
+     */
+    reset() {
+        if (this.#arrows) {
+            this.#arrows = '';
+            this.#arrowsArea.innerText = this.#arrows;
+            if (document.body.contains(this.#backgroundElement)) {
+                document.body.removeChild(this.#backgroundElement);
+            }
+            if (this.#backgroundElement.contains(this.#actionNameAndArrowsElement)) {
+                this.#backgroundElement.removeChild(this.#actionNameAndArrowsElement);
+            }
         }
     }
 }
