@@ -107,6 +107,38 @@ const mouseGestureActionCategories = [
                 },
             },
             {
+                id: 'openlinkinnewtableftmost',
+                function: (option) => {
+                    if (option.url) {
+                        sendChromeMessage({ action: 'openlinkinnewtableftmost', url: option.url });
+                    }
+                },
+            },
+            {
+                id: 'openlinkinnewtableftmostandactivate',
+                function: (option) => {
+                    if (option.url) {
+                        sendChromeMessage({ action: 'openlinkinnewtableftmostandactivate', url: option.url });
+                    }
+                },
+            },
+            {
+                id: 'openlinkinnewtabrightmost',
+                function: (option) => {
+                    if (option.url) {
+                        sendChromeMessage({ action: 'openlinkinnewtabrightmost', url: option.url });
+                    }
+                },
+            },
+            {
+                id: 'openlinkinnewtabrightmostandactivate',
+                function: (option) => {
+                    if (option.url) {
+                        sendChromeMessage({ action: 'openlinkinnewtabrightmostandactivate', url: option.url });
+                    }
+                },
+            },
+            {
                 id: 'openimageinnewtab',
                 function: (option) => {
                     if (option.src) {
@@ -135,6 +167,38 @@ const mouseGestureActionCategories = [
                 function: (option) => {
                     if (option.src) {
                         sendChromeMessage({ action: 'openlinkinnwewindowandactivate', url: option.src });
+                    }
+                },
+            },
+            {
+                id: 'openimageinnewtableftmost',
+                function: (option) => {
+                    if (option.src) {
+                        sendChromeMessage({ action: 'openimageinnewtableftmost', url: option.src });
+                    }
+                },
+            },
+            {
+                id: 'openimageinnewtableftmostandactivate',
+                function: (option) => {
+                    if (option.src) {
+                        sendChromeMessage({ action: 'openimageinnewtableftmostandactivate', url: option.src });
+                    }
+                },
+            },
+            {
+                id: 'openimageinnewtabrightmost',
+                function: (option) => {
+                    if (option.src) {
+                        sendChromeMessage({ action: 'openimageinnewtabrightmost', url: option.src });
+                    }
+                },
+            },
+            {
+                id: 'openimageinnewtabrightmostandactivate',
+                function: (option) => {
+                    if (option.src) {
+                        sendChromeMessage({ action: 'openimageinnewtabrightmostandactivate', url: option.src });
                     }
                 },
             },

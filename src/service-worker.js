@@ -599,6 +599,102 @@ class MouseGestureService {
                             });
                         })();
                         break;
+                    case 'openlinkinnewtableftmost':
+                        (async () => {
+                            chrome.tabs.create({
+                                url: request.url,
+                                active: false,
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: 0,
+                            });
+                        })();
+                        break;
+                    case 'openlinkinnewtabrightmost':
+                        (async () => {
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
+                            const maxIndex = Math.max(...tabs.map(tab => tab.index));
+                            chrome.tabs.create({
+                                url: request.url,
+                                active: false,
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: maxIndex + 1,
+                            });
+                        })();
+                        break;
+                    case 'openimageinnewtableftmost':
+                        (async () => {
+                            chrome.tabs.create({
+                                url: request.url,
+                                active: false,
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: 0,
+                            });
+                        })();
+                        break;
+                    case 'openimageinnewtabrightmost':
+                        (async () => {
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
+                            const maxIndex = Math.max(...tabs.map(tab => tab.index));
+                            chrome.tabs.create({
+                                url: request.url,
+                                active: false,
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: maxIndex + 1,
+                            });
+                        })();
+                        break;
+                    case 'openlinkinnewtableftmostandactivate':
+                        (async () => {
+                            chrome.tabs.create({
+                                url: request.url,
+                                active: true,
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: 0,
+                            });
+                        })();
+                        break;
+                    case 'openlinkinnewtabrightmostandactivate':
+                        (async () => {
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
+                            const maxIndex = Math.max(...tabs.map(tab => tab.index));
+                            chrome.tabs.create({
+                                url: request.url,
+                                active: true,
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: maxIndex + 1,
+                            });
+                        })();
+                        break;
+                    case 'openimageinnewtableftmostandactivate':
+                        (async () => {
+                            chrome.tabs.create({
+                                url: request.url,
+                                active: true,
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: 0,
+                            });
+                        })();
+                        break;
+                    case 'openimageinnewtabrightmostandactivate':
+                        (async () => {
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
+                            const maxIndex = Math.max(...tabs.map(tab => tab.index));
+                            chrome.tabs.create({
+                                url: request.url,
+                                active: true,
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: maxIndex + 1,
+                            });
+                        })();
+                        break;
                     default:
                         console.log('Unexpected request:', request);
                         break;
