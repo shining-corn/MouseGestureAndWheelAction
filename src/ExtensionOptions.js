@@ -78,9 +78,17 @@ class ExtensionOptions {
         if (localResult && localResult.options && Object.keys(localResult.options).length !== 0) {
             this.#options = localResult.options;
 
-            // Set to sync storage and remove from local storage
+            // Migrate options to sync storage
             await chrome.storage.sync.set({ options: this.#options });
             await chrome.storage.local.remove(['options']);
+
+            // Migrate defaultBookmarkFolder if it exists
+            const defaultBookmarkFolder = await chrome.storage.local.get(['defaultBookmarkFolder']);
+            if (defaultBookmarkFolder && defaultBookmarkFolder.defaultBookmarkFolder) {
+                await chrome.storage.sync.set({ defaultBookmarkFolder: defaultBookmarkFolder.defaultBookmarkFolder });
+                await chrome.storage.local.remove(['defaultBookmarkFolder']);
+            }
+            
             return;
         }
 
