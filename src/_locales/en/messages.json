@@ -26,6 +26,18 @@
     "openlinkinnwewindowandactivate": {
         "message": "Open link in new window and activate"
     },
+    "openlinkinnewtableftmost": {
+        "message": "Open link in new tab (leftmost)"
+    },
+    "openlinkinnewtabrightmost": {
+        "message": "Open link in new tab (rightmost)"
+    },
+    "openlinkinnewtableftmostandactivate": {
+        "message": "Open link in new tab and activate (leftmost)"
+    },
+    "openlinkinnewtabrightmostandactivate": {
+        "message": "Open link in new tab and activate (rightmost)"
+    },
     "openimageinnewtab": {
         "message": "Open image in new tab"
     },
@@ -38,23 +50,11 @@
     "openimageinnewwindowandactivate": {
         "message": "Open image in new window and activate"
     },
-    "openlinkinnewtableftmost": {
-        "message": "Open link in new tab (leftmost)"
-    },
-    "openlinkinnewtabrightmost": {
-        "message": "Open link in new tab (rightmost)"
-    },
     "openimageinnewtableftmost": {
         "message": "Open image in new tab (leftmost)"
     },
     "openimageinnewtabrightmost": {
         "message": "Open image in new tab (rightmost)"
-    },
-    "openlinkinnewtableftmostandactivate": {
-        "message": "Open link in new tab and activate (leftmost)"
-    },
-    "openlinkinnewtabrightmostandactivate": {
-        "message": "Open link in new tab and activate (rightmost)"
     },
     "openimageinnewtableftmostandactivate": {
         "message": "Open image in new tab and activate (leftmost)"

@@ -26,6 +26,18 @@
     "openlinkinnwewindowandactivate": {
         "message": "リンクを新しいウィンドウで開いてアクティブにする"
     },
+    "openlinkinnewtableftmost": {
+        "message": "リンクを新しいタブで開く（左端）"
+    },
+    "openlinkinnewtabrightmost": {
+        "message": "リンクを新しいタブで開く（右端）"
+    },
+    "openlinkinnewtableftmostandactivate": {
+        "message": "リンクを新しいタブで開いてアクティブにする（左端）"
+    },
+    "openlinkinnewtabrightmostandactivate": {
+        "message": "リンクを新しいタブで開いてアクティブにする（右端）"
+    },
     "openimageinnewtab": {
         "message": "画像を新しいタブで開く"
     },
@@ -38,23 +50,11 @@
     "openimageinnewwindowandactivate": {
         "message": "画像を新しいウィンドウで開いてアクティブにする"
     },
-    "openlinkinnewtableftmost": {
-        "message": "リンクを左端に新しいタブで開く"
-    },
-    "openlinkinnewtabrightmost": {
-        "message": "リンクを右端に新しいタブで開く"
-    },
     "openimageinnewtableftmost": {
         "message": "画像を新しいタブで開く（左端）"
     },
     "openimageinnewtabrightmost": {
         "message": "画像を新しいタブで開く（右端）"
-    },
-    "openlinkinnewtableftmostandactivate": {
-        "message": "リンクを新しいタブで開いてアクティブにする（左端）"
-    },
-    "openlinkinnewtabrightmostandactivate": {
-        "message": "リンクを新しいタブで開いてアクティブにする（右端）"
     },
     "openimageinnewtableftmostandactivate": {
         "message": "画像を新しいタブで開いてアクティブにする（左端）"
