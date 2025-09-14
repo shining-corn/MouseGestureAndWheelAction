@@ -77,6 +77,10 @@ class ExtensionOptions {
         const localResult = await chrome.storage.local.get(['options']);
         if (localResult && localResult.options && Object.keys(localResult.options).length !== 0) {
             this.#options = localResult.options;
+
+            // Set to sync storage and remove from local storage
+            await chrome.storage.sync.set({ options: this.#options });
+            await chrome.storage.local.remove(['options']);
             return;
         }
 
