@@ -456,7 +456,7 @@
         "message": "エクスポート"
     },
     "optionsPageTitleImport": {
-        "message": "エクスポート"
+        "message": "インポート"
     },
     "optionsCopyOptionsToClipboard": {
         "message": "全設定をクリップボードにコピー"
