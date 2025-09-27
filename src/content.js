@@ -345,7 +345,15 @@ class MouseGestureAndWheelActionClient {
             }
 
             if (event.button === 2) {
-                this.#isRightButtonPressed = false;
+                if (this.#isRightButtonPressed) {
+                    this.#isRightButtonPressed = false;
+                }
+                else {
+                    // It should have been moved from another tab with the right button held down, so ignore the mouseup event
+                    // and prevent the context menu from appearing.
+                    global.shouldPreventContextMenu = true;
+                    return; 
+                }
             }
 
             // Mouse Gesture
