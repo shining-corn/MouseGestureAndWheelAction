@@ -351,7 +351,10 @@ class MouseGestureAndWheelActionClient {
                 else {
                     // It should have been moved from another tab with the right button held down, so ignore the mouseup event
                     // and prevent the context menu from appearing.
-                    global.shouldPreventContextMenu = true;
+                    // Only do it when the OS is Windows.
+                    if (navigator.userAgent.indexOf('Windows') !== -1) {
+                        global.shouldPreventContextMenu = true;
+                    }
                     return; 
                 }
             }
