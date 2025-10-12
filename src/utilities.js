@@ -72,7 +72,7 @@ function getRootWindow() {
  * @returns {string|undefined} - One of the four directions: '→', '↑', '←', '↓', or undefined if the direction is diagonal.
  */
 function computeDirection(x, y) {
-    const THRESHOLD = Math.PI / 8;  // Ignore diagonal directions
+    const THRESHOLD = Math.PI / 6;  // Ignore diagonal directions
     const radian = Math.atan2(y, x);
     if (Math.abs(radian) <= THRESHOLD) {
         return '→';
