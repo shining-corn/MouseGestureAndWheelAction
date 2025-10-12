@@ -4,7 +4,7 @@
  */
 
 /**
- * @import { Point, computeDirection } from './utilities.js';
+ * @import { Point, computeDirection, compute8Direction } from './utilities.js';
  */
 
 /**
@@ -306,7 +306,13 @@ class MouseGestureController {
             if (strokeLength * strokeLength <= distanceSquare) {
                 this.#previousPoint = point;
 
-                const direction = computeDirection(diffX, diffY);
+                let direction;
+                if (this.#options.enable8DirectionsForMouseGesture) {
+                    direction = compute8Direction(diffX, diffY);
+                }
+                else {
+                    direction = computeDirection(diffX, diffY);
+                }
                 if (direction) {
                     if (direction !== this.#previousDirection) {
                         this.#elements.addArrow(direction);
@@ -571,7 +577,7 @@ function renderMouseGestureOptions(options) {
     const mouseGestureStrokeLengthElement = document.getElementById('gesture-stroke-length');
     mouseGestureStrokeLengthElement.value = options.mouseGestureStrokeLength;
     mouseGestureStrokeLengthElement.disabled = !options.enabledMouseGesture;
-    mouseGestureStrokeLengthElement.addEventListener('change', async () => {
+    mouseGestureStrokeLengthElement.addEventListener('change', () => {
         const strokeLength = parseInt(mouseGestureStrokeLengthElement.value);
         if (strokeLength) {
             options.setMouseGestureStrokeLength(strokeLength);
@@ -581,10 +587,17 @@ function renderMouseGestureOptions(options) {
         mouseGestureStrokeLengthElement.value = mouseGestureStrokeLengthElement.value.slice(0, 3);
     });
 
+    const enable8DirectionsForMouseGestureElement = document.getElementById('enable-8-directions-for-mousegesture');
+    enable8DirectionsForMouseGestureElement.checked = options.enable8DirectionsForMouseGesture;
+    enable8DirectionsForMouseGestureElement.disabled = !options.enabledMouseGesture;
+    enable8DirectionsForMouseGestureElement.addEventListener('click', () => {
+        options.setEnable8DirectionsForMouseGesture(enable8DirectionsForMouseGestureElement.checked);
+    });
+
     const previousTabHistorySizeElement = document.getElementById('previous-tab-history-size');
     previousTabHistorySizeElement.value = options.previousTabHistorySize;
     previousTabHistorySizeElement.disabled = !options.enabledMouseGesture;
-    previousTabHistorySizeElement.addEventListener('change', async () => {
+    previousTabHistorySizeElement.addEventListener('change', () => {
         const size = parseInt(previousTabHistorySizeElement.value);
         if (size) {
             options.setPreviousTabHistorySize(size);
@@ -857,7 +870,7 @@ function renderAppearanceOptions(options) {
     saveButtonElement.addEventListener('click', () => {
         (async () => {
             const lineColor = lineColorElement.value;
-            const hideLine =!enabledGestureLineElement.checked;
+            const hideLine = !enabledGestureLineElement.checked;
             const arrowColor = arrowColorElement.value;
             const arrowSize = parseInt(arrowFontSizeElement.value);
             const hideArrow = !enabledGestureArrowElement.checked;

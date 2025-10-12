@@ -335,6 +335,9 @@
     "optionsGestureStrokeLength": {
         "message": "ジェスチャーの１ストロークあたりの距離"
     },
+    "optionsEnable8DirectionsForMouseGesture": {
+        "message": "マウスジェスチャーで斜め方向を有効にする"
+    },
     "optionsPreviousTabHistorySize": {
         "message": "「前のタブに戻る」の履歴の最大数"
     },

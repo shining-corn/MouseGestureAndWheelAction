@@ -707,4 +707,24 @@ class ExtensionOptions {
         this.#options.hideHintPermanently = hide;
         await chrome.storage.sync.set({ 'options': this.#options });
     }
+
+    /**
+     * @summary Get the enable8DirectionsForMouseGesture option.
+     * @returns {boolean} Whether 8 directions for mouse gesture is enabled or not.
+     */
+    get enable8DirectionsForMouseGesture() {
+        return this.#options?.enable8DirectionsForMouseGesture ?? false;
+    }
+
+    /**
+     * @summary Set the enable8DirectionsForMouseGesture option.
+     * @param {boolean} enable - Whether to enable 8 directions for mouse gesture or not.
+     */
+    async setEnable8DirectionsForMouseGesture(enable) {
+        if (!this.#options) {
+            await this.loadFromStorage();
+        }
+        this.#options.enable8DirectionsForMouseGesture = enable;
+        await chrome.storage.sync.set({ 'options': this.#options });
+    }
 }

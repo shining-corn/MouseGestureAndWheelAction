@@ -69,7 +69,7 @@ function getRootWindow() {
  * @summary Compute direction based on distance x and distance y.
  * @param {number} x
  * @param {number} y 
- * @returns 
+ * @returns {string|undefined} - One of the four directions: '→', '↑', '←', '↓', or undefined if the direction is diagonal.
  */
 function computeDirection(x, y) {
     const THRESHOLD = Math.PI / 8;  // Ignore diagonal directions
@@ -87,4 +87,38 @@ function computeDirection(x, y) {
         return '←';
     }
     return undefined;
+}
+
+/**
+ * @summary Compute direction based on distance x and distance y.
+ * @param {number} x
+ * @param {number} y 
+ * @returns {string} - One of the eight directions: '→', '↗', '↑', '↖', '←', '↙', '↓', '↘'.
+ */
+function compute8Direction(x, y) {
+    const radian = Math.atan2(y, x);
+    if (radian >= -Math.PI / 8 && radian < Math.PI / 8) {
+        return '→';
+    }
+    else if (radian >= Math.PI / 8 && radian < 3 * Math.PI / 8) {
+        return '↘';
+    }
+    else if (radian >= 3 * Math.PI / 8 && radian < 5 * Math.PI / 8) {
+        return '↓';
+    }
+    else if (radian >= 5 * Math.PI / 8 && radian < 7 * Math.PI / 8) {
+        return '↙';
+    }
+    else if (radian >= -3 * Math.PI / 8 && radian < -Math.PI / 8) {
+        return '↗';
+    }
+    else if (radian >= -5 * Math.PI / 8 && radian < -3 * Math.PI / 8) {
+        return '↑';
+    }
+    else if (radian >= -7 * Math.PI / 8 && radian < -5 * Math.PI / 8) {
+        return '↖';
+    }
+    else {
+        return '←';
+    }
 }
