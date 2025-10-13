@@ -69,24 +69,22 @@ function getRootWindow() {
  * @summary Compute direction based on distance x and distance y.
  * @param {number} x
  * @param {number} y 
- * @returns {string|undefined} - One of the four directions: '→', '↑', '←', '↓', or undefined if the direction is diagonal.
+ * @returns {string|undefined} - One of the four directions: '→', '↑', '←', '↓'
  */
 function computeDirection(x, y) {
-    const THRESHOLD = Math.PI / 6;  // Ignore diagonal directions
     const radian = Math.atan2(y, x);
-    if (Math.abs(radian) <= THRESHOLD) {
+    if (radian >= -Math.PI / 4 && radian < Math.PI / 4) {
         return '→';
     }
-    else if (Math.abs(radian - Math.PI / 2) <= THRESHOLD) {
+    else if (radian >= Math.PI / 4 && radian < 3 * Math.PI / 4) {
         return '↓';
     }
-    else if (Math.abs(radian + Math.PI / 2) <= THRESHOLD) {
+    else if (radian >= -3 * Math.PI / 4 && radian < -Math.PI / 4) {
         return '↑';
     }
-    else if (Math.PI - Math.abs(radian) <= THRESHOLD) {
+    else {
         return '←';
     }
-    return undefined;
 }
 
 /**
