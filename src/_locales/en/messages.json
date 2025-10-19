@@ -335,6 +335,9 @@
     "optionsGestureStrokeLength": {
         "message": "Stroke Length"
     },
+    "optionsEnable8DirectionsForMouseGesture": {
+        "message": "Enable diagonal direction mouse gesture"
+    },
     "optionsPreviousTabHistorySize": {
         "message": "History size of \"Go to previous tab\""
     },

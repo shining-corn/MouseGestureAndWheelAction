@@ -4,7 +4,7 @@
  */
 
 /**
- * @import { Point, sendChromeMessage, computeDirection, isInRootWindow, getRootWindow } from './utilities.js';
+ * @import { Point, sendChromeMessage, computeDirection, compute8Direction, isInRootWindow, getRootWindow } from './utilities.js';
  * @import { ExtensionOptions, CustomUrlSetting, GestureSetting, DisableExtensionSetting } from './ExtensionOptions.js';
  * @import { InterIframeVariables } from './InterIframeVariables.js';
  * @import { getGestureAction, ActionOption } from './gestureActions.js';
@@ -313,7 +313,13 @@ class MouseGestureAndWheelActionClient {
 
                     this.#previousPoint = currentPoint;
 
-                    const direction = computeDirection(diffX, diffY);
+                    let direction;
+                    if (this.#options.enable8DirectionsForMouseGesture) {
+                        direction = compute8Direction(diffX, diffY);
+                    }
+                    else {
+                        direction = computeDirection(diffX, diffY);
+                    }
                     if (direction && direction !== this.#previousDirection) {
                         global.onMouseGesture = true;
                         global.arrows += direction;
