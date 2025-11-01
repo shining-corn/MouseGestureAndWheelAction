@@ -83,6 +83,12 @@
     "createtab": {
         "message": "新しいタブ"
     },
+    "createtableftmost": {
+        "message": "新しいタブ（左端）"
+    },
+    "createtabrightmost": {
+        "message": "新しいタブ（右端）"
+    },
     "duplicatetab": {
         "message": "タブを複製"
     },

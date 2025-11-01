@@ -83,6 +83,12 @@
     "createtab": {
         "message": "New tab"
     },
+    "createtableftmost": {
+        "message": "New tab (leftmost)"
+    },
+    "createtabrightmost": {
+        "message": "New tab (rightmost)"
+    },
     "duplicatetab": {
         "message": "Duplicate tab"
     },

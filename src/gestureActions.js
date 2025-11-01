@@ -244,6 +244,18 @@ const mouseGestureActionCategories = [
                 },
             },
             {
+                id: 'createtableftmost',
+                function: () => {
+                    sendChromeMessage({ action: 'createtableftmost' });
+                },
+            },
+            {
+                id: 'createtabrightmost',
+                function: () => {
+                    sendChromeMessage({ action: 'createtabrightmost' });
+                },
+            },
+            {
                 id: 'duplicatetab',
                 function: () => {
                     sendChromeMessage({ action: 'duplicatetab' });
