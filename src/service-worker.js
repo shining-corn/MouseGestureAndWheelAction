@@ -193,6 +193,26 @@ class MouseGestureService {
                             index: this.#getIndexToInsertCreatedTab(sender.tab.index),
                         });
                         break;
+                    case 'createtableftmost':
+                        chrome.tabs.create({
+                            active: true,
+                            windowId: sender.tab.windowId,
+                            openerTabId: sender.tab.id,
+                            index: 0,
+                        });
+                        break;
+                    case 'createtabrightmost':
+                        (async () => {
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
+                            const maxIndex = Math.max(...tabs.map(tab => tab.index));
+                            chrome.tabs.create({
+                                active: true,
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: maxIndex + 1,
+                            });
+                        })();
+                        break;
                     case 'addtabtogroup':
                         (async () => {
                             const tab = await chrome.tabs.get(sender.tab.id);
