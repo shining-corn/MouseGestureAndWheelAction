@@ -35,7 +35,8 @@
     "permissions": [
         "storage",
         "sessions",
-        "bookmarks"
+        "bookmarks",
+        "history"
     ],
     "options_ui": {
         "page": "options.html",
