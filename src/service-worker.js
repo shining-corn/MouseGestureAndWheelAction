@@ -581,7 +581,7 @@ class MouseGestureService {
                             chrome.tabs.setZoom(zoom.defaultZoomFactor);
                         })();
                         break;
-                    case 'openlinkinnwetab':
+                    case 'openlinkinnwetab':    // For compatibility, the typo "nwe" is left as is.
                         (async () => {
                             chrome.tabs.create({
                                 url: request.url,
@@ -590,9 +590,12 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: this.#getIndexToInsertCreatedTab(sender.tab.index),
                             });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            chrome.history.addUrl({ url: request.url }, () => { });
                         })();
                         break;
-                    case 'openlinkinnwetabandactivate':
+                    case 'openlinkinnwetabandactivate':    // For compatibility, the typo "nwe" is left as is.
                         (async () => {
                             chrome.tabs.create({
                                 url: request.url,
@@ -601,22 +604,31 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: this.#getIndexToInsertCreatedTab(sender.tab.index),
                             });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            chrome.history.addUrl({ url: request.url }, () => { });
                         })();
                         break;
-                    case 'openlinkinnwewindow':
+                    case 'openlinkinnwewindow':    // For compatibility, the typo "nwe" is left as is.
                         (async () => {
                             await chrome.windows.create({
                                 url: request.url,
                                 focused: false
                             });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            chrome.history.addUrl({ url: request.url }, () => { });
                         })();
                         break;
-                    case 'openlinkinnwewindowandactivate':
+                    case 'openlinkinnwewindowandactivate':  // For compatibility, the typo "nwe" is left as is.
                         (async () => {
                             await chrome.windows.create({
                                 url: request.url,
                                 focused: true
                             });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            chrome.history.addUrl({ url: request.url }, () => { });
                         })();
                         break;
                     case 'openlinkinnewtableftmost':
@@ -628,6 +640,9 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: 0,
                             });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            chrome.history.addUrl({ url: request.url }, () => { });
                         })();
                         break;
                     case 'openlinkinnewtabrightmost':
@@ -641,6 +656,9 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: maxIndex + 1,
                             });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            chrome.history.addUrl({ url: request.url }, () => { });
                         })();
                         break;
                     case 'openimageinnewtableftmost':
@@ -652,6 +670,9 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: 0,
                             });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            chrome.history.addUrl({ url: request.url }, () => { });
                         })();
                         break;
                     case 'openimageinnewtabrightmost':
@@ -665,6 +686,9 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: maxIndex + 1,
                             });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            chrome.history.addUrl({ url: request.url }, () => { });
                         })();
                         break;
                     case 'openlinkinnewtableftmostandactivate':
@@ -676,6 +700,9 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: 0,
                             });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            chrome.history.addUrl({ url: request.url }, () => { });
                         })();
                         break;
                     case 'openlinkinnewtabrightmostandactivate':
@@ -689,6 +716,9 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: maxIndex + 1,
                             });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            chrome.history.addUrl({ url: request.url }, () => { });
                         })();
                         break;
                     case 'openimageinnewtableftmostandactivate':
@@ -700,6 +730,9 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: 0,
                             });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            chrome.history.addUrl({ url: request.url }, () => { });
                         })();
                         break;
                     case 'openimageinnewtabrightmostandactivate':
@@ -713,6 +746,9 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: maxIndex + 1,
                             });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            chrome.history.addUrl({ url: request.url }, () => { });
                         })();
                         break;
                     default:
