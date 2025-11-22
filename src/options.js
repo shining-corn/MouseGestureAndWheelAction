@@ -503,11 +503,17 @@ function renderMouseGestureOptions(options) {
         const mouseGestureStrokeLengthElement = document.getElementById('gesture-stroke-length');
         mouseGestureStrokeLengthElement.disabled = !enabledMouseGestureElement.checked;
 
-        const previousTabHistorySizeElement = document.getElementById('previous-tab-hisotry-size');
+        const enable8DirectionsForMouseGestureElement = document.getElementById('enable-8-directions-for-mousegesture');
+        enable8DirectionsForMouseGestureElement.disabled = !enabledMouseGestureElement.checked;
+
+        const previousTabHistorySizeElement = document.getElementById('previous-tab-history-size');
         previousTabHistorySizeElement.disabled = !enabledMouseGestureElement.checked;
 
         const addNewTabOnLastTabCloseElement = document.getElementById('add-new-tab-on-last-tab-close');
         addNewTabOnLastTabCloseElement.disabled = !enabledMouseGestureElement.checked;
+
+        const goToOnCloseTabElement = document.getElementById('go-to-on-close-tab');
+        goToOnCloseTabElement.disabled = !enabledMouseGestureElement.checked;
 
         options.setEnabledMouseGesture(enabledMouseGestureElement.checked);
     });
