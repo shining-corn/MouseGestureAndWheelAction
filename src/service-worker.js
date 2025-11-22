@@ -458,7 +458,9 @@ class MouseGestureService {
                         break;
                     case 'createwindow':
                         (async () => {
-                            await chrome.windows.create();
+                            await chrome.windows.create({
+                                incognito: sender.tab.incognito,
+                            });
                         })();
                         break;
                     case 'closewindow':
@@ -619,7 +621,8 @@ class MouseGestureService {
                         (async () => {
                             await chrome.windows.create({
                                 url: request.url,
-                                focused: false
+                                focused: false,
+                                incognito: sender.tab.incognito,
                             });
                             
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
@@ -633,7 +636,8 @@ class MouseGestureService {
                         (async () => {
                             await chrome.windows.create({
                                 url: request.url,
-                                focused: true
+                                focused: true,
+                                incognito: sender.tab.incognito,
                             });
                             
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
