@@ -1,0 +1,536 @@
+{
+    "extensionDescription": {
+        "message": "使用鼠标手势、右键+滚轮以及摇杆手势来操控浏览器。"
+    },
+    "actionCategoryHistory": {
+        "message": "历史记录操作"
+    },
+    "back": {
+        "message": "后退"
+    },
+    "forward": {
+        "message": "前进"
+    },
+    "actionCategoryLink": {
+        "message": "链接操作"
+    },
+    "openlinkinnwetab": {
+        "message": "在新标签页中打开所指向的链接"
+    },
+    "openlinkinnwetabandactivate": {
+        "message": "在新标签页中打开并跳转至所指向的链接"
+    },
+    "openlinkinnwewindow": {
+        "message": "在新窗口中打开所指向的链接"
+    },
+    "openlinkinnwewindowandactivate": {
+        "message": "在新窗口中打开并跳转至所指向的链接"
+    },
+    "openlinkinnewtableftmost": {
+        "message": "在新标签页中打开所指向的链接 (最左侧)"
+    },
+    "openlinkinnewtabrightmost": {
+        "message": "在新标签页中打开所指向的链接 (最右侧)"
+    },
+    "openlinkinnewtableftmostandactivate": {
+        "message": "在新标签页中打开并跳转至所指向的链接 (最左侧)"
+    },
+    "openlinkinnewtabrightmostandactivate": {
+        "message": "在新标签页中打开并跳转至所指向的链接 (最右侧)"
+    },
+    "openimageinnewtab": {
+        "message": "在新标签页中打开所指向的图片"
+    },
+    "openimageinnewtabandactivate": {
+        "message": "在新标签页中打开并跳转至所指向的图片"
+    },
+    "openimageinnewwindow": {
+        "message": "在新窗口中打开所指向的图片"
+    },
+    "openimageinnewwindowandactivate": {
+        "message": "在新窗口中打开并跳转至所指向的图片"
+    },
+    "openimageinnewtableftmost": {
+        "message": "在新标签页中打开所指向的图片 (最左侧)"
+    },
+    "openimageinnewtabrightmost": {
+        "message": "在新标签页中打开所指向的图片 (最右侧)"
+    },
+    "openimageinnewtableftmostandactivate": {
+        "message": "在新窗口中打开并跳转至所指向的图片 (最左侧)"
+    },
+    "openimageinnewtabrightmostandactivate": {
+        "message": "在新窗口中打开并跳转至所指向的图片 (最右侧)"
+    },
+    "actionCategoryTabOpenClose": {
+        "message": "标签页打开/关闭操作"
+    },
+    "closetab": {
+        "message": "关闭标签页"
+    },
+    "closetableftall": {
+        "message": "关闭左侧标签页"
+    },
+    "closetabrightall": {
+        "message": "关闭右侧标签页"
+    },
+    "closetabotherall": {
+        "message": "关闭其他标签页"
+    },
+    "reopenclosedtab": {
+        "message": "重新打开关闭的标签页"
+    },
+    "createtab": {
+        "message": "新建标签页"
+    },
+    "createtableftmost": {
+        "message": "新建标签页 (最左侧)"
+    },
+    "createtabrightmost": {
+        "message": "新建标签页 (最右侧)"
+    },
+    "duplicatetab": {
+        "message": "复制当前标签页"
+    },
+    "actionCategoryTabManipulation": {
+        "message": "标签页高级操作"
+    },
+    "pintab": {
+        "message": "固定标签页"
+    },
+    "addtabtogroup": {
+        "message": "向新建标签组中添加标签页"
+    },
+    "removetabfromgroup": {
+        "message": "从标签组中移除标签页"
+    },
+    "mutetab": {
+        "message": "静音"
+    },
+    "unmutetab": {
+        "message": "取消静音"
+    },
+    "mutetabtoggle": {
+        "message": "切换静音状态"
+    },
+    "mutetaball": {
+        "message": "静音全部标签页"
+    },
+    "unmutetaball": {
+        "message": "取消静音全部标签页"
+    },
+    "zoomin": {
+        "message": "放大文字"
+    },
+    "zoomout": {
+        "message": "缩小文字"
+    },
+    "zoomdefault": {
+        "message": "重置为默认缩放级别"
+    },
+    "actionCategoryTabMove": {
+        "message": "标签页间切换操作"
+    },
+    "gotolefttab": {
+        "message": "切换至左侧标签页"
+    },
+    "gotorighttab": {
+        "message": "切换至右侧标签页"
+    },
+    "gotolefttabwithloop": {
+        "message": "切换至左侧标签页 (循环)"
+    },
+    "gotorighttabwithloop": {
+        "message": "切换至右侧标签页 (循环)"
+    },
+    "gotomostlefttab": {
+        "message": "切换至最左侧标签页"
+    },
+    "gotomostrighttab": {
+        "message": "切换至最右侧标签页"
+    },
+    "gotoprevioustab": {
+        "message": "切换至上一个标签页"
+    },
+    "gotoprevioustabloop": {
+        "message": "切换至上一个标签页 (循环)"
+    },
+    "gotonexttab": {
+        "message": "切换至下一个标签页"
+    },
+    "gotonexttabloop": {
+        "message": "切换至下一个标签页 (循环)"
+    },
+    "actionCategoryReload": {
+        "message": "重新加载操作"
+    },
+    "reloadtab": {
+        "message": "重新加载"
+    },
+    "reloadtabhard": {
+        "message": "强制重新加载"
+    },
+    "reloadtaball": {
+        "message": "重新加载该窗口的全部标签页"
+    },
+    "actionCategoryBookmark": {
+        "message": "书签操作"
+    },
+    "addbookmark": {
+        "message": "添加到书签栏"
+    },
+    "upsertbookmark": {
+        "message": "添加书签"
+    },
+    "deletebookmark": {
+        "message": "删除书签"
+    },
+    "actionCategoryScroll": {
+        "message": "滚动操作"
+    },
+    "scrollup": {
+        "message": "向上滚动"
+    },
+    "scrolldown": {
+        "message": "向下滚动"
+    },
+    "scrollleft": {
+        "message": "向左滚动"
+    },
+    "scrollright": {
+        "message": "向右滚动"
+    },
+    "scrolltotop": {
+        "message": "滚动至顶部"
+    },
+    "scrolltobottom": {
+        "message": "滚动至底部"
+    },
+    "scrolltoleftmost": {
+        "message": "滚动至最左侧"
+    },
+    "scrolltorightmost": {
+        "message": "滚动至最右侧"
+    },
+    "actionCategoryWindow": {
+        "message": "窗口操作"
+    },
+    "createwindow": {
+        "message": "新建窗口"
+    },
+    "closewindow": {
+        "message": "关闭窗口"
+    },
+    "closewindowall": {
+        "message": "关闭所有窗口"
+    },
+    "maximizewindow": {
+        "message": "最大化窗口"
+    },
+    "minimizewindow": {
+        "message": "最小化窗口"
+    },
+    "fullscreenwindow": {
+        "message": "全屏"
+    },
+    "actionCategoryMisc": {
+        "message": "其他操作"
+    },
+    "copyurl": {
+        "message": "复制链接地址"
+    },
+    "copytitle": {
+        "message": "复制标题"
+    },
+    "openoptionspage": {
+        "message": "打开扩展程序设置页面"
+    },
+    "disableextension": {
+        "message": "在当前标签页禁用该扩展"
+    },
+    "actionCategoryCustomUrl": {
+        "message": "自定义链接操作"
+    },
+    "opencustomurl": {
+        "message": "打开自定义链接"
+    },
+    "messageCopied": {
+        "message": "已复制。"
+    },
+    "messageCopyError": {
+        "message": "复制失败。无法在 HTTP 页面中复制文字，请切换至 HTTPS 页面。"
+    },
+    "messageCustomUrlHelp": {
+        "message": "要打开自定义链接，请首先选择文本，然后执行鼠标手势。"
+    },
+    "messageCustomUrlSettingNotFound": {
+        "message": "未设置自定义链接。"
+    },
+    "messageExtensionHasBeenUpdated": {
+        "message": "由于扩展已更新，无法在该页面上继续使用鼠标手势。\n请重新加载后再试。"
+    },
+    "strBookmarkDialogTitleAdd": {
+        "message": "已添加书签"
+    },
+    "strBookmarkDialogTitleEdit": {
+        "message": "修改书签"
+    },
+    "strBookmarkDialogName": {
+        "message": "名称"
+    },
+    "strBookmarkDialogUrl": {
+        "message": "链接"
+    },
+    "strBookmarkDialogFolder": {
+        "message": "文件夹"
+    },
+    "strClose": {
+        "message": "×"
+    },
+    "strCancel": {
+        "message": "取消"
+    },
+    "strDelete": {
+        "message": "移除"
+    },
+    "strOk": {
+        "message": "完成"
+    },
+    "strCustomUrlGoToSelectedUrl": {
+        "message": "跳转至所选的链接"
+    },
+    "optionsPageTitle": {
+        "message": "鼠标手势与滚轮动作设置页面"
+    },
+    "optionsPageTitleWheelAction": {
+        "message": "滚轮动作"
+    },
+    "optionsEnableWheelAction": {
+        "message": "启用滚轮动作"
+    },
+    "optionsTableRightClickWheelUp": {
+        "message": "按住右键时向上滚动滚轮"
+    },
+    "optionsTableRightClickWheelDown": {
+        "message": "按住右键时向下滚动滚轮"
+    },
+    "optionsSelectOptionNone": {
+        "message": "无操作"
+    },
+    "optionsPageTitleMouseGesture": {
+        "message": "鼠标手势"
+    },
+    "optionsEnableMouseGesture": {
+        "message": "启用鼠标手势"
+    },
+    "optionsMouseGestureHelp": {
+        "message": "按住右键并按照\"手势\"移动鼠标，即可执行对应的\"操作\"。"
+    },
+    "optionsPageTableHeadGesture": {
+        "message": "手势"
+    },
+    "optionsPageTableHeadAction": {
+        "message": "操作"
+    },
+    "optionsPageTitleMouseGestureDetails": {
+        "message": "鼠标手势高级设置"
+    },
+    "optionsRightDoubleClickToContextMenu": {
+        "message": "右键双击替换为打开上下文菜单"
+    },
+    "optionsGestureStrokeLength": {
+        "message": "笔画长度"
+    },
+    "optionsEnable8DirectionsForMouseGesture": {
+        "message": "允许斜向鼠标手势"
+    },
+    "optionsPreviousTabHistorySize": {
+        "message": "\"切换至上一个标签页\"操作中历史记录堆栈"
+    },
+    "optionsAddNewTabOnLastTabClose": {
+        "message": "关闭最后一个标签页时始终新建标签页"
+    },
+    "optionsGoToOnCloseTab": {
+        "message": "关闭标签页后跳转至"
+    },
+    "optionsGoToOnCloseTabNone": {
+        "message": "无"
+    },
+    "optionsGoToOnCLoseTabPrevious": {
+        "message": "上一个标签页"
+    },
+    "optionsGoToOnCloseTabLeft": {
+        "message": "左侧的标签页"
+    },
+    "optionsPageTitleRockerGesture": {
+        "message": "摇杆手势"
+    },
+    "optionsRockerGestureDescription1": {
+        "message": "如果\"按住右键并左键点击 (←)\"没有设置为\"无操作\"，那么所有需要以\"点击\"操作开始的鼠标手势将无法正常工作。"
+    },
+    "optionsRockerGestureLeftRight": {
+        "message": "按住左键并右键点击 (→)"
+    },
+    "optionsRockerGestureRightLeft": {
+        "message": "按住右键并左键点击 (←)"
+    },
+    "optionsPageTitleCustomURL": {
+        "message": "自定义链接"
+    },
+    "optionsCustomUrlDescription1": {
+        "message": "添加\"自定义链接操作\"至鼠标手势的\"操作\"列表中。"
+    },
+    "optionsCustomUrlDescription2": {
+        "message": "在执行\"自定义链接操作\"时将打开配置的自定义链接。其中自定义链接中的 {} 将被替换为执行鼠标手势前选中的文本。"
+    },
+    "optionsCustomUrlDescription3": {
+        "message": "而自定义链接中的 {url} 将被替换为执行鼠标手势时所在页面的链接"
+    },
+    "optionsShouldTrimSelectedText": {
+        "message": "处理自定义链接时修剪选中的文本中的空白字符"
+    },
+    "optionsPageTableHeadCustomUrlId": {
+        "message": "ID"
+    },
+    "optionsPageTableHeadCustomUrlUrl": {
+        "message": "链接"
+    },
+    "optionsPageTableHeadCustomUrlOpenInNewTab": {
+        "message": "在新标签页中打开"
+    },
+    "optionsCustomUrlErrorMessageIdMustBeSpecified": {
+        "message": "必须指定一个 ID。"
+    },
+    "optionsCustomUrlErrorMessageIdMustBeUnique": {
+        "message": "ID 不允许重复。"
+    },
+    "messageSucceededInSave": {
+        "message": "设置已保存。"
+    },
+    "optionsPageTitleAppearance": {
+        "message": "鼠标手势外观"
+    },
+    "optionsLine": {
+        "message": "手势线条"
+    },
+    "optionsArrow": {
+        "message": "手势箭头"
+    },
+    "optionsText": {
+        "message": "操作文本"
+    },
+    "optionsBackground": {
+        "message": "背景"
+    },
+    "optionsColor": {
+        "message": "颜色"
+    },
+    "optionsFontSize": {
+        "message": "字体大小"
+    },
+    "optionsShowArrowsPositionLabel": {
+        "message": "箭头与文本位置"
+    },
+    "optionsShowArrowsPositionTopLeft": {
+        "message": "左上"
+    },
+    "optionsShowArrowsPositionTop": {
+        "message": "上方"
+    },
+    "optionsShowArrowsPositionTopRight": {
+        "message": "右上"
+    },
+    "optionsShowArrowsPositionLeft": {
+        "message": "左侧"
+    },
+    "optionsShowArrowsPositionCenter": {
+        "message": "中间"
+    },
+    "optionsShowArrowsPositionRight": {
+        "message": "右侧"
+    },
+    "optionsShowArrowsPositionBottomLeft": {
+        "message": "左下"
+    },
+    "optionsShowArrowsPositionBottom": {
+        "message": "下方"
+    },
+    "optionsShowArrowsPositionBottomRight": {
+        "message": "右下"
+    },
+    "optionsPageTitleExportImport": {
+        "message": "导出/导入"
+    },
+    "optionsPageTitleExport": {
+        "message": "导出"
+    },
+    "optionsPageTitleImport": {
+        "message": "导入"
+    },
+    "optionsCopyOptionsToClipboard": {
+        "message": "将包含所有设置的 JSON 文本复制到剪贴板"
+    },
+    "importErrorMessgeOptionsMustBeObject": {
+        "message": "设置类型必须为合法的对象。"
+    },
+    "optionsPageTitleDisableExtension": {
+        "message": "禁用扩展"
+    },
+    "optionsDisbleExtensionDescription1": {
+        "message": "在满足以下条件的网页上禁用此扩展。"
+    },
+    "optionsDisbleExtensionDescription2": {
+        "message": "对于在禁用前打开的网页，需要重新加载后才会生效。"
+    },
+    "optionsPageTableHeadDisableExtensionOperator": {
+        "message": "匹配方式"
+    },
+    "optionsPageTableHeadDisableExtensionOperand": {
+        "message": "链接"
+    },
+    "optionsDisableExtensionMethodPrefixMatch": {
+        "message": "前缀"
+    },
+    "optionsDisableExtensionMethodInclude": {
+        "message": "包含"
+    },
+    "optionsDisableExtensionMethodRegexp": {
+        "message": "正则表达式"
+    },
+    "optionsDisbleExtensionErrorMessageInvalidRegExp": {
+        "message": "无效的正则表达式。"
+    },
+    "optionsPageTitleHint": {
+        "message": "提示"
+    },
+    "optionsHintBrowserDefaultFeature": {
+        "message": "浏览器功能"
+    },
+    "optionsHintOpenLinkInNewTab": {
+        "message": "按下鼠标中键 (滚轮) 并点击链接即可在新标签页打开该链接"
+    },
+    "optionsHintHorizontalScroll": {
+        "message": "按住 Shift 键并滚动鼠标中键 (滚轮) 即可水平滚动标签页。"
+    },
+    "hideHintPermanently": {
+        "message": "永久隐藏提示"
+    },
+    "optionsAddMouseGestureDescription": {
+        "message": "按住右键并移动鼠标或点击鼠标左键"
+    },
+    "optionsSelectAction": {
+        "message": "选择手势对应的操作"
+    },
+    "optionsAdd": {
+        "message": "添加"
+    },
+    "optionsSave": {
+        "message": "保存"
+    },
+    "optionsEnabled": {
+        "message": "启用"
+    },
+    "optionsReset": {
+        "message": "恢复至默认设置"
+    }
+}
