@@ -710,6 +710,20 @@ const mouseGestureActionCategories = [
         ]
     },
     {
+        id: 'actionCategorySave',
+        actions: [
+            {
+                id: 'saveimageas',
+                function: (option) => {
+                    const imageUrl = option.src || option.url;
+                    if (imageUrl) {
+                        sendChromeMessage({ action: 'saveimageas', url: imageUrl });
+                    }
+                },
+            },
+        ]
+    },
+    {
         id: 'actionCategoryMisc',
         actions: [
             {

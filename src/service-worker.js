@@ -121,6 +121,117 @@ function goToMostRightTab(allTabs, shouldPreventContextMenu) {
 }
 
 /**
+ * @summary Get a suggested file name for an image download based on the URL.
+ * @param {string} url - The URL of the image.
+ * @returns {string} - The suggested file name.
+ */
+function getSuggestedDownloadFilename(url) {
+    try {
+        const parsedUrl = new URL(url);
+        const pathname = parsedUrl.pathname || '/';
+        const basename = pathname.split('/').pop() || 'image';
+        const extensionMatch = basename.match(/\.([a-z0-9]+)$/i);
+        if (extensionMatch) {
+            return basename;
+        }
+
+        const lowerPath = pathname.toLowerCase();
+        if (lowerPath.endsWith('.png')) {
+            return 'image.png';
+        }
+        if (lowerPath.endsWith('.jpg') || lowerPath.endsWith('.jpeg')) {
+            return 'image.jpg';
+        }
+        if (lowerPath.endsWith('.gif')) {
+            return 'image.gif';
+        }
+        if (lowerPath.endsWith('.webp')) {
+            return 'image.webp';
+        }
+        if (lowerPath.endsWith('.svg')) {
+            return 'image.svg';
+        }
+
+        return 'image.png';
+    }
+    catch (_) {
+        return 'image.png';
+    }
+}
+
+/**
+ * @summary Wrap chrome.downloads.download() with a result object that normalizes success and failure.
+ * @param {{ url: string, saveAs?: boolean, filename?: string }} options - Download options.
+ * @returns {Promise<{ success: boolean, id?: number, error?: string }>} Download result.
+ */
+async function downloadResource(options) {
+    const downloadOptions = {
+        ...options,
+        saveAs: options.saveAs ?? true,
+    };
+
+    let id;
+    try {
+        id = await chrome.downloads.download(downloadOptions);
+    }
+    catch (error) {
+        return {
+            success: false,
+            error: error?.message || 'UNKNOWN_ERROR',
+        };
+    }
+
+    return new Promise((resolve) => {
+        const listener = (delta) => {
+            if (delta.id !== id) {
+                return;
+            }
+
+            if (delta.state?.current === 'complete') {
+                chrome.downloads.onChanged.removeListener(listener);
+                resolve({
+                    success: true,
+                    id,
+                });
+                return;
+            }
+
+            if (delta.state?.current === 'interrupted') {
+                chrome.downloads.onChanged.removeListener(listener);
+                resolve({
+                    success: false,
+                    id,
+                    error: delta.error?.current || 'UNKNOWN_ERROR',
+                });
+            }
+        };
+
+        chrome.downloads.onChanged.addListener(listener);
+    });
+}
+
+/**
+ * @summary Download an image with a browser-friendly suggested filename while allowing the caller to choose saveAs.
+ * @param {{ url: string, saveAs?: boolean, filename?: string }} options - Image download options.
+ * @returns {Promise<{ success: boolean, id?: number, error?: string }>} Download result.
+ */
+async function downloadImage(options) {
+    const imageUrl = options.url;
+    if (!imageUrl) {
+        return {
+            success: false,
+            error: 'INVALID_URL',
+        };
+    }
+
+    return downloadResource({
+        url: imageUrl,
+        saveAs: options.saveAs ?? true,
+        filename: options.filename ?? getSuggestedDownloadFilename(imageUrl),
+    });
+}
+
+/**
  * @summary Class representing a mouse gesture service.
  */
 class MouseGestureService {
@@ -387,6 +498,34 @@ class MouseGestureService {
                     case 'gotonexttabloop':
                         this.goToNextTab(sender, true, request.shouldPreventContextMenu);
                         break;
+                    case 'saveimageas':
+                        if (request.url) {
+                            (async () => {
+                                const result = await downloadImage({
+                                    url: request.url,
+                                    saveAs: true,
+                                });
+
+                                if (!result.success) {
+                                    switch (result.error) {
+                                        case 'SERVER_FORBIDDEN':
+                                            sendMessageToTabs({ type: 'show-error-message', message: chrome.i18n.getMessage('messageDownloadErrorServerForbidden') }, [sender.tab]);
+                                            break;
+                                        case 'USER_CANCELED':
+                                            // Do nothing
+                                            break;
+                                        case `USER_SHUTDOWN`:
+                                            // Do nothing
+                                            break;
+                                        default:
+                                            const message = chrome.i18n.getMessage('messageDownloadErrorGeneric');
+                                            sendMessageToTabs({ type: 'show-error-message', message: `${message} (${result.error})` }, [sender.tab]);
+                                            break;
+                                    }
+                                }
+                            })();
+                        }
+                        break;
                     case 'openoptionspage':
                         chrome.runtime.openOptionsPage();
                         break;
@@ -592,7 +731,7 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: this.#getIndexToInsertCreatedTab(sender.tab.index),
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -609,7 +748,7 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: this.#getIndexToInsertCreatedTab(sender.tab.index),
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -624,7 +763,7 @@ class MouseGestureService {
                                 focused: false,
                                 incognito: sender.tab.incognito,
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -639,7 +778,7 @@ class MouseGestureService {
                                 focused: true,
                                 incognito: sender.tab.incognito,
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -656,7 +795,7 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: 0,
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -675,7 +814,7 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: maxIndex + 1,
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -692,7 +831,7 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: 0,
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -711,7 +850,7 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: maxIndex + 1,
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -728,7 +867,7 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: 0,
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -747,7 +886,7 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: maxIndex + 1,
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -764,7 +903,7 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: 0,
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -783,7 +922,7 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: maxIndex + 1,
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {

@@ -36,7 +36,8 @@
         "storage",
         "sessions",
         "bookmarks",
-        "history"
+        "history",
+        "downloads"
     ],
     "options_ui": {
         "page": "options.html",

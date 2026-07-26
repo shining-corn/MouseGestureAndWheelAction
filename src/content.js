@@ -361,7 +361,7 @@ class MouseGestureAndWheelActionClient {
                     if (navigator.userAgent.indexOf('Windows') !== -1) {
                         global.shouldPreventContextMenu = true;
                     }
-                    return; 
+                    return;
                 }
             }
 
@@ -411,6 +411,11 @@ class MouseGestureAndWheelActionClient {
             }
             else if (request.type === 'reset-prevent-contextmenu') {
                 global.shouldPreventContextMenu = false;
+            }
+            else if (request.type === 'show-error-message') {
+                if (isInRootWindow()) {
+                    window.alert(request.message);
+                }
             }
         });
 
@@ -519,8 +524,7 @@ class MouseGestureAndWheelActionClient {
         this.#url = undefined;
         this.#src = undefined;
         let elem = element;
-        while (elem) {
-            if (elem.href) {
+        while (elem) {if (elem.href) {
                 this.#url = elem.href;
                 break;
             }

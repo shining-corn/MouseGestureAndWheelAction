@@ -233,6 +233,12 @@
     "fullscreenwindow": {
         "message": "Fullscreen"
     },
+    "actionCategorySave": {
+        "message": "Save"
+    },
+    "saveimageas": {
+        "message": "Save image as"
+    },
     "actionCategoryMisc": {
         "message": "Misc"
     },
@@ -268,6 +274,12 @@
     },
     "messageExtensionHasBeenUpdated": {
         "message": "Because the extension has been updated, mouse gestures no longer work on this screen.\nPlease reload the web page."
+    },
+    "messageDownloadErrorGeneric": {
+        "message": "Failed to download."
+    },
+    "messageDownloadErrorServerForbidden": {
+        "message": "Download is forbidden by the server."
     },
     "strBookmarkDialogTitleAdd": {
         "message": "Add Bookmark"

@@ -72,6 +72,7 @@ Functions that can be performed
 - Open image in new tab and activate (leftmost)
 - Open image in new tab and activate (rightmost)
 - Open options
+- Save image as
 - Disable this extension on this tab
 - Open custom URL
 
@@ -103,6 +104,7 @@ Fixed an issue where some functions did not work with wheel actions. Fixed an is
 1.15.0: Fixed an issue where links did not mark as visited when opened via mouse gestures.
 1.15.1: Fixed an issue where links opened via mouse gestures in Incognito Mode were added to history. Added Incognito Mode support for the “Open in New Window” feature. Fixed an issue where `Enabled mouse gesture` could not be turned OFF in the Options screen.
 1.16.0: Supports Simplified Chinese.
+1.17.0: Added a new action to save images by choosing a file name.
 
 Repository
 https://github.com/shining-corn/MouseGestureAndWheelAction

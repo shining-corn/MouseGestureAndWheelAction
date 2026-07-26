@@ -233,6 +233,12 @@
     "fullscreenwindow": {
         "message": "フルスクリーン"
     },
+    "actionCategorySave": {
+        "message": "保存"
+    },
+    "saveimageas": {
+        "message": "名前を付けて画像を保存"
+    },
     "actionCategoryMisc": {
         "message": "その他"
     },
@@ -268,6 +274,12 @@
     },
     "messageExtensionHasBeenUpdated": {
         "message": "拡張機能がバージョンアップされたため、この画面ではマウスジェスチャーが動作しなくなりました。\n画面をリロードしてください。"
+    },
+    "messageDownloadErrorGeneric": {
+        "message": "ダウンロードに失敗しました。"
+    },
+    "messageDownloadErrorServerForbidden": {
+        "message": "サーバーからダウンロードを禁止されています。"
     },
     "strBookmarkDialogTitleAdd": {
         "message": "ブックマークを追加"
