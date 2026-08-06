@@ -31,9 +31,44 @@
  * @summary Mouse gesture actions for the extension.
  * @type {MouseGestureActionCategory[]}
  */
+function getParentDirectoryUrl(url) {
+    try {
+        const currentUrl = new URL(url);
+        const pathSegments = currentUrl.pathname.split('/').filter(Boolean);
+
+        if (pathSegments.length <= 1) {
+            currentUrl.pathname = '/';
+        }
+        else {
+            pathSegments.pop();
+            currentUrl.pathname = `/${pathSegments.join('/')}/`;
+        }
+
+        currentUrl.search = '';
+        currentUrl.hash = '';
+        return currentUrl.toString();
+    }
+    catch (error) {
+        return url;
+    }
+}
+
+function getRootDirectoryUrl(url) {
+    try {
+        const currentUrl = new URL(url);
+        currentUrl.pathname = '/';
+        currentUrl.search = '';
+        currentUrl.hash = '';
+        return currentUrl.toString();
+    }
+    catch (error) {
+        return url;
+    }
+}
+
 const mouseGestureActionCategories = [
     {
-        id: 'actionCategoryHistory',
+        id: 'actionCategoryNavigation',
         actions: [
             {
                 id: 'back',
@@ -63,6 +98,58 @@ const mouseGestureActionCategories = [
                             extensionId: chrome.runtime.id,
                             type: 'execute-action',
                             action: 'forward',
+                            option: undefined,
+                        },
+                            '*');
+                    }
+                },
+            },
+            {
+                id: 'reloadtab',
+                function: () => {
+                    sendChromeMessage({ action: 'reloadtab' });
+                },
+            },
+            {
+                id: 'reloadtabhard',
+                function: () => {
+                    sendChromeMessage({ action: 'reloadtabhard' });
+                },
+            },
+            {
+                id: 'reloadtaball',
+                function: () => {
+                    sendChromeMessage({ action: 'reloadtaball' });
+                },
+            },
+            {
+                id: 'gotoparentdirectory',
+                function: () => {
+                    if (isInRootWindow()) {
+                        window.location.assign(getParentDirectoryUrl(window.location.href));
+                    }
+                    else {
+                        getRootWindow().postMessage({
+                            extensionId: chrome.runtime.id,
+                            type: 'execute-action',
+                            action: 'gotoparentdirectory',
+                            option: undefined,
+                        },
+                            '*');
+                    }
+                },
+            },
+            {
+                id: 'gotorootdirectory',
+                function: () => {
+                    if (isInRootWindow()) {
+                        window.location.assign(getRootDirectoryUrl(window.location.href));
+                    }
+                    else {
+                        getRootWindow().postMessage({
+                            extensionId: chrome.runtime.id,
+                            type: 'execute-action',
+                            action: 'gotorootdirectory',
                             option: undefined,
                         },
                             '*');
@@ -395,30 +482,6 @@ const mouseGestureActionCategories = [
                 id: 'gotonexttabloop',
                 function: (option) => {
                     sendChromeMessage({ action: 'gotonexttabloop', shouldPreventContextMenu: option.shouldPreventContextMenu });
-                },
-            },
-        ]
-    },
-    {
-        id: 'actionCategoryReload',
-        actions: [
-            
-            {
-                id: 'reloadtab',
-                function: () => {
-                    sendChromeMessage({ action: 'reloadtab' });
-                },
-            },
-            {
-                id: 'reloadtabhard',
-                function: () => {
-                    sendChromeMessage({ action: 'reloadtabhard' });
-                },
-            },
-            {
-                id: 'reloadtaball',
-                function: () => {
-                    sendChromeMessage({ action: 'reloadtaball' });
                 },
             },
         ]

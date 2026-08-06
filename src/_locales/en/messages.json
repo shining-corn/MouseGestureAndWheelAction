@@ -2,14 +2,29 @@
     "extensionDescription": {
         "message": "Mouse gestures, right-click + wheel and rocker gesture to control the browser."
     },
-    "actionCategoryHistory": {
-        "message": "History"
+    "actionCategoryNavigation": {
+        "message": "Navigation"
     },
     "back": {
         "message": "Go back"
     },
     "forward": {
         "message": "Go forward"
+    },
+    "reloadtab": {
+        "message": "Reload"
+    },
+    "reloadtabhard": {
+        "message": "Hard reload"
+    },
+    "reloadtaball": {
+        "message": "Reload all tabs in the same  window"
+    },
+    "gotoparentdirectory": {
+        "message": "Go to parent directory"
+    },
+    "gotorootdirectory": {
+        "message": "Go to root directory"
     },
     "actionCategoryLink": {
         "message": "Link"
@@ -160,18 +175,6 @@
     },
     "gotonexttabloop": {
         "message": "Go to next tab (loop)"
-    },
-    "actionCategoryReload": {
-        "message": "Reload"
-    },
-    "reloadtab": {
-        "message": "Reload"
-    },
-    "reloadtabhard": {
-        "message": "Hard reload"
-    },
-    "reloadtaball": {
-        "message": "Reload all tabs in the same  window"
     },
     "actionCategoryBookmark": {
         "message": "Bookmark"
