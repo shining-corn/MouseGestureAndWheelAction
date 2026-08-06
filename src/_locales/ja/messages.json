@@ -2,14 +2,29 @@
     "extensionDescription": {
         "message": "マウスジェスチャー、右クリック＋ホイール、ロッカージェスチャーによるブラウザの操作。"
     },
-    "actionCategoryHistory": {
-        "message": "履歴"
+    "actionCategoryNavigation": {
+        "message": "ナビゲーション"
     },
     "back": {
         "message": "戻る"
     },
     "forward": {
         "message": "進む"
+    },
+    "reloadtab": {
+        "message": "再読み込み"
+    },
+    "reloadtabhard": {
+        "message": "再読み込み（キャッシュ無視）"
+    },
+    "reloadtaball": {
+        "message": "同じウィンドウのすべてのタブを再読み込み"
+    },
+    "gotoparentdirectory": {
+        "message": "親ディレクトリへ移動"
+    },
+    "gotorootdirectory": {
+        "message": "ルートディレクトリへ移動"
     },
     "actionCategoryLink": {
         "message": "リンク"
@@ -160,18 +175,6 @@
     },
     "gotonexttabloop": {
         "message": "次のタブに進む（ループする）"
-    },
-    "actionCategoryReload": {
-        "message": "再読み込み"
-    },
-    "reloadtab": {
-        "message": "再読み込み"
-    },
-    "reloadtabhard": {
-        "message": "再読み込み（キャッシュ無視）"
-    },
-    "reloadtaball": {
-        "message": "同じウィンドウのすべてのタブを再読み込み"
     },
     "actionCategoryBookmark": {
         "message": "ブックマーク"
