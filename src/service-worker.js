@@ -567,13 +567,15 @@ class MouseGestureService {
                         break;
                     case 'zoomin':
                         (async () => {
-                            const zoom = (await chrome.tabs.getZoom()) + 0.25;
+                            const step = this.#options.zoomInOutStep / 100;
+                            const zoom = (await chrome.tabs.getZoom()) + step;
                             chrome.tabs.setZoom(zoom >= 5 ? 5 : zoom);
                         })();
                         break;
                     case 'zoomout':
                         (async () => {
-                            const zoom = (await chrome.tabs.getZoom()) - 0.25;
+                            const step = this.#options.zoomInOutStep / 100;
+                            const zoom = (await chrome.tabs.getZoom()) - step;
                             chrome.tabs.setZoom(zoom <= 0 ? 0.25 : zoom);
                         })();
                         break;

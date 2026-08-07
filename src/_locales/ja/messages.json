@@ -365,6 +365,9 @@
     "optionsGoToOnCloseTabLeft": {
         "message": "左のタブに移動"
     },
+    "optionsZoomInOutStep": {
+        "message": "ズームイン/アウトの変動幅"
+    },
     "optionsPageTitleRockerGesture": {
         "message": "ロッカージェスチャー"
     },

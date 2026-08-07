@@ -365,6 +365,9 @@
     "optionsGoToOnCloseTabLeft": {
         "message": "左侧的标签页"
     },
+    "optionsZoomInOutStep": {
+        "message": "缩放步长"
+    },
     "optionsPageTitleRockerGesture": {
         "message": "摇杆手势"
     },

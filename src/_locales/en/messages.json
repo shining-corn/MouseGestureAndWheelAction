@@ -365,6 +365,9 @@
     "optionsGoToOnCloseTabLeft": {
         "message": "Go to left tab"
     },
+    "optionsZoomInOutStep": {
+        "message": "Zoom in/out step size"
+    },
     "optionsPageTitleRockerGesture": {
         "message": "Rocker Gesture"
     },

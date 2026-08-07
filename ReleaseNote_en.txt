@@ -133,7 +133,7 @@ Version history
 1.15.0: Fixed an issue where links opened via mouse gestures were not marked as visited.
 1.15.1: Fixed an issue where links opened via mouse gestures in Incognito Mode were added to history. Added Incognito Mode support for the "Open in New Window" feature. Fixed an issue where "Enabled mouse gesture" could not be turned off in the options screen.
 1.16.0: Added support for Simplified Chinese.
-1.17.0: Added a "Go to parent directory" and "Go to root directory" action.
+1.17.0: Added a "Go to parent directory" and "Go to root directory" action. Added a feature to customize the zoom in/out step size.
 
 ----
 Repository
