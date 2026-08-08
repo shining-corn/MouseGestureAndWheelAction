@@ -393,6 +393,7 @@ class MouseGestureAndWheelActionClient {
                             }, 100);
                         }
                         else {
+                            // If there is no need to wait, execute immediately
                             processAction(this.#options, command, actionOption);
 
                             getRootWindow().postMessage({
