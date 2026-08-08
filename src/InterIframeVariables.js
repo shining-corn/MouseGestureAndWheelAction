@@ -50,7 +50,7 @@ class InterIframeVariables {
         }
 
         window.addEventListener('message', event => {
-            if (event.data.extensionId !== chrome.runtime.id) {
+            if (chrome.runtime && event.data.extensionId !== chrome.runtime.id) {
                 return;
             }
 
