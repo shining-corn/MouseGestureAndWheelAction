@@ -186,7 +186,6 @@ class MouseGestureAndWheelActionClient {
         });
 
         window.addEventListener('mousedown', (event) => {
-
             if (event.button === 2) { // Right mouse button
                 event.preventDefault(); // Prevent context menu from appearing
 
@@ -203,7 +202,7 @@ class MouseGestureAndWheelActionClient {
                         c.window.postMessage({
                             type: 'root',
                         },
-                            '*'); //window.location.origin);
+                            '*');
                     }
                 }
             }
@@ -235,6 +234,8 @@ class MouseGestureAndWheelActionClient {
                     event.preventDefault();
                     event.stopImmediatePropagation();
                     global.shouldPreventContextMenu = true;
+                    this.#previousPoint = undefined;
+                    global.onMouseGesture = false;
                     this.setActionOptionsFromElement(event.target);
                     processAction(this.#options, command, this.getActionOptions());
 
