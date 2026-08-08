@@ -617,7 +617,7 @@ class MouseGestureAndWheelActionClient {
 
         // Processes gesture execution requests sent from child windows
         window.addEventListener('message', (event) => {
-            if (event.data.extensionId !== chrome.runtime.id) {
+            if (chrome.runtime && (event.data.extensionId !== chrome.runtime.id)) {
                 return;
             }
 
