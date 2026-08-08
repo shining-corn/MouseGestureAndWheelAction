@@ -567,14 +567,13 @@ class MouseGestureService {
                         break;
                     case 'screenshot':
                         (async () => {
-                            const tab = await chrome.tabs.get(sender.tab.id);
-                            if (tab) {
+                            if (sender && sender.tab && sender.tab.windowId) {
                                 try {
-                                    chrome.tabs.captureVisibleTab(tab.windowId, { format: 'png' }, (dataUrl) => {
+                                    chrome.tabs.captureVisibleTab(sender.tab.windowId, { format: 'png' }, (dataUrl) => {
                                         if (dataUrl) {
                                             chrome.downloads.download({
                                                 url: dataUrl,
-                                                filename: `screenshot-${encodeURI(tab.title)}.png`,
+                                                filename: `screenshot-${encodeURI(sender.tab.title)}.png`,
                                                 conflictAction: 'uniquify',
                                             });
                                         }
@@ -615,7 +614,7 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: this.#getIndexToInsertCreatedTab(sender.tab.index),
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -632,7 +631,7 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: this.#getIndexToInsertCreatedTab(sender.tab.index),
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -647,7 +646,7 @@ class MouseGestureService {
                                 focused: false,
                                 incognito: sender.tab.incognito,
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -662,7 +661,7 @@ class MouseGestureService {
                                 focused: true,
                                 incognito: sender.tab.incognito,
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -679,7 +678,7 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: 0,
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -698,7 +697,7 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: maxIndex + 1,
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -715,7 +714,7 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: 0,
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -734,7 +733,7 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: maxIndex + 1,
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -751,7 +750,7 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: 0,
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -770,7 +769,7 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: maxIndex + 1,
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -787,7 +786,7 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: 0,
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -806,7 +805,7 @@ class MouseGestureService {
                                 openerTabId: sender.tab.id,
                                 index: maxIndex + 1,
                             });
-                            
+
                             // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
                             // Do not do it in incognito mode.
                             if (!sender.tab.incognito) {
@@ -972,6 +971,7 @@ class MouseGestureService {
     }
 }
 
+// Initialize the extension
 (() => {
     chrome.runtime.onInstalled.addListener((details) => {
         if (details.reason === 'install') {
@@ -985,5 +985,6 @@ class MouseGestureService {
 
     let options = new ExtensionOptions();
     (async () => { await options.loadFromStorage(); })();
+
     (new MouseGestureService(options)).start(); // If execute this in the async function, it rarely causes an error "Could not establish connection. Receiving end does not exist." in `chrome.runtime.sendMessage()` in content.js, so execute it in the immediate function.
 })();
