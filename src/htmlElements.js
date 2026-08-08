@@ -31,20 +31,95 @@
  */
 function createBackgroundElement(isCentering) {
     const element = document.createElement('div');
-    element.style.all = 'initial';
-    element.style.width = '100vw';
-    element.style.height = '100vh';
-    element.style.position = 'fixed';
-    element.style.left = '0px';
-    element.style.top = '0px';
-    element.style.margin = '0px';
-    element.style.padding = '0px';
-    element.style.border = 'none';
+    let style = 'all: initial; width: 100vw; height: 100vh; position: fixed; left: 0px; top: 0px; margin: 0px; padding: 0px; border: none;';
+
     if (isCentering) {
-        element.style.display = 'grid';
-        element.style.placeContent = 'center';
-        element.style.gap = '1ch';
+        style += ' display: grid; place-content: center; gap: 1ch;';
     }
+
+    element.setAttribute('style', style);
+
+    return element;
+}
+
+function createPositionElement(position) {
+    // Get the size of the scrollbar
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    const scrollbarHeight = window.innerHeight - document.documentElement.clientHeight;
+
+    // Create the element
+    const element = document.createElement('div');
+    let style = 'all: initial; width: fit-content; height: fit-content;';
+
+    switch (position) {
+        case 'top-left':
+            style += 'position: absolute; top: 0; left: 0;';
+            break;
+        case 'top':
+            style += 'position: absolute; top: 0; left: 50%; transform: translateX(-50%);';
+            break;
+        case 'top-right':
+            style += 'position: absolute; top: 0; right: 0;';
+            break;
+        case 'left':
+            style += 'position: absolute; top: 50%; left: 0; transform: translateY(-50%);';
+            break;
+        case 'center': /* fall through */
+        default:
+            style += 'maxWidth: 100vw;';
+            break;
+        case 'right':
+            style += `position: absolute; top: 50%; right: ${scrollbarWidth}px; transform: translateY(-50%);`;
+            break;
+        case 'bottom-left':
+            style += `position: absolute; bottom: ${scrollbarHeight}px; left: 0;`;
+            break;
+        case 'bottom':
+            style += `position: absolute; bottom: ${scrollbarHeight}px; left: 50%; transform: translateX(-50%);`;
+            break;
+        case 'bottom-right':
+            style += `position: absolute; bottom: ${scrollbarHeight}px; right: ${scrollbarWidth}px;`;
+            break;
+    }
+
+    element.setAttribute('style', style);
+
+    return element;
+}
+
+function createActionNameAreaElement(options) {
+    const element = document.createElement('div');
+    const style = `all: revert; width: fit-content; height: ${options.gestureTextFontSize}px; margin: 0px; border: none; line-height: 1; font-family: BIZ UDPGothic; background-color: ${options.gestureBackgroundColor}; display: none; pointer-events: none; white-space: nowrap; color: ${options.gestureFontColor}; background-color: ${options.gestureBackgroundColor}; font-size: ${options.gestureTextFontSize}px; padding: ${Math.floor(options.gestureTextFontSize) / 3}px;`;
+
+    element.setAttribute('style', style);
+
+    return element;
+}
+
+function createArrowsAreaElement(options) {
+    const element = document.createElement('div');
+    let style = `all: revert; font-weight: bold; border: none; line-height: 1; font-family: monospace; background-color: ${options.gestureBackgroundColor}; max-width: 100vw; width: fit-content; height: fit-content; overflow-wrap: anywhere; pointer-events: none; color: ${options.gestureArrowColor}; background-color: ${options.gestureBackgroundColor}; font-size: ${options.gestureArrowFontSize}px; padding: ${Math.floor(options.gestureArrowFontSize / 8)}px;`;
+
+    switch (options.showArrowsPosition) {
+        case 'top-left': /* fall through */
+        case 'left': /* fall through */
+        case 'bottom-left':
+            style += 'margin-left: auto; text-align: left;';
+            break;
+        case 'top': /* fall through */
+        case 'center': /* fall through */
+        case 'bottom':
+        default:
+            style += 'margin-right: auto; margin-left: auto; text-align: center;';
+            break;
+        case 'top-right': /* fall through */
+        case 'right': /* fall through */
+        case 'bottom-right':
+            style += 'margin-right: auto; text-align: right;';
+            break;
+    }
+
+    element.setAttribute('style', style);
 
     return element;
 }
@@ -55,10 +130,9 @@ function createBackgroundElement(isCentering) {
  */
 function createCenteringElement() {
     const element = document.createElement('div');
-    element.style.all = 'revert';
-    element.style.maxWidth = '100vw';
-    element.style.width = 'fit-content';
-    element.style.height = 'fit-content';
+    let style = 'all: revert; maxWidth: 100vw; width: fit-content; height: fit-content;';
+
+    element.setAttribute('style', style);
 
     return element;
 }
@@ -95,14 +169,13 @@ class GestureElements {
         this.#options = options;
 
         this.#backgroundElement = createBackgroundElement();
-        this.#backgroundElement.style.zIndex = 16777271;
-        this.#backgroundElement.style.backgroundColor = 'transparent';
+        if (this.#backgroundElement.style) {
+            this.#backgroundElement.style.zIndex = 16777271;
+            this.#backgroundElement.style.backgroundColor = 'transparent';
+        }
 
         this.#canvasElement = document.createElement('canvas');
-        this.#canvasElement.style.all = 'revert';
-        this.#canvasElement.style.margin = '0px';
-        this.#canvasElement.style.padding = '0px';
-        this.#canvasElement.style.backgroundColor = 'transparent';
+        this.#canvasElement.setAttribute('style', 'all: revert; margin: 0px; padding: 0px; background-color: transparent;');
 
         this.#backgroundElement.appendChild(this.#canvasElement);
     }
@@ -122,7 +195,9 @@ class GestureElements {
      * @param {HTMLElement} targetElement - The target element to remove from.
      */
     removeFrom(targetElement) {
-        targetElement.removeChild(this.#backgroundElement);
+        if (targetElement && this.#backgroundElement && targetElement.contains(this.#backgroundElement)) {
+            targetElement.removeChild(this.#backgroundElement);
+        }
     }
 
     /**
@@ -187,7 +262,7 @@ class ShowArrowsElement {
     /**
      * @type {HTMLElement | undefined}
      */
-    #centeringElement = undefined;
+    #actionNameAndArrowsElement = undefined;
 
     /**
      * @type {HTMLElement | undefined}
@@ -200,6 +275,12 @@ class ShowArrowsElement {
     #arrowsArea = undefined;
 
     /**
+     * @type {Window | undefined}
+     * @description The window in which the mouse gesture was initiated.
+     */
+    #windowMouseGestureWasInitiated = undefined;
+
+    /**
      * @constructor
      * @param {ExtensionOptions} options 
      */
@@ -207,56 +288,30 @@ class ShowArrowsElement {
         this.#options = options;
 
         this.#backgroundElement = createBackgroundElement(true);
-        this.#backgroundElement.style.zIndex = 16777270;
-        this.#backgroundElement.style.backgroundColor = 'transparent';
-        this.#backgroundElement.style.pointerEvents = 'none'; // 特定のIFRAME（主にブラウザゲーム）でマウスジェスチャ可能にするために必要
-
-        this.#centeringElement = createCenteringElement();
-        this.#backgroundElement.appendChild(this.#centeringElement);
-        this.#centeringElement.style.textAlign = 'center';
-        this.#centeringElement.style.pointerEvents = 'none';
-
-        this.#actionNameArea = document.createElement('div');
-        this.#centeringElement.appendChild(this.#actionNameArea);
-        this.#actionNameArea.style.all = 'revert';
-        this.#actionNameArea.style.width = 'fit-content';
-        this.#actionNameArea.style.height = 'fit-content';
-        this.#actionNameArea.style.margin = '0px';
-        this.#actionNameArea.style.border = 'none';
-        this.#actionNameArea.style.lineHeight = '1';
-        this.#actionNameArea.style.fontFamily = 'BIZ UDPGothic';
-        this.#actionNameArea.style.backgroundColor = this.#options.gestureBackgroundColor;
-        this.#actionNameArea.style.display = 'none';
-        this.#actionNameArea.style.pointerEvents = 'none';
-
-        this.#arrowsArea = document.createElement('div');
-        this.#centeringElement.appendChild(this.#arrowsArea);
-        this.#arrowsArea.style.all = 'revert';
-        this.#arrowsArea.style.fontWeight = 'bold';
-        this.#arrowsArea.style.left = '0';
-        this.#arrowsArea.style.right = '0';
-        this.#arrowsArea.style.margin = 'auto';
-        this.#arrowsArea.style.border = 'none';
-        this.#arrowsArea.style.lineHeight = '1';
-        this.#arrowsArea.style.fontFamily = 'monospace';
-        this.#arrowsArea.style.backgroundColor = this.#options.gestureBackgroundColor;
-        this.#arrowsArea.style.maxWidth = 'calc(100vw - 64px)';
-        this.#arrowsArea.style.width = 'fit-content';
-        this.#arrowsArea.style.height = 'fit-content';
-        this.#arrowsArea.style.overflowWrap = 'anywhere';
-        this.#arrowsArea.style.pointerEvents = 'none';
+        if (this.#backgroundElement.style) {
+            this.#backgroundElement.style.zIndex = 16777270;
+            this.#backgroundElement.style.backgroundColor = 'transparent';
+            this.#backgroundElement.style.pointerEvents = 'none'; // Needed to enable mouse gestures in certain IFRAMEs (mainly browser games)
+        }
 
         window.addEventListener('message', (event) => {
-            if (event.data.extensionId !== chrome.runtime.id) {
+            if (chrome.runtime && event.data.extensionId !== chrome.runtime.id) {
                 return;
             }
 
             switch (event.data.type) {
                 case 'show-arrows':
-                    this.showArrows(event.data.arrows);
+                    this.showArrows(global.arrows);
+                    if (isInRootWindow() && this.#windowMouseGestureWasInitiated !== window) {
+                        this.#windowMouseGestureWasInitiated = event.source;
+                    }
                     break;
                 case 'reset-gesture':
                     this.reset();
+                    if (this.#windowMouseGestureWasInitiated) {
+                        this.#windowMouseGestureWasInitiated.postMessage({ extensionId: chrome.runtime.id, type: 'reset-gesture' }, '*');
+                        this.#windowMouseGestureWasInitiated = undefined;
+                    }
                     break;
             }
         });
@@ -268,40 +323,7 @@ class ShowArrowsElement {
      */
     showArrows(arrows) {
         if (this.#arrows.length === 0) {
-            if (this.#options.hideGestureText) {
-                this.#actionNameArea.style.color = 'rgba(0, 0, 0, 0)';
-            }
-            else {
-                this.#actionNameArea.style.color = this.#options.gestureFontColor;
-            }
-
-            if (this.#options.hideGestureBackground || this.#options.hideGestureText) {
-                this.#actionNameArea.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-            }
-            else {
-                this.#actionNameArea.style.backgroundColor = this.#options.gestureBackgroundColor;
-            }
-
-            this.#actionNameArea.style.fontSize = `${this.#options.gestureTextFontSize}px`;
-            this.#actionNameArea.style.padding = `${Math.floor(this.#options.gestureTextFontSize) / 3}px`;
-
-            if (this.#options.hideGestureArrow) {
-                this.#arrowsArea.style.color = 'rgba(0, 0, 0, 0)';
-            }
-            else {
-                this.#arrowsArea.style.color = this.#options.gestureArrowColor;
-            }
-
-            if (this.#options.hideGestureBackground || this.#options.hideGestureArrow) {
-                this.#arrowsArea.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-            }
-            else {
-                this.#arrowsArea.style.backgroundColor = this.#options.backgroundColor;
-            }
-
-            this.#arrowsArea.style.fontSize = `${this.#options.gestureArrowFontSize}px`;
-            this.#arrowsArea.style.padding = `${Math.floor(this.#options.gestureArrowFontSize / 8)}px`;
-
+            this.#createActionNameAreaElementAndArrowsElement();
             document.body.appendChild(this.#backgroundElement);
         }
         this.#arrows = arrows;
@@ -315,12 +337,30 @@ class ShowArrowsElement {
             else if (action) {
                 this.#actionNameArea.innerText = chrome.i18n.getMessage(action);
             }
-            this.#actionNameArea.style.display = 'inline';
-            this.#arrowsArea.style.marginTop = '10px';
+            this.#actionNameArea.style.display = 'block';
         }
         else {
-            this.#actionNameArea.style.display = 'none';
-            this.#arrowsArea.style.marginTop = '35px';
+            this.#actionNameArea.innerText = '';
+            this.#actionNameArea.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+        }
+    }
+
+    /**
+     * @summary Create the action name area and arrows area elements.
+     */
+    #createActionNameAreaElementAndArrowsElement() {
+        this.#actionNameAndArrowsElement = createPositionElement(this.#options.showArrowsPosition);
+        this.#backgroundElement.appendChild(this.#actionNameAndArrowsElement);
+        this.#actionNameAndArrowsElement.style.pointerEvents = 'none';
+
+        this.#actionNameArea = createActionNameAreaElement(this.#options);
+        if (!this.#options.hideGestureText) {
+            this.#actionNameAndArrowsElement.appendChild(this.#actionNameArea);
+        }
+
+        this.#arrowsArea = createArrowsAreaElement(this.#options);
+        if (!this.#options.hideGestureArrow) {
+            this.#actionNameAndArrowsElement.appendChild(this.#arrowsArea);
         }
     }
 
@@ -331,7 +371,12 @@ class ShowArrowsElement {
         if (this.#arrows) {
             this.#arrows = '';
             this.#arrowsArea.innerText = this.#arrows;
-            document.body.removeChild(this.#backgroundElement);
+            if (document.body.contains(this.#backgroundElement)) {
+                document.body.removeChild(this.#backgroundElement);
+            }
+            if (this.#backgroundElement.contains(this.#actionNameAndArrowsElement)) {
+                this.#backgroundElement.removeChild(this.#actionNameAndArrowsElement);
+            }
         }
     }
 }
@@ -389,7 +434,7 @@ class BookMarkEditDialogElements {
             if (request && request.extensionId === chrome.runtime.id && request.type === 'upsertbookmarkresponse') {
                 (async () => {
                     if (!this.#targetElement) {
-                        const data = await chrome.storage.local.get(['defaultBookmarkFolder']);
+                        const data = await chrome.storage.sync.get(['defaultBookmarkFolder']);
                         this.addDialog(request.bookmarks, request.existsBookmark, data ? data.defaultBookmarkFolder : undefined);
                     }
                 })();
@@ -422,63 +467,45 @@ class BookMarkEditDialogElements {
         this.#backgroundElement.appendChild(centeringElement);
 
         const dialogElement = document.createElement('div');
-        dialogElement.style.all = 'revert';
-        dialogElement.style.position = 'relative';
-        dialogElement.style.backgroundColor = 'white';
-        dialogElement.style.padding = '2em';
+        dialogElement.setAttribute('style', 'all: revert; position: relative; background-color: white; padding: 2em;');
         centeringElement.appendChild(dialogElement);
 
         const cancelButton = document.createElement('a');
         cancelButton.href = '#';
         cancelButton.innerText = chrome.i18n.getMessage('strClose');
-        cancelButton.style.all = 'revert';
-        cancelButton.style.fontWeight = 'bold';
-        cancelButton.style.textDecoration = 'none';
-        cancelButton.style.color = 'black';
-        cancelButton.style.display = 'block';
-        cancelButton.style.position = 'absolute';
-        cancelButton.style.right = '1em';
-        cancelButton.style.top = '1em';
+        cancelButton.setAttribute('style', 'all: revert; font-weight: bold; text-decoration: none; color: black; display: block; position: absolute; right: 1em; top: 1em;');
         cancelButton.addEventListener('click', this.on.cancel);
         dialogElement.appendChild(cancelButton);
 
         const titleBarElement = document.createElement('div');
-        titleBarElement.style.all = 'revert';
+        titleBarElement.setAttribute('style', 'all: revert');
         dialogElement.appendChild(titleBarElement);
 
         const titleElement = document.createElement('span');
         titleElement.innerText = isEditMode ? chrome.i18n.getMessage('strBookmarkDialogTitleEdit') : chrome.i18n.getMessage('strBookmarkDialogTitleAdd');
-        titleElement.style.all = 'revert';
-        titleElement.style.marginBottom = '1em';
+        titleElement.setAttribute('style', 'all: revert; margin-bottom: 1em;');
         titleBarElement.appendChild(titleElement);
 
         const tableElement = document.createElement('div');
-        tableElement.style.all = 'revert';
-        tableElement.style.display = 'table';
-        tableElement.style.marginBottom = '1em';
+        tableElement.setAttribute('style', 'all: revert; display: table; margin-bottom: 1em;');
         dialogElement.appendChild(tableElement);
 
         const rowNameElement = document.createElement('div');
-        rowNameElement.style.all = 'revert';
-        rowNameElement.style.display = 'table-row';
+        rowNameElement.setAttribute('style', 'all: revert; display: table-row;');
         tableElement.appendChild(rowNameElement);
 
         const nameRabelElement = document.createElement('div');
-        nameRabelElement.style.all = 'revert';
-        nameRabelElement.style.display = 'table-cell';
-        nameRabelElement.style.padding = '1em';
+        nameRabelElement.setAttribute('style', 'all: revert; display: table-cell; padding: 1em;');
         nameRabelElement.innerText = chrome.i18n.getMessage('strBookmarkDialogName');
         rowNameElement.appendChild(nameRabelElement);
 
         const nameInputColumnElement = document.createElement('div');
-        nameInputColumnElement.style.all = 'revert';
-        nameInputColumnElement.style.display = 'table-cell';
+        nameInputColumnElement.setAttribute('style', 'all: revert; display: table-cell;');
         rowNameElement.appendChild(nameInputColumnElement);
 
         this.#nameInputElement = document.createElement('input');
-        this.#nameInputElement.style.all = 'revert';
+        this.#nameInputElement.setAttribute('style', 'all: revert; width: 40vw;');
         this.#nameInputElement.type = 'text';
-        this.#nameInputElement.style.width = '40vw';
         if (this.#existingBookmark) {
             this.#nameInputElement.value = this.#existingBookmark.title || '';
         }
@@ -488,49 +515,39 @@ class BookMarkEditDialogElements {
         nameInputColumnElement.appendChild(this.#nameInputElement);
 
         const rowUrlElement = document.createElement('div');
-        rowUrlElement.style.all = 'revert';
-        rowUrlElement.style.display = 'table-row';
+        rowUrlElement.setAttribute('style', 'all: revert; display: table-row;');
         tableElement.appendChild(rowUrlElement);
 
         const urlRabelElement = document.createElement('div');
-        urlRabelElement.style.all = 'revert';
-        urlRabelElement.style.display = 'table-cell';
-        urlRabelElement.style.padding = '1em';
+        urlRabelElement.setAttribute('style', 'all: revert; display: table-cell; padding: 1em;');
         urlRabelElement.innerText = chrome.i18n.getMessage('strBookmarkDialogUrl');
         rowUrlElement.appendChild(urlRabelElement);
 
         const urlInputColumnElement = document.createElement('div');
-        urlInputColumnElement.style.all = 'revert';
-        urlInputColumnElement.style.display = 'table-cell';
+        urlInputColumnElement.setAttribute('style', 'all: revert; display: table-cell;');
         rowUrlElement.appendChild(urlInputColumnElement);
 
         this.#urlInputElement = document.createElement('input');
-        this.#urlInputElement.style.all = 'revert';
+        this.#urlInputElement.setAttribute('style', 'all: revert; width: 40vw;');
         this.#urlInputElement.type = 'text';
-        this.#urlInputElement.style.width = '40vw';
         this.#urlInputElement.value = this.#existingBookmark ? this.#existingBookmark.url : document.location.href;
         urlInputColumnElement.appendChild(this.#urlInputElement);
 
         const rowFolderElement = document.createElement('div');
-        rowFolderElement.style.all = 'revert';
-        rowFolderElement.style.display = 'table-row';
+        rowFolderElement.setAttribute('style', 'all: revert; display: table-row;');
         tableElement.appendChild(rowFolderElement);
 
         const folderRabelElement = document.createElement('div');
-        folderRabelElement.style.all = 'revert';
-        folderRabelElement.style.display = 'table-cell';
-        folderRabelElement.style.padding = '1em';
+        folderRabelElement.setAttribute('style', 'all: revert; display: table-cell; padding: 1em;');
         folderRabelElement.innerText = chrome.i18n.getMessage('strBookmarkDialogFolder');
         rowFolderElement.appendChild(folderRabelElement);
 
         const folderSelectColumnElement = document.createElement('div');
-        folderSelectColumnElement.style.all = 'revert';
-        folderSelectColumnElement.style.display = 'table-cell';
+        folderSelectColumnElement.setAttribute('style', 'all: revert; display: table-cell;');
         rowFolderElement.appendChild(folderSelectColumnElement);
 
         this.#folderSelectElement = document.createElement('select');
-        this.#folderSelectElement.style.all = 'revert';
-        this.#folderSelectElement.style.width = '40vw';
+        this.#folderSelectElement.setAttribute('style', 'all: revert; width: 40vw;');
         folderSelectColumnElement.appendChild(this.#folderSelectElement);
 
         const parentIdOfexistingBookmark = this.#existingBookmark ? this.#existingBookmark.parentId : defaultBookmarkFolder;
@@ -545,7 +562,7 @@ class BookMarkEditDialogElements {
 
                     if (node.title) {
                         const optionElement = document.createElement('option');
-                        optionElement.style.all = 'revert';
+                        optionElement.setAttribute('style', 'all: revert');
                         optionElement.innerText = node.title;
                         optionElement.value = node.id;
                         if (parentIdOfexistingBookmark === node.id) {
@@ -560,34 +577,27 @@ class BookMarkEditDialogElements {
         }
 
         const buttonsAreaElement = document.createElement('div');
-        buttonsAreaElement.style.all = 'revert';
-        buttonsAreaElement.style.display = 'grid';
-        buttonsAreaElement.style.gridTemplateColumns = '1fr 1fr';
-        buttonsAreaElement.style.placeContent = 'center';
-        buttonsAreaElement.style.gap = '1ch';
+        buttonsAreaElement.setAttribute('style', 'all: revert; display: grid; grid-template-columns: 1fr 1fr; plac-content: center; gap: 1ch;');
         dialogElement.appendChild(buttonsAreaElement);
 
         const deleteButtonColumn = document.createElement('div');
-        deleteButtonColumn.style.all = 'revert';
-        deleteButtonColumn.style.textAlign = 'center';
+        deleteButtonColumn.setAttribute('style', 'all: revert; text-align: center;');
         buttonsAreaElement.appendChild(deleteButtonColumn);
 
         const deleteButton = document.createElement('a');
         deleteButton.innerText = chrome.i18n.getMessage('strDelete');
         deleteButton.href = '#';
-        deleteButton.style.all = 'revert';
+        deleteButton.setAttribute('style', 'all: revert');
         deleteButton.addEventListener('click', this.on.deleteBookmark);
         deleteButtonColumn.appendChild(deleteButton);
 
         const okButtonColumn = document.createElement('div');
-        okButtonColumn.style.all = 'revert';
-        okButtonColumn.style.textAlign = 'center';
+        okButtonColumn.setAttribute('style', 'all: revert; text-align: center;');
         buttonsAreaElement.appendChild(okButtonColumn);
 
         const okButton = document.createElement('button');
         okButton.innerText = chrome.i18n.getMessage('strOk');
-        okButton.style.all = 'revert';
-        okButton.style.width = '10em';
+        okButton.setAttribute('style', 'all: revert; width: 10em;');
         okButton.addEventListener('click', this.on.ok);
         okButtonColumn.appendChild(okButton);
 
@@ -696,6 +706,6 @@ class BookMarkEditDialogElements {
      * @param {string} folderId - The ID of the folder to set as default.
      */
     setDefaultBookmarkFolder(folderId) {
-        chrome.storage.local.set({ defaultBookmarkFolder: folderId }).then();
+        chrome.storage.sync.set({ defaultBookmarkFolder: folderId }).then();
     }
 }

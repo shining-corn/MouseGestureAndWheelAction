@@ -4,23 +4,17 @@
  */
 
 /**
- * @import { Point, sendChromeMessage, computeDirection, isInRootWindow, getRootWindow } from './utilities.js';
+ * @import { Point, sendChromeMessage, computeDirection, compute8Direction, isInRootWindow, getRootWindow } from './utilities.js';
  * @import { ExtensionOptions, CustomUrlSetting, GestureSetting, DisableExtensionSetting } from './ExtensionOptions.js';
  * @import { InterIframeVariables } from './InterIframeVariables.js';
- * @import { getGestureActions } from './gestureActions.js';
+ * @import { getGestureAction, ActionOption } from './gestureActions.js';
  * @import { GestureElements } from './htmlElements.js';
  * @import { checkHasExtensionBeenUpdated } from './utilities.js';
  */
 
-/**
- * @typedef {object} ActionOption
- * @property {HTMLElement} target - The target element of the action.
- * @property {string} url - The href attribute of the target element.
- * @property {string} src - The src attribute of the target element.
- * @property {boolean} shouldPreventContextMenu - Indicates whether to prevent the context menu.
- */
-
 const global = new InterIframeVariables();
+
+let childWindows = [];
 
 /**
  * @summary Processes the action based on the provided action string and options.
@@ -32,14 +26,17 @@ const global = new InterIframeVariables();
 function processAction(extensionOptions, action, actionOption) {
     if (action) {
         if (action.startsWith('customurl:')) {
-            const text = global.selectedText;
+            const shouldTrimSelectedText = extensionOptions.shouldTrimSelectedText;
+            const text = shouldTrimSelectedText ? global.selectedText.trim() : global.selectedText;
             const id = action.substring(10);
             const setting = extensionOptions.getCustomUrlSetting(id);
-            const hasPlaceholder = setting && setting.customUrl.indexOf('{}') !== -1;
+            const hasSelectedTextPlaceholder = setting && setting.customUrl.indexOf('{}') !== -1;
 
-            if (text || !hasPlaceholder) {
+            if (text || !hasSelectedTextPlaceholder) {
                 if (setting) {
-                    const url = setting.customUrl.replace(/\{\}/ig, encodeURI(text));
+                    const url = setting.customUrl
+                        .replace(/\{\}/ig, encodeURI(text))
+                        .replace(/\{\s*?url\s*?\}/ig, encodeURI(window.location.href));
                     if (setting.openInNewTab) {
                         sendChromeMessage({ action: 'openlinkinnwetabandactivate', url: url });
                     }
@@ -56,7 +53,7 @@ function processAction(extensionOptions, action, actionOption) {
             }
         }
         else {
-            getGestureActions()[action](actionOption);
+            executeAction(action, actionOption);
         }
     }
 }
@@ -91,11 +88,6 @@ class MouseGestureAndWheelActionClient {
     #gestureElement = undefined;
 
     /**
-     * @type {string}
-     */
-    #arrows = '';
-
-    /**
      * @type {string | undefined}
      */
     #url = undefined;
@@ -118,11 +110,6 @@ class MouseGestureAndWheelActionClient {
     /**
      * @type {boolean}
      */
-    #onMouseGesture = false;
-
-    /**
-     * @type {boolean}
-     */
     #isRightButtonPressed = false;
 
     /**
@@ -141,25 +128,34 @@ class MouseGestureAndWheelActionClient {
     start() {
         this.disableExtensionByUrlCondition();
 
-        document.addEventListener("selectionchange", () => {
+        document.addEventListener("selectionchange", (event) => {
+            if (!event.isTrusted || !global.enabledExtension) {
+                return;
+            }
+
             const text = window.getSelection().toString();
             if (text) {
                 global.selectedText = text;
             }
         });
 
-        window.addEventListener('blur', () => {
+        window.addEventListener('blur', (event) => {
+            if (!event.isTrusted || !global.enabledExtension) {
+                return;
+            }
+
+            // Reset the state when the tab loses focus
             global.shouldPreventContextMenu = false;    // Disable context menu suppression when leaving a tab
             this.resetGestureState();
             this.#isRightButtonPressed = false;
         });
 
         window.addEventListener('wheel', (event) => {
-            if (!global.enabledExtension) {
+            if (!event.isTrusted || !global.enabledExtension) {
                 return;
             }
 
-            const isWheelAction = () => this.#options.enabledWheelAction && (event.buttons === 2) && !this.#onMouseGesture;
+            const isWheelAction = () => this.#options.enabledWheelAction && (event.buttons === 2) && !global.onMouseGesture;
 
             if (isWheelAction()) {
                 if (checkHasExtensionBeenUpdated()) {
@@ -176,16 +172,11 @@ class MouseGestureAndWheelActionClient {
             (async () => {
                 if (isWheelAction()) {
                     this.setActionOptionsFromElement(event.target);
-                    let action;
                     if (event.wheelDelta > 0) {
-                        action = getGestureActions()[this.#options.rightButtonAndWheelUp];
+                        executeAction(this.#options.rightButtonAndWheelUp, this.getActionOptions());
                     }
                     else {
-                        action = getGestureActions()[this.#options.rightButtonAndWheelDown];
-                    }
-                    if (typeof action === 'function') {
-                        const option = this.getActionOptions();
-                        action(option);
+                        executeAction(this.#options.rightButtonAndWheelDown, this.getActionOptions());
                     }
                 }
             })();
@@ -195,7 +186,28 @@ class MouseGestureAndWheelActionClient {
         });
 
         window.addEventListener('mousedown', (event) => {
-            if (!global.enabledExtension) {
+            if (event.button === 2) { // Right mouse button
+                event.preventDefault(); // Prevent context menu from appearing
+
+                if (isInIFrame()) {
+                    const rootWindow = getRootWindow();
+                    const message = {
+                        type: 'rightClick',
+                        origin: window.location.origin,
+                    };
+                    rootWindow.postMessage(message, '*');
+                }
+                else {
+                    for (const c of childWindows) {
+                        c.window.postMessage({
+                            type: 'root',
+                        },
+                            '*');
+                    }
+                }
+            }
+
+            if (!event.isTrusted || !global.enabledExtension) {
                 return;
             }
 
@@ -204,7 +216,7 @@ class MouseGestureAndWheelActionClient {
             }
 
             // Rocker Gesture
-            if (event.buttons === 3 && !this.#onMouseGesture) {
+            if (event.buttons === 3 && !global.onMouseGesture) {
                 if (checkHasExtensionBeenUpdated()) {
                     this.resetGestureState();
                     return;
@@ -222,6 +234,8 @@ class MouseGestureAndWheelActionClient {
                     event.preventDefault();
                     event.stopImmediatePropagation();
                     global.shouldPreventContextMenu = true;
+                    this.#previousPoint = undefined;
+                    global.onMouseGesture = false;
                     this.setActionOptionsFromElement(event.target);
                     processAction(this.#options, command, this.getActionOptions());
 
@@ -231,7 +245,7 @@ class MouseGestureAndWheelActionClient {
 
             // Mouse Gesture
             if (this.#options.enabledMouseGesture) {
-                if ((event.button === 0) && this.#previousPoint) {
+                if ((event.button === 0) && ((event.buttons & 2) === 2) && (this.#previousPoint || global.onMouseGesture)) {
                     if (checkHasExtensionBeenUpdated()) {
                         this.resetGestureState();
                         return;
@@ -240,13 +254,12 @@ class MouseGestureAndWheelActionClient {
                     event.preventDefault();
                     event.stopImmediatePropagation();
 
-                    this.#onMouseGesture = true;
-                    this.#arrows += 'Click ';
+                    global.onMouseGesture = true;
+                    global.arrows += 'Click ';
                     getRootWindow().postMessage(
                         {
                             extensionId: chrome.runtime.id,
                             type: 'show-arrows',
-                            arrows: this.#arrows,
                         },
                         '*'
                     );
@@ -270,7 +283,7 @@ class MouseGestureAndWheelActionClient {
         });
 
         window.addEventListener('mousemove', (event) => {
-            if (!global.enabledExtension) {
+            if (!event.isTrusted || !global.enabledExtension) {
                 return;
             }
 
@@ -301,19 +314,26 @@ class MouseGestureAndWheelActionClient {
 
                     this.#previousPoint = currentPoint;
 
-                    const direction = computeDirection(diffX, diffY);
+                    let direction;
+                    if (this.#options.enable8DirectionsForMouseGesture) {
+                        direction = compute8Direction(diffX, diffY);
+                    }
+                    else {
+                        direction = computeDirection(diffX, diffY);
+                    }
                     if (direction && direction !== this.#previousDirection) {
-                        this.#onMouseGesture = true;
-                        this.#arrows += direction;
+                        global.onMouseGesture = true;
+                        global.arrows += direction;
                         getRootWindow().postMessage(
                             {
                                 extensionId: chrome.runtime.id,
                                 type: 'show-arrows',
-                                arrows: this.#arrows,
                             },
                             '*'
                         );
                         this.#previousDirection = direction;
+
+                        global.shouldPreventContextMenu = true;
                     }
                 }
             }
@@ -322,48 +342,75 @@ class MouseGestureAndWheelActionClient {
         });
 
         window.addEventListener('mouseup', (event) => {
-            if (!global.enabledExtension) {
+
+            if (event.buttons === 2) { // Right mouse button is pressed
+                event.preventDefault(); // Prevent context menu from appearing
+            }
+
+            if (!event.isTrusted || !global.enabledExtension) {
                 return;
             }
 
             if (event.button === 2) {
-                this.#isRightButtonPressed = false;
+                if (this.#isRightButtonPressed) {
+                    this.#isRightButtonPressed = false;
+                }
+                else {
+                    // It should have been moved from another tab with the right button held down, so ignore the mouseup event
+                    // and prevent the context menu from appearing.
+                    // Only do it when the OS is Windows.
+                    if (navigator.userAgent.indexOf('Windows') !== -1) {
+                        global.shouldPreventContextMenu = true;
+                    }
+                    return;
+                }
             }
 
             // Mouse Gesture
             if (event.button === 2) {
-                if (this.#previousPoint) {
-                    if (this.#onMouseGesture) {
-                        event.preventDefault();
-                        event.stopImmediatePropagation();
-                        global.shouldPreventContextMenu = true;
-                    }
+                if (global.onMouseGesture) {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                    global.shouldPreventContextMenu = true;
 
                     const actionOption = this.getActionOptions();
-                    setTimeout(() => {  // Use setTimeout to wait for global.shouldPreventContextMenu changes to be reflected in other frames
-                        const command = this.#options.getGestureAction(this.#arrows);
 
-                        getRootWindow().postMessage({
-                            extensionId: chrome.runtime.id,
-                            type: 'reset-gesture',
-                        }, '*');
-                        this.doneGesture();
+                    // Use setTimeout to wait for global.shouldPreventContextMenu changes to be reflected in other frames
+                    // For example, prevent a context menu from appearing on a particular web site when a mouse gesture is initiated from the parent frame and the right button is released on the IFRAME of an advertisement.
+                    setTimeout(() => {
+                        const command = this.#options.getGestureAction(global.arrows);
 
                         // To prevent the mouse gesture from showing up in the screenshot, do `processAction()` after `doneGesture()`.
                         if (command === 'screenshot') {
                             setTimeout(() => {
                                 processAction(this.#options, command, actionOption);
+
+                                getRootWindow().postMessage({
+                                    extensionId: chrome.runtime.id,
+                                    type: 'reset-gesture',
+                                }, '*');
+                                this.doneGesture();
                             }, 100);
                         }
                         else {
-                            
+                            processAction(this.#options, command, actionOption);
+
+                            getRootWindow().postMessage({
+                                extensionId: chrome.runtime.id,
+                                type: 'reset-gesture',
+                            }, '*');
+                            this.doneGesture();
                         }
-                    }, 0);
+                    }, 30);
+                }
+                else if (this.#hasGestureDrawn) {
+                    global.shouldPreventContextMenu = true;
+                    this.doneGesture();
                 }
 
                 this.#url = undefined;
                 this.#src = undefined;
-                this.#onMouseGesture = false;
+                global.onMouseGesture = false;
             }
         }, {
             capture: true  // Measures against stopImmediatePropagation() of other scripts on the WEB site
@@ -374,15 +421,20 @@ class MouseGestureAndWheelActionClient {
                 return;
             }
 
-            switch (request.type) {
-                case 'prevent-contextmenu':
-                    global.shouldPreventContextMenu = true;
-                    this.#isRightButtonPressed = true;   // It should have been moved from another tab with the right button held down, so set it to true.
-                    break;
+            if (request.type === 'prevent-contextmenu') {
+                global.shouldPreventContextMenu = true;
+                this.#isRightButtonPressed = true;   // It should have been moved from another tab with the right button held down, so set it to true.
+            }
+            else if (request.type === 'reset-prevent-contextmenu') {
+                global.shouldPreventContextMenu = false;
             }
         });
 
         window.addEventListener('contextmenu', (event) => {
+            if (!event.isTrusted || !global.enabledExtension) {
+                return;
+            }
+
             if (global.shouldPreventContextMenu) {
                 event.preventDefault();
             }
@@ -390,7 +442,11 @@ class MouseGestureAndWheelActionClient {
         });
 
         window.addEventListener('click', (event) => {
-            if (((event.button === 0) && this.#onMouseGesture) ||     // During mouse gesture
+            if (!event.isTrusted || !global.enabledExtension) {
+                return;
+            }
+
+            if (((event.button === 0) && global.onMouseGesture) ||     // During mouse gesture
                 ((event.button === 0) && (event.buttons === 2))      // During rocker gesture
             ) {
                 event.preventDefault();
@@ -401,6 +457,17 @@ class MouseGestureAndWheelActionClient {
         });
 
         window.addEventListener('message', (event) => {
+            if (event.data.type === 'rightClick') {
+                const message = event.data;
+                if (childWindows.find(c => c.origin === message.origin)) {
+                    return; // Already handled this origin
+                }
+                childWindows.push({
+                    window: event.source,
+                    origin: message.origin
+                });
+            }
+
             if (event.data.extensionId === chrome.runtime.id && event.data.type === 'disable-mousegesture') {
                 global.enabledExtension = false;
             }
@@ -421,7 +488,7 @@ class MouseGestureAndWheelActionClient {
             this.#gestureElement.reset();
             this.#hasGestureDrawn = false;
         }
-        this.#arrows = '';
+        global.arrows = '';
     }
 
     /**
@@ -434,12 +501,12 @@ class MouseGestureAndWheelActionClient {
             getRootWindow().postMessage({ extensionId: chrome.runtime.id, type: 'reset-gesture' }, `*`);
         }
 
-        this.#arrows = '';
+        global.arrows = '';
         this.#url = undefined;
         this.#src = undefined;
         this.#target = undefined;
         this.#rightClickCount = 0;
-        this.#onMouseGesture = false;
+        global.onMouseGesture = false;
     }
 
     /**
@@ -557,7 +624,7 @@ class MouseGestureAndWheelActionClient {
 
 (async () => {
     let options = new ExtensionOptions();
-    await options.loadFromStrageLocal();
+    await options.loadFromStorage();
     new MouseGestureAndWheelActionClient(options).start();
     if (isInRootWindow()) {
         new ShowArrowsElement(options);
@@ -565,13 +632,13 @@ class MouseGestureAndWheelActionClient {
 
         // Processes gesture execution requests sent from child windows
         window.addEventListener('message', (event) => {
-            if (event.data.extensionId !== chrome.runtime.id) {
+            if (chrome.runtime && (event.data.extensionId !== chrome.runtime.id)) {
                 return;
             }
 
             switch (event.data.type) {
                 case 'execute-action':
-                    getGestureActions()[event.data.action](event.data.option);
+                    executeAction(event.data.action, event.data.option);
                     break;
             }
         });

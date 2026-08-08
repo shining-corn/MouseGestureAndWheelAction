@@ -39,14 +39,16 @@ importScripts('./ExtensionOptions.js');
 function sendMessageToTabs(request, tabs) {
     request.extensionId = chrome.runtime.id;
     for (let tab of tabs) {
-        chrome.tabs.sendMessage(tab.id, request)
-            .then(() => { }).catch(() => { });
+        if (tab.id) {
+            chrome.tabs.sendMessage(tab.id, request)
+                .then(() => { }).catch(() => { });
+        }
     }
 }
 
 /**
- * @summary Go to a specific tab based on the current tab's ID and the distance to move.
- * @param {Tab[]} allTabs - All tabs in the current window.
+ * @summary Go to a specific tab based on the source tab's ID and the distance to move.
+ * @param {Tab[]} allTabs - All tabs.
  * @param {number} srcTabId - The ID of the source tab.
  * @param {number} distance - The distance to move (1 for right, -1 for left).
  * @param {boolean} isLoop - Whether to loop around when reaching the end of the tab list.
@@ -87,8 +89,8 @@ function goToTab(allTabs, srcTabId, distance, isLoop, shouldPreventContextMenu) 
 }
 
 /**
- * @summary Go to the most left tab in the current window.
- * @param {Tab[]} allTabs - All tabs in the current window.
+ * @summary Go to the most left tab.
+ * @param {Tab[]} allTabs - All tabs.
  * @param {boolean} shouldPreventContextMenu - Whether to prevent the context menu from appearing on the target tab.
  * @returns {boolean} - Returns true if the tab was successfully changed, false otherwise.
  */
@@ -103,8 +105,8 @@ function goToMostLeftTab(allTabs, shouldPreventContextMenu) {
 }
 
 /**
- * @summary Go to the most right tab in the current window.
- * @param {Tab[]} allTabs - All tabs in the current window.
+ * @summary Go to the most right tab.
+ * @param {Tab[]} allTabs - All tabs.
  * @param {boolean} shouldPreventContextMenu - Whether to prevent the context menu from appearing on the target tab.
  * @returns {boolean} - Returns true if the tab was successfully changed, false otherwise.
  */
@@ -138,6 +140,11 @@ class MouseGestureService {
     #lastCreatedGroupId = undefined;
 
     /**
+     * @type {number | undefined}
+     */
+    #indexToInsertCreatedTab = undefined;
+
+    /**
      * @type {TabActivateHistoryContainer[]}
      */
     #tabActivateHistoryContainer = {};
@@ -156,6 +163,21 @@ class MouseGestureService {
     start() {
         this.processTabHistory();
 
+        chrome.tabs.onActivated.addListener(() => {
+            this.#indexToInsertCreatedTab = undefined;
+        });
+
+        // reset shouldPreventContextMenu when tab is deactivated
+        (() => {
+            let previousTabId = undefined;
+            chrome.tabs.onActivated.addListener((activeInfo) => {
+                if (previousTabId) {
+                    sendMessageToTabs({ type: 'reset-prevent-contextmenu' }, [{ id: previousTabId }]);
+                }
+                previousTabId = activeInfo.tabId;
+            });
+        })();
+
         chrome.runtime.onMessage.addListener(
             (request, sender) => {
                 if (!request || request.extensionId !== chrome.runtime.id) {
@@ -164,7 +186,32 @@ class MouseGestureService {
 
                 switch (request.action) {
                     case 'createtab':
-                        chrome.tabs.create({ active: true });
+                        chrome.tabs.create({
+                            active: true,
+                            windowId: sender.tab.windowId,
+                            openerTabId: sender.tab.id,
+                            index: this.#getIndexToInsertCreatedTab(sender.tab.index),
+                        });
+                        break;
+                    case 'createtableftmost':
+                        chrome.tabs.create({
+                            active: true,
+                            windowId: sender.tab.windowId,
+                            openerTabId: sender.tab.id,
+                            index: 0,
+                        });
+                        break;
+                    case 'createtabrightmost':
+                        (async () => {
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
+                            const maxIndex = Math.max(...tabs.map(tab => tab.index));
+                            chrome.tabs.create({
+                                active: true,
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: maxIndex + 1,
+                            });
+                        })();
                         break;
                     case 'addtabtogroup':
                         (async () => {
@@ -199,9 +246,23 @@ class MouseGestureService {
                         break;
                     case 'closetab':
                         (async () => {
-                            const tab = await chrome.tabs.query({ windowId: sender.tab.windowId });
-                            if (tab.length === 1 && this.#options.addNewTabOnLastTabClose) {
-                                chrome.tabs.create({ windowId: sender.tab.windowId, url: 'chrome://newtab' });
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
+                            if (tabs.length === 1) {
+                                if (this.#options.addNewTabOnLastTabClose) {
+                                    chrome.tabs.create({ windowId: sender.tab.windowId, url: 'chrome://newtab' });
+                                }
+                            }
+                            else {
+                                switch (this.#options.goToOnCloseTab) {
+                                    case 'previous':
+                                        this.goToPreviousTab(sender, false, false);
+                                        break;
+                                    case 'left':
+                                        goToTab(tabs, sender.tab.id, -1, false, false);
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
 
                             chrome.tabs.remove(sender.tab.id);
@@ -209,7 +270,7 @@ class MouseGestureService {
                         break;
                     case 'closetableftall':
                         (async () => {
-                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
                             const i = tabs.findIndex((element) => element.id === sender.tab.id);
                             if (i !== -1) {
                                 for (const tab of tabs) {
@@ -225,7 +286,7 @@ class MouseGestureService {
                         break;
                     case 'closetabrightall':
                         (async () => {
-                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
                             const i = tabs.findIndex((element) => element.id === sender.tab.id);
                             if (i !== -1) {
                                 for (const tab of tabs) {
@@ -241,7 +302,7 @@ class MouseGestureService {
                         break;
                     case 'closetabotherall':
                         (async () => {
-                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
                             const i = tabs.findIndex((element) => element.id === sender.tab.id);
                             if (i !== -1) {
                                 for (const tab of tabs) {
@@ -272,7 +333,7 @@ class MouseGestureService {
                         break;
                     case 'reloadtaball':
                         (async () => {
-                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
                             for (const tab of tabs) {
                                 chrome.tabs.reload(tab.id);
                             }
@@ -280,37 +341,37 @@ class MouseGestureService {
                         break;
                     case 'gotolefttab':
                         (async () => {
-                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
                             goToTab(tabs, sender.tab.id, -1, false, request.shouldPreventContextMenu);
                         })();
                         break;
                     case 'gotorighttab':
                         (async () => {
-                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
                             goToTab(tabs, sender.tab.id, 1, false, request.shouldPreventContextMenu);
                         })();
                         break;
                     case 'gotolefttabwithloop':
                         (async () => {
-                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
                             goToTab(tabs, sender.tab.id, -1, true, request.byshouldPreventContextMenuwheel);
                         })();
                         break;
                     case 'gotorighttabwithloop':
                         (async () => {
-                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
                             goToTab(tabs, sender.tab.id, 1, true, request.shouldPreventContextMenu);
                         })();
                         break;
                     case 'gotomostlefttab':
                         (async () => {
-                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
                             goToMostLeftTab(tabs, request.shouldPreventContextMenu);
                         })();
                         break;
                     case 'gotomostrighttab':
                         (async () => {
-                            const tabs = await chrome.tabs.query({ currentWindow: true });
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
                             goToMostRightTab(tabs, request.shouldPreventContextMenu);
                         })();
                         break;
@@ -343,7 +404,7 @@ class MouseGestureService {
 
                             const existingBookmarks = await chrome.bookmarks.search({ url: request.bookmark.url });
                             if (existingBookmarks.length === 0) {
-                                const data = await chrome.storage.local.get(['defaultBookmarkFolder']);
+                                const data = await chrome.storage.sync.get(['defaultBookmarkFolder']);
                                 if (data && data.defaultBookmarkFolder) {
                                     request.bookmark.parentId = data.defaultBookmarkFolder;
                                 }
@@ -397,12 +458,14 @@ class MouseGestureService {
                         break;
                     case 'createwindow':
                         (async () => {
-                            await chrome.windows.create();
+                            await chrome.windows.create({
+                                incognito: sender.tab.incognito,
+                            });
                         })();
                         break;
                     case 'closewindow':
                         {
-                            const window = chrome.windows.getCurrent();
+                            const window = chrome.windows.get(sender.tab.windowId);
                             window.then((w) => {
                                 (async () => {
                                     await chrome.windows.remove(w.id);
@@ -424,7 +487,7 @@ class MouseGestureService {
                         break;
                     case 'maximizewindow':
                         {
-                            const window = chrome.windows.getCurrent();
+                            const window = chrome.windows.get(sender.tab.windowId);
                             window.then((w) => {
                                 (async () => {
                                     if (w.state !== 'maximized') {
@@ -445,7 +508,7 @@ class MouseGestureService {
                         break;
                     case 'minimizewindow':
                         {
-                            const window = chrome.windows.getCurrent();
+                            const window = chrome.windows.get(sender.tab.windowId);
                             window.then((w) => {
                                 (async () => {
                                     await chrome.windows.update(w.id, { state: 'minimized' });
@@ -455,7 +518,7 @@ class MouseGestureService {
                         break;
                     case 'fullscreenwindow':
                         {
-                            const window = chrome.windows.getCurrent();
+                            const window = chrome.windows.get(sender.tab.windowId);
                             window.then((w) => {
                                 (async () => {
                                     if (w.state !== 'fullscreen') {
@@ -525,13 +588,15 @@ class MouseGestureService {
                         break;
                     case 'zoomin':
                         (async () => {
-                            const zoom = (await chrome.tabs.getZoom()) + 0.25;
+                            const step = this.#options.zoomInOutStep / 100;
+                            const zoom = (await chrome.tabs.getZoom()) + step;
                             chrome.tabs.setZoom(zoom >= 5 ? 5 : zoom);
                         })();
                         break;
                     case 'zoomout':
                         (async () => {
-                            const zoom = (await chrome.tabs.getZoom()) - 0.25;
+                            const step = this.#options.zoomInOutStep / 100;
+                            const zoom = (await chrome.tabs.getZoom()) - step;
                             chrome.tabs.setZoom(zoom <= 0 ? 0.25 : zoom);
                         })();
                         break;
@@ -541,38 +606,212 @@ class MouseGestureService {
                             chrome.tabs.setZoom(zoom.defaultZoomFactor);
                         })();
                         break;
-                    case 'openlinkinnwetab':
+                    case 'openlinkinnwetab':    // For compatibility, the typo "nwe" is left as is.
                         (async () => {
                             chrome.tabs.create({
                                 url: request.url,
                                 active: false,
-                                index: sender.tab.index + 1
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: this.#getIndexToInsertCreatedTab(sender.tab.index),
                             });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            // Do not do it in incognito mode.
+                            if (!sender.tab.incognito) {
+                                chrome.history.addUrl({ url: request.url }, () => { });
+                            }
                         })();
                         break;
-                    case 'openlinkinnwetabandactivate':
+                    case 'openlinkinnwetabandactivate':    // For compatibility, the typo "nwe" is left as is.
                         (async () => {
                             chrome.tabs.create({
                                 url: request.url,
                                 active: true,
-                                index: sender.tab.index + 1
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: this.#getIndexToInsertCreatedTab(sender.tab.index),
                             });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            // Do not do it in incognito mode.
+                            if (!sender.tab.incognito) {
+                                chrome.history.addUrl({ url: request.url }, () => { });
+                            }
                         })();
                         break;
-                    case 'openlinkinnwewindow':
+                    case 'openlinkinnwewindow':    // For compatibility, the typo "nwe" is left as is.
                         (async () => {
                             await chrome.windows.create({
                                 url: request.url,
-                                focused: false
+                                focused: false,
+                                incognito: sender.tab.incognito,
                             });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            // Do not do it in incognito mode.
+                            if (!sender.tab.incognito) {
+                                chrome.history.addUrl({ url: request.url }, () => { });
+                            }
                         })();
                         break;
-                    case 'openlinkinnwewindowandactivate':
+                    case 'openlinkinnwewindowandactivate':  // For compatibility, the typo "nwe" is left as is.
                         (async () => {
                             await chrome.windows.create({
                                 url: request.url,
-                                focused: true
+                                focused: true,
+                                incognito: sender.tab.incognito,
                             });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            // Do not do it in incognito mode.
+                            if (!sender.tab.incognito) {
+                                chrome.history.addUrl({ url: request.url }, () => { });
+                            }
+                        })();
+                        break;
+                    case 'openlinkinnewtableftmost':
+                        (async () => {
+                            chrome.tabs.create({
+                                url: request.url,
+                                active: false,
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: 0,
+                            });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            // Do not do it in incognito mode.
+                            if (!sender.tab.incognito) {
+                                chrome.history.addUrl({ url: request.url }, () => { });
+                            }
+                        })();
+                        break;
+                    case 'openlinkinnewtabrightmost':
+                        (async () => {
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
+                            const maxIndex = Math.max(...tabs.map(tab => tab.index));
+                            chrome.tabs.create({
+                                url: request.url,
+                                active: false,
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: maxIndex + 1,
+                            });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            // Do not do it in incognito mode.
+                            if (!sender.tab.incognito) {
+                                chrome.history.addUrl({ url: request.url }, () => { });
+                            }
+                        })();
+                        break;
+                    case 'openimageinnewtableftmost':
+                        (async () => {
+                            chrome.tabs.create({
+                                url: request.url,
+                                active: false,
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: 0,
+                            });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            // Do not do it in incognito mode.
+                            if (!sender.tab.incognito) {
+                                chrome.history.addUrl({ url: request.url }, () => { });
+                            }
+                        })();
+                        break;
+                    case 'openimageinnewtabrightmost':
+                        (async () => {
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
+                            const maxIndex = Math.max(...tabs.map(tab => tab.index));
+                            chrome.tabs.create({
+                                url: request.url,
+                                active: false,
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: maxIndex + 1,
+                            });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            // Do not do it in incognito mode.
+                            if (!sender.tab.incognito) {
+                                chrome.history.addUrl({ url: request.url }, () => { });
+                            }
+                        })();
+                        break;
+                    case 'openlinkinnewtableftmostandactivate':
+                        (async () => {
+                            chrome.tabs.create({
+                                url: request.url,
+                                active: true,
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: 0,
+                            });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            // Do not do it in incognito mode.
+                            if (!sender.tab.incognito) {
+                                chrome.history.addUrl({ url: request.url }, () => { });
+                            }
+                        })();
+                        break;
+                    case 'openlinkinnewtabrightmostandactivate':
+                        (async () => {
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
+                            const maxIndex = Math.max(...tabs.map(tab => tab.index));
+                            chrome.tabs.create({
+                                url: request.url,
+                                active: true,
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: maxIndex + 1,
+                            });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            // Do not do it in incognito mode.
+                            if (!sender.tab.incognito) {
+                                chrome.history.addUrl({ url: request.url }, () => { });
+                            }
+                        })();
+                        break;
+                    case 'openimageinnewtableftmostandactivate':
+                        (async () => {
+                            chrome.tabs.create({
+                                url: request.url,
+                                active: true,
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: 0,
+                            });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            // Do not do it in incognito mode.
+                            if (!sender.tab.incognito) {
+                                chrome.history.addUrl({ url: request.url }, () => { });
+                            }
+                        })();
+                        break;
+                    case 'openimageinnewtabrightmostandactivate':
+                        (async () => {
+                            const tabs = await chrome.tabs.query({ windowId: sender.tab.windowId });
+                            const maxIndex = Math.max(...tabs.map(tab => tab.index));
+                            chrome.tabs.create({
+                                url: request.url,
+                                active: true,
+                                windowId: sender.tab.windowId,
+                                openerTabId: sender.tab.id,
+                                index: maxIndex + 1,
+                            });
+                            
+                            // To address the issue where link colors do not change due to Partitioning-visited-links-history, add the URL to the history.
+                            // Do not do it in incognito mode.
+                            if (!sender.tab.incognito) {
+                                chrome.history.addUrl({ url: request.url }, () => { });
+                            }
                         })();
                         break;
                     default:
@@ -610,16 +849,34 @@ class MouseGestureService {
             }
         });
 
-        chrome.tabs.onDetached.addListener((tabId, detachInfo) => {
-            if (this.#tabActivateHistoryContainer[detachInfo.oldWindowId]) {
-                this.#tabActivateHistoryContainer[detachInfo.oldWindowId].history = this.#tabActivateHistoryContainer[detachInfo.oldWindowId].history.filter((elem) => elem !== tabId);
+        const cleanupHistory = (tabId, windowId) => {
+            // If the tab is detached orremoved, remove it from the history of the specified window
+            const container = this.#tabActivateHistoryContainer[windowId];
+            if (container) {
+                container.history = container.history.filter((elem, i) => {
+                    if ((elem === tabId) && i < container.index && (container.index > 0)) {
+                        container.index--;
+                    }
+                    return elem !== tabId
+                });
 
-                this.#tabActivateHistoryContainer[detachInfo.oldWindowId].history = this.#tabActivateHistoryContainer[detachInfo.oldWindowId].history.filter((elem, i, array) => i === 0 || elem !== array[i - 1]);
+                // Remove consecutive duplicates from the history
+                container.history = container.history.filter((elem, i, array) => {
+                    if ((i !== 0 && elem === array[i - 1]) && (i < container.index) && (container.index > 0)) {
+                        container.index--;
+                    }
+                    return i === 0 || elem !== array[i - 1];
+                });
 
-                if (this.#tabActivateHistoryContainer[detachInfo.oldWindowId].history.length === 0) {
-                    delete this.#tabActivateHistoryContainer[detachInfo.oldWindowId];
+                // If the history is empty, delete the container
+                if (this.#tabActivateHistoryContainer[windowId].history.length === 0) {
+                    delete this.#tabActivateHistoryContainer[windowId];
                 }
             }
+        }
+
+        chrome.tabs.onDetached.addListener((tabId, detachInfo) => {
+            cleanupHistory(tabId, detachInfo.oldWindowId);
         });
 
         chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
@@ -627,12 +884,7 @@ class MouseGestureService {
                 delete this.#tabActivateHistoryContainer[removeInfo.windowId];
             }
             else if (this.#tabActivateHistoryContainer[removeInfo.windowId]) {
-                this.#tabActivateHistoryContainer[removeInfo.windowId].history = this.#tabActivateHistoryContainer[removeInfo.windowId].history.filter((elem) => elem !== tabId);
-
-                this.#tabActivateHistoryContainer[removeInfo.windowId].history = this.#tabActivateHistoryContainer[removeInfo.windowId].history.filter((elem, i, array) => i === 0 || elem !== array[i - 1]);
-                if (this.#tabActivateHistoryContainer[removeInfo.windowId].history.length === 0) {
-                    delete this.#tabActivateHistoryContainer[removeInfo.windowId];
-                }
+                cleanupHistory(tabId, removeInfo.windowId);
             }
         });
     }
@@ -702,6 +954,22 @@ class MouseGestureService {
             }
         }
     }
+
+    /**
+     * @summary Gets the index to insert a newly created tab.
+     * @param {number} index - The index of the tab that was active when the new tab was created.
+     * @returns {number} - The index to insert the newly created tab.
+     */
+    #getIndexToInsertCreatedTab(index) {
+        if (this.#indexToInsertCreatedTab === undefined) {
+            this.#indexToInsertCreatedTab = index + 1;
+        }
+        else {
+            this.#indexToInsertCreatedTab++;
+        }
+
+        return this.#indexToInsertCreatedTab;
+    }
 }
 
 (() => {
@@ -711,7 +979,11 @@ class MouseGestureService {
         }
     });
 
+    chrome.action.onClicked.addListener((tab) => {
+        chrome.runtime.openOptionsPage();
+    });
+
     let options = new ExtensionOptions();
-    (async () => { await options.loadFromStrageLocal(); })();
+    (async () => { await options.loadFromStorage(); })();
     (new MouseGestureService(options)).start(); // If execute this in the async function, it rarely causes an error "Could not establish connection. Receiving end does not exist." in `chrome.runtime.sendMessage()` in content.js, so execute it in the immediate function.
 })();

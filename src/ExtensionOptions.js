@@ -25,7 +25,7 @@
 /**
  * @class ExtensionOptions
  * @description This class manages the extension's options and settings.
- * It provides methods to load, save, and manipulate the options stored in Chrome's local storage.
+ * It provides methods to load, save, and manipulate the options stored in Chrome's sync storage.
  * It also listens for changes in the storage and updates the options accordingly.
  */
 class ExtensionOptions {
@@ -35,55 +35,99 @@ class ExtensionOptions {
     #options = undefined;
 
     /**
+     * @type {Array<Function>}
+     * @private
+     */
+    #onChangedCallbacks = [];
+
+    /**
      * @constructor
      */
     constructor() {
-        chrome.storage.local.onChanged.addListener((event) => {
+        chrome.storage.sync.onChanged.addListener((event) => {
             if (event.options && event.options.newValue) {
                 this.#options = event.options.newValue;
             }
-        })
+
+            // Execute all registered callbacks in order
+            for (const cb of this.#onChangedCallbacks) {
+                try {
+                    cb(event);
+                } catch (e) {
+                    // Ignore errors in callbacks, but log them
+                    console.error('ExtensionOptions onChanged callback error:', e);
+                }
+            }
+        });
+
     }
 
     /**
-     * @summary Loads the options from Chrome's local storage.
+     * @summary Loads the options from storage.
      */
-    async loadFromStrageLocal() {
-        const result = await chrome.storage.local.get(['options']);
-        if (result.options) {
-            this.#options = result.options;
+    async loadFromStorage() {
+        // First, check if options exist in sync storage
+        const syncResult = await chrome.storage.sync.get(['options']);
+        if (syncResult && syncResult.options && Object.keys(syncResult.options).length !== 0) {
+            this.#options = syncResult.options;
+            return;
         }
-        else {
-            this.#options = {
-                enabledWheelAction: true,
-                rightButtonAndWheelUp: 'gotolefttab',
-                rightButtonAndWheelDown: 'gotorighttab',
 
-                enabledMouseGesture: true,
-                gestureSettings: [
-                    { gesture: 'Click ', action: 'openlinkinnwetabandactivate' },
-                    { gesture: '←', action: 'back' },
-                    { gesture: '→', action: 'forward' },
-                    { gesture: '↑', action: 'scrollup' },
-                    { gesture: '↓', action: 'scrolldown' },
-                    { gesture: '→↑', action: 'scrolltotop' },
-                    { gesture: '→↓', action: 'scrolltobottom' },
-                    { gesture: '↓→', action: 'closetab' },
-                    { gesture: '↓←', action: 'reopenclosedtab' },
-                    { gesture: '↑↓', action: 'reloadtab' },
-                    { gesture: '↑↓↑', action: 'reloadtabhard' },
-                    { gesture: '↑←', action: 'gotolefttabwithloop' },
-                    { gesture: '↑→', action: 'gotorighttabwithloop' },
-                    { gesture: '↑←↓', action: 'gotomostlefttab' },
-                    { gesture: '↑→↓', action: 'gotomostrighttab' },
-                    { gesture: '←↑', action: 'upsertbookmark' },
-                    { gesture: '←↓', action: 'deletebookmark' },
-                    { gesture: '←→', action: 'mutetabtoggle' },
-                ],
-            };
+        // If options don't exist in sync storage, try to load them from local storage
+        const localResult = await chrome.storage.local.get(['options']);
+        if (localResult && localResult.options && Object.keys(localResult.options).length !== 0) {
+            this.#options = localResult.options;
 
-            await chrome.storage.local.set({ options: this.#options });
+            // Migrate options to sync storage
+            await chrome.storage.sync.set({ options: this.#options });
+            await chrome.storage.local.remove(['options']);
+
+            // Migrate defaultBookmarkFolder if it exists
+            const defaultBookmarkFolder = await chrome.storage.local.get(['defaultBookmarkFolder']);
+            if (defaultBookmarkFolder && defaultBookmarkFolder.defaultBookmarkFolder) {
+                await chrome.storage.sync.set({ defaultBookmarkFolder: defaultBookmarkFolder.defaultBookmarkFolder });
+                await chrome.storage.local.remove(['defaultBookmarkFolder']);
+            }
+            
+            return;
         }
+
+        // If options don't exist in both storages, create default options
+        this.#options = this.#createDefaultGestureSettings();
+        await chrome.storage.sync.set({ options: this.#options });
+    }
+
+    /**
+     * @summary Creates default gesture settings if they don't exist.
+     */
+    #createDefaultGestureSettings() {
+        return {
+            enabledWheelAction: true,
+            rightButtonAndWheelUp: 'gotolefttab',
+            rightButtonAndWheelDown: 'gotorighttab',
+
+            enabledMouseGesture: true,
+            gestureSettings: [
+                { gesture: 'Click ', action: 'openlinkinnwetabandactivate' },
+                { gesture: '←', action: 'back' },
+                { gesture: '→', action: 'forward' },
+                { gesture: '↑', action: 'scrollup' },
+                { gesture: '↓', action: 'scrolldown' },
+                { gesture: '→↑', action: 'scrolltotop' },
+                { gesture: '→↓', action: 'scrolltobottom' },
+                { gesture: '↓→', action: 'closetab' },
+                { gesture: '↓←', action: 'reopenclosedtab' },
+                { gesture: '↑↓', action: 'reloadtab' },
+                { gesture: '↑↓↑', action: 'reloadtabhard' },
+                { gesture: '↑←', action: 'gotolefttabwithloop' },
+                { gesture: '↑→', action: 'gotorighttabwithloop' },
+                { gesture: '↑←↓', action: 'gotomostlefttab' },
+                { gesture: '↑→↓', action: 'gotomostrighttab' },
+                { gesture: '←↑', action: 'upsertbookmark' },
+                { gesture: '←↓', action: 'deletebookmark' },
+                { gesture: '←→', action: 'mutetabtoggle' },
+            ],
+        };
     }
 
     /**
@@ -106,10 +150,25 @@ class ExtensionOptions {
                     customUrl: 'https://www.youtube.com/results?search_query={}',
                     openInNewTab: true,
                 },
+                {
+                    id: `${chrome.i18n.getMessage('strCustomUrlGoToSelectedUrl')}`,
+                    customUrl: '{}',
+                    openInNewTab: true,
+                }
             ];
         }
 
-        await chrome.storage.local.set({ options: this.#options });
+        await chrome.storage.sync.set({ options: this.#options });
+    }
+
+    /**
+     * @summary Register a callback (lambda) to be executed when chrome.storage.sync.onChanged fires.
+     * @param {Function} callback - A function that takes the event as an argument.
+     */
+    addOnChangedCallback(callback) {
+        if (typeof callback === 'function') {
+            this.#onChangedCallbacks.push(callback);
+        }
     }
 
     /**
@@ -119,8 +178,7 @@ class ExtensionOptions {
     async setOptions(options) {
         if (options) {
             this.#options = options;
-
-            await chrome.storage.local.set({ 'options': this.#options });
+            await chrome.storage.sync.set({ 'options': this.#options });
         }
     }
 
@@ -162,7 +220,7 @@ class ExtensionOptions {
      **/
     async upsertGesture(gesture, action) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStorage();
         }
 
         const newGesture = {
@@ -182,7 +240,7 @@ class ExtensionOptions {
             this.#options.gestureSettings.push(newGesture);
         }
 
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -191,14 +249,13 @@ class ExtensionOptions {
      **/
     async removeGesture(gesture) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStorage();
         }
 
         const i = this.#options.gestureSettings.findIndex(elem => elem.gesture.toString() === gesture);
         if (i !== -1) {
             this.#options.gestureSettings.splice(i, 1);
-
-            await chrome.storage.local.set({ 'options': this.#options });
+            await chrome.storage.sync.set({ 'options': this.#options });
         }
     }
 
@@ -216,11 +273,10 @@ class ExtensionOptions {
      */
     async setEnabledWheelAction(enabled) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStorage();
         }
-
         this.#options.enabledWheelAction = enabled;
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -237,11 +293,10 @@ class ExtensionOptions {
      */
     async setRightClickWheelUpAction(action) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStorage();
         }
-
         this.#options.rightButtonAndWheelUp = action;
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -258,11 +313,10 @@ class ExtensionOptions {
      */
     async setRightClickWheelDownAction(action) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStorage();
         }
-
         this.#options.rightButtonAndWheelDown = action;
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -279,11 +333,10 @@ class ExtensionOptions {
      */
     async setEnabledMouseGesture(enabled) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStorage();
         }
-
         this.#options.enabledMouseGesture = enabled;
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -300,11 +353,10 @@ class ExtensionOptions {
      */
     async setRightDoubleClickToContextMenu(enabled) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStorage();
         }
-
         this.#options.rightDoubleClickToContextMenu = enabled;
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -315,7 +367,6 @@ class ExtensionOptions {
         if (typeof this.#options?.mouseGestureStrokeLength === 'number' && this.#options.mouseGestureStrokeLength) {
             return this.#options.mouseGestureStrokeLength;
         }
-
         return 16;
     }
 
@@ -325,11 +376,10 @@ class ExtensionOptions {
      */
     async setMouseGestureStrokeLength(length) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStorage();
         }
-
         this.#options.mouseGestureStrokeLength = length;
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -340,7 +390,6 @@ class ExtensionOptions {
         if (typeof this.#options?.previousTabHistorySize === 'number' && this.#options.previousTabHistorySize) {
             return this.#options.previousTabHistorySize;
         }
-
         return 4096;
     }
 
@@ -350,11 +399,50 @@ class ExtensionOptions {
      */
     async setPreviousTabHistorySize(size) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStorage();
         }
-
         this.#options.previousTabHistorySize = size;
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
+    }
+
+    /**
+     * @summary Set the goToOnCloseTab option.
+     * @param {string} to - The tab to go to when closing a tab.
+     */
+    async setGoToOnCloseTab(to) {
+        if (!this.#options) {
+            await this.loadFromStorage();
+        }
+        this.#options.goToOnCloseTab = to;
+        await chrome.storage.sync.set({ 'options': this.#options });
+    }
+
+    /**
+     * @summary Get the goToOnCloseTab option.
+     * @returns {string} The tab to go to when closing a tab.
+     */
+    get goToOnCloseTab() {
+        return this.#options?.goToOnCloseTab ?? 'auto';
+    }
+
+    /**
+     * @summary Set the zoomInOutStep option.
+     * @param {number} step 
+     */
+    async setZoomInOutStep(step) {
+        if (!this.#options) {
+            await this.loadFromStorage();
+        }
+        this.#options.zoomInOutStep = step;
+        await chrome.storage.sync.set({ 'options': this.#options });
+    }
+
+    /**
+     * @summary Get the zoomInOutStep option.
+     * @returns {number} The step size for zooming in and out.
+     */
+    get zoomInOutStep() {
+        return this.#options?.zoomInOutStep ?? 25;
     }
 
     /**
@@ -379,7 +467,7 @@ class ExtensionOptions {
      */
     async setAddNewTabOnLastTabClose(enabled) {
         this.#options.addNewTabOnLastTabClose = enabled;
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -388,11 +476,10 @@ class ExtensionOptions {
      */
     async setRockerGestureLeftRight(action) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStorage();
         }
-
         this.#options.rockerGestureLeftRight = action;
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -409,11 +496,10 @@ class ExtensionOptions {
      */
     async setRockerGestureRightLeft(action) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStorage();
         }
-
         this.#options.rockerGestureRightLeft = action;
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -442,12 +528,30 @@ class ExtensionOptions {
      */
     async setCustomUrlSettings(customUrlSettings) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStorage();
         }
-
         this.#options.customUrlSettings = customUrlSettings;
+        await chrome.storage.sync.set({ 'options': this.#options });
+    }
 
-        await chrome.storage.local.set({ 'options': this.#options });
+    /**
+     * @summary Get the option to trim selected text.
+     * @returns {boolean} Whether the feature is enabled.
+     */
+    get shouldTrimSelectedText() {
+        return this.#options?.shouldTrimSelectedText ?? false;
+    }
+
+    /**
+     * @summary Set the option to trim selected text.
+     * @param {boolean} enabled - Whether the feature is enabled.
+     */
+    async setShouldTrimSelectedText(enabled) {
+        if (!this.#options) {
+            await this.loadFromStorage();
+        }
+        this.#options.shouldTrimSelectedText = enabled;
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -458,7 +562,6 @@ class ExtensionOptions {
         if (typeof this.#options?.gestureLineColor === 'string' && this.#options.gestureLineColor) {
             return this.#options.gestureLineColor;
         }
-
         return 'rgba(128, 128, 255, 0.9)';
     }
 
@@ -478,7 +581,6 @@ class ExtensionOptions {
         if (typeof this.#options?.gestureArrowColor === 'string' && this.#options.gestureArrowColor) {
             return this.#options.gestureArrowColor;
         }
-
         return 'rgba(239, 239, 255, 0.9)';
     }
 
@@ -490,7 +592,6 @@ class ExtensionOptions {
         if (typeof this.#options?.gestureArrowFontSize === 'number' && this.#options.gestureArrowFontSize) {
             return this.#options.gestureArrowFontSize;
         }
-
         return 64;
     }
 
@@ -510,7 +611,6 @@ class ExtensionOptions {
         if (typeof this.#options?.gestureFontColor === 'string' && this.#options.gestureFontColor) {
             return this.#options.gestureFontColor;
         }
-
         return 'rgba(239, 239, 255, 0.9)';
     }
 
@@ -522,7 +622,6 @@ class ExtensionOptions {
         if (typeof this.#options?.gestureTextFontSize === 'number' && this.#options.gestureTextFontSize) {
             return this.#options.gestureTextFontSize;
         }
-
         return 24;
     }
 
@@ -542,7 +641,6 @@ class ExtensionOptions {
         if (typeof this.#options?.gestureBackgroundColor === 'string' && this.#options.gestureBackgroundColor) {
             return this.#options.gestureBackgroundColor;
         }
-
         return 'rgba(0, 0, 32, 0.9)';
     }
 
@@ -552,6 +650,13 @@ class ExtensionOptions {
      */
     get hideGestureBackground() {
         return this.#options?.hideGestureBackground ?? false;
+    }
+    /**
+     * @summary Get the showArrowsPosition option.
+     * @returns {string} ShowArrowsElement position.
+     */
+    get showArrowsPosition() {
+        return this.#options?.showArrowsPosition || 'center';
     }
 
     /**
@@ -567,9 +672,9 @@ class ExtensionOptions {
      * @param {string} backgroundColor 
      * @param {boolean} hideBackground 
      */
-    async setGestureAppearance(lineColor, hideLine, arrowColor, arrowFontSize, hideArrow, textColor, textFontSize, hideText, backgroundColor, hideBackground) {
+    async setGestureAppearance(lineColor, hideLine, arrowColor, arrowFontSize, hideArrow, textColor, textFontSize, hideText, backgroundColor, hideBackground, showArrowsPosition) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStorage();
         }
 
         this.#options.gestureLineColor = lineColor;
@@ -586,7 +691,9 @@ class ExtensionOptions {
         this.#options.gestureBackgroundColor = backgroundColor;
         this.#options.hideGestureBackground = hideBackground;
 
-        await chrome.storage.local.set({ 'options': this.#options });
+        this.#options.showArrowsPosition = showArrowsPosition;
+
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -603,12 +710,10 @@ class ExtensionOptions {
      */
     async setDisableExtensionSettings(disableExtensionSettings) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStorage();
         }
-
         this.#options.disableExtensionSettings = disableExtensionSettings;
-
-        await chrome.storage.local.set({ 'options': this.#options });
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 
     /**
@@ -625,11 +730,29 @@ class ExtensionOptions {
      */
     async setHideHintPermanently(hide) {
         if (!this.#options) {
-            await this.loadFromStrageLocal();
+            await this.loadFromStorage();
         }
-
         this.#options.hideHintPermanently = hide;
+        await chrome.storage.sync.set({ 'options': this.#options });
+    }
 
-        await chrome.storage.local.set({ 'options': this.#options });
+    /**
+     * @summary Get the enable8DirectionsForMouseGesture option.
+     * @returns {boolean} Whether 8 directions for mouse gesture is enabled or not.
+     */
+    get enable8DirectionsForMouseGesture() {
+        return this.#options?.enable8DirectionsForMouseGesture ?? false;
+    }
+
+    /**
+     * @summary Set the enable8DirectionsForMouseGesture option.
+     * @param {boolean} enable - Whether to enable 8 directions for mouse gesture or not.
+     */
+    async setEnable8DirectionsForMouseGesture(enable) {
+        if (!this.#options) {
+            await this.loadFromStorage();
+        }
+        this.#options.enable8DirectionsForMouseGesture = enable;
+        await chrome.storage.sync.set({ 'options': this.#options });
     }
 }

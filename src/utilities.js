@@ -69,22 +69,54 @@ function getRootWindow() {
  * @summary Compute direction based on distance x and distance y.
  * @param {number} x
  * @param {number} y 
- * @returns 
+ * @returns {string|undefined} - One of the four directions: '→', '↑', '←', '↓'
  */
 function computeDirection(x, y) {
-    const THRESHOLD = Math.PI / 8;  // Ignore diagonal directions
     const radian = Math.atan2(y, x);
-    if (Math.abs(radian) <= THRESHOLD) {
+    if (radian >= -Math.PI / 4 && radian < Math.PI / 4) {
         return '→';
     }
-    else if (Math.abs(radian - Math.PI / 2) <= THRESHOLD) {
+    else if (radian >= Math.PI / 4 && radian < 3 * Math.PI / 4) {
         return '↓';
     }
-    else if (Math.abs(radian + Math.PI / 2) <= THRESHOLD) {
+    else if (radian >= -3 * Math.PI / 4 && radian < -Math.PI / 4) {
         return '↑';
     }
-    else if (Math.PI - Math.abs(radian) <= THRESHOLD) {
+    else {
         return '←';
     }
-    return undefined;
+}
+
+/**
+ * @summary Compute direction based on distance x and distance y.
+ * @param {number} x
+ * @param {number} y 
+ * @returns {string} - One of the eight directions: '→', '↗', '↑', '↖', '←', '↙', '↓', '↘'.
+ */
+function compute8Direction(x, y) {
+    const radian = Math.atan2(y, x);
+    if (radian >= -Math.PI / 8 && radian < Math.PI / 8) {
+        return '→';
+    }
+    else if (radian >= Math.PI / 8 && radian < 3 * Math.PI / 8) {
+        return '↘';
+    }
+    else if (radian >= 3 * Math.PI / 8 && radian < 5 * Math.PI / 8) {
+        return '↓';
+    }
+    else if (radian >= 5 * Math.PI / 8 && radian < 7 * Math.PI / 8) {
+        return '↙';
+    }
+    else if (radian >= -3 * Math.PI / 8 && radian < -Math.PI / 8) {
+        return '↗';
+    }
+    else if (radian >= -5 * Math.PI / 8 && radian < -3 * Math.PI / 8) {
+        return '↑';
+    }
+    else if (radian >= -7 * Math.PI / 8 && radian < -5 * Math.PI / 8) {
+        return '↖';
+    }
+    else {
+        return '←';
+    }
 }

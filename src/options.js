@@ -4,7 +4,7 @@
  */
 
 /**
- * @import { Point, computeDirection } from './utilities.js';
+ * @import { Point, computeDirection, compute8Direction } from './utilities.js';
  */
 
 /**
@@ -306,7 +306,13 @@ class MouseGestureController {
             if (strokeLength * strokeLength <= distanceSquare) {
                 this.#previousPoint = point;
 
-                const direction = computeDirection(diffX, diffY);
+                let direction;
+                if (this.#options.enable8DirectionsForMouseGesture) {
+                    direction = compute8Direction(diffX, diffY);
+                }
+                else {
+                    direction = computeDirection(diffX, diffY);
+                }
                 if (direction) {
                     if (direction !== this.#previousDirection) {
                         this.#elements.addArrow(direction);
@@ -367,31 +373,53 @@ class MouseGestureController {
  * @summary Append gesture action options to select element.
  * @param {ExtensionOptions} options 
  * @param {HTMLElement} selectElement 
- * @param {string} selectedOption 
+ * @param {string} selectedOptionId 
  */
-function appendGestureActionOptionsToSelectElement(options, selectElement, selectedOption) {
-    const actions = [''].concat(Object.keys(getGestureActions()));
-    for (const action of actions) {
-        const optionElement = document.createElement('option');
-        optionElement.value = action;
-        optionElement.dataset.i18n = action || 'optionsSelectOptionNone';
-        if (selectedOption === action) {
-            optionElement.selected = true;
+function appendGestureActionOptionsToSelectElement(options, selectElement, selectedOptionId) {
+    // Add "None" option
+    const noneOptionElement = document.createElement('option');
+    noneOptionElement.value = '';
+    noneOptionElement.dataset.i18n = 'optionsSelectOptionNone';
+    if (selectedOptionId === noneOptionElement.value) {
+        noneOptionElement.selected = true;
+    }
+    selectElement.appendChild(noneOptionElement);
+
+    // Add embeded options
+    const categories = getGestureActionCategories();
+    for (const category of categories) {
+        const categoryElement = document.createElement('optgroup');
+        categoryElement.label = chrome.i18n.getMessage(category.id);
+
+        for (const id of category.actions.map((action) => action.id)) {
+            const optionElement = document.createElement('option');
+            optionElement.value = id;
+            optionElement.dataset.i18n = id || 'optionsSelectOptionNone';
+            if (selectedOptionId === id) {
+                optionElement.selected = true;
+            }
+            categoryElement.appendChild(optionElement);
         }
-        selectElement.appendChild(optionElement);
+
+        selectElement.appendChild(categoryElement);
     }
 
-    // Custom URL
-    if (Object.prototype.toString.call(options.customUrlSettings) === '[object Array]') {
+    // Add custom URL options
+    if (Object.prototype.toString.call(options.customUrlSettings) === '[object Array]' && options.customUrlSettings.length > 0) {
+        const customUrlCategoryElement = document.createElement('optgroup');
+        customUrlCategoryElement.label = chrome.i18n.getMessage('actionCategoryCustomUrl');
+
         for (const customUrl of options.customUrlSettings) {
             const optionElement = document.createElement('option');
             optionElement.value = `customurl:${customUrl.id}`;
             optionElement.innerText = `${chrome.i18n.getMessage('openCustomUrl')}:${customUrl.id}`;
-            if (selectedOption === optionElement.value) {
+            if (selectedOptionId === optionElement.value) {
                 optionElement.selected = true;
             }
-            selectElement.appendChild(optionElement);
+            customUrlCategoryElement.appendChild(optionElement);
         }
+
+        selectElement.appendChild(customUrlCategoryElement);
     }
 }
 
@@ -417,6 +445,7 @@ function render(options) {
 function renderResetButton() {
     const resetButtonElement = document.getElementById('reset-button');
     resetButtonElement.addEventListener('click', (async () => {
+        await chrome.storage.sync.remove('options');
         await chrome.storage.local.remove('options');
         window.location.reload();
     }));
@@ -474,11 +503,20 @@ function renderMouseGestureOptions(options) {
         const mouseGestureStrokeLengthElement = document.getElementById('gesture-stroke-length');
         mouseGestureStrokeLengthElement.disabled = !enabledMouseGestureElement.checked;
 
-        const previousTabHistorySizeElement = document.getElementById('previous-tab-hisotry-size');
+        const enable8DirectionsForMouseGestureElement = document.getElementById('enable-8-directions-for-mousegesture');
+        enable8DirectionsForMouseGestureElement.disabled = !enabledMouseGestureElement.checked;
+
+        const previousTabHistorySizeElement = document.getElementById('previous-tab-history-size');
         previousTabHistorySizeElement.disabled = !enabledMouseGestureElement.checked;
 
         const addNewTabOnLastTabCloseElement = document.getElementById('add-new-tab-on-last-tab-close');
         addNewTabOnLastTabCloseElement.disabled = !enabledMouseGestureElement.checked;
+
+        const goToOnCloseTabElement = document.getElementById('go-to-on-close-tab');
+        goToOnCloseTabElement.disabled = !enabledMouseGestureElement.checked;
+
+        const zoomInOutStepElement = document.getElementById('zoom-in-out-step');
+        zoomInOutStepElement.disabled = !enabledMouseGestureElement.checked;
 
         options.setEnabledMouseGesture(enabledMouseGestureElement.checked);
     });
@@ -548,7 +586,7 @@ function renderMouseGestureOptions(options) {
     const mouseGestureStrokeLengthElement = document.getElementById('gesture-stroke-length');
     mouseGestureStrokeLengthElement.value = options.mouseGestureStrokeLength;
     mouseGestureStrokeLengthElement.disabled = !options.enabledMouseGesture;
-    mouseGestureStrokeLengthElement.addEventListener('change', async () => {
+    mouseGestureStrokeLengthElement.addEventListener('change', () => {
         const strokeLength = parseInt(mouseGestureStrokeLengthElement.value);
         if (strokeLength) {
             options.setMouseGestureStrokeLength(strokeLength);
@@ -558,10 +596,17 @@ function renderMouseGestureOptions(options) {
         mouseGestureStrokeLengthElement.value = mouseGestureStrokeLengthElement.value.slice(0, 3);
     });
 
+    const enable8DirectionsForMouseGestureElement = document.getElementById('enable-8-directions-for-mousegesture');
+    enable8DirectionsForMouseGestureElement.checked = options.enable8DirectionsForMouseGesture;
+    enable8DirectionsForMouseGestureElement.disabled = !options.enabledMouseGesture;
+    enable8DirectionsForMouseGestureElement.addEventListener('click', () => {
+        options.setEnable8DirectionsForMouseGesture(enable8DirectionsForMouseGestureElement.checked);
+    });
+
     const previousTabHistorySizeElement = document.getElementById('previous-tab-history-size');
     previousTabHistorySizeElement.value = options.previousTabHistorySize;
     previousTabHistorySizeElement.disabled = !options.enabledMouseGesture;
-    previousTabHistorySizeElement.addEventListener('change', async () => {
+    previousTabHistorySizeElement.addEventListener('change', () => {
         const size = parseInt(previousTabHistorySizeElement.value);
         if (size) {
             options.setPreviousTabHistorySize(size);
@@ -576,6 +621,26 @@ function renderMouseGestureOptions(options) {
     addNewTabOnLastTabCloseElement.disabled = !options.enabledMouseGesture;
     addNewTabOnLastTabCloseElement.addEventListener('click', () => {
         options.setAddNewTabOnLastTabClose(addNewTabOnLastTabCloseElement.checked);
+    });
+
+    const goToOnCloseTabElement = document.getElementById('go-to-on-close-tab');
+    const goToOnCloseTabOptionElement = goToOnCloseTabElement.querySelector(`option[value="${options.goToOnCloseTab ?? 'none'}"]`);
+    if (goToOnCloseTabOptionElement) {
+        goToOnCloseTabOptionElement.selected = true;
+    }
+    goToOnCloseTabElement.disabled = !options.enabledMouseGesture;
+    goToOnCloseTabElement.addEventListener('change', () => {
+        options.setGoToOnCloseTab(goToOnCloseTabElement.value);
+    });
+
+    const zoomInOutStepElement = document.getElementById('zoom-in-out-step');
+    zoomInOutStepElement.value = options.zoomInOutStep;
+    zoomInOutStepElement.disabled = !options.enabledMouseGesture;
+    zoomInOutStepElement.addEventListener('change', () => {
+        const step = parseInt(zoomInOutStepElement.value);
+        if (step) {
+            options.setZoomInOutStep(step);
+        }
     });
 }
 
@@ -695,6 +760,14 @@ function renderCustomUrlOptions(options) {
         saveCustomUrl(options);
     });
     customUrlOptionsControlsElement.appendChild(saveButtonElement);
+
+    const shouldTrimSelectedTextElement = document.getElementById('should-trim-selected-text');
+    if (shouldTrimSelectedTextElement) {
+        shouldTrimSelectedTextElement.checked = options.shouldTrimSelectedText;
+        shouldTrimSelectedTextElement.addEventListener('change', async () => {
+            await options.setShouldTrimSelectedText(shouldTrimSelectedTextElement.checked);
+        });
+    }
 }
 
 /**
@@ -752,10 +825,10 @@ function renderAppearanceOptions(options) {
     lineColorElement.value = options.gestureLineColor;
     lineColorElement.disabled = options.hideGestureLine;
 
-    const hideGestureLineElement = document.getElementById('hide-gesture-line');
-    hideGestureLineElement.checked = options.hideGestureLine;
-    hideGestureLineElement.addEventListener('change', () => {
-        lineColorElement.disabled = hideGestureLineElement.checked;
+    const enabledGestureLineElement = document.getElementById('enabled-gesture-line');
+    enabledGestureLineElement.checked = !options.hideGestureLine;
+    enabledGestureLineElement.addEventListener('change', () => {
+        lineColorElement.disabled = !enabledGestureLineElement.checked;
     });
 
     const arrowColorElement = document.getElementById('color-arrow');
@@ -769,11 +842,11 @@ function renderAppearanceOptions(options) {
         arrowFontSizeElement.value = arrowFontSizeElement.value.slice(0, 3);
     });
 
-    const hideGestureArrowElement = document.getElementById('hide-gesture-arrow');
-    hideGestureArrowElement.checked = options.hideGestureArrow;
-    hideGestureArrowElement.addEventListener('change', () => {
-        arrowColorElement.disabled = hideGestureArrowElement.checked;
-        arrowFontSizeElement.disabled = hideGestureArrowElement.checked;
+    const enabledGestureArrowElement = document.getElementById('enabled-gesture-arrow');
+    enabledGestureArrowElement.checked = !options.hideGestureArrow;
+    enabledGestureArrowElement.addEventListener('change', () => {
+        arrowColorElement.disabled = !enabledGestureArrowElement.checked;
+        arrowFontSizeElement.disabled = !enabledGestureArrowElement.checked;
     });
 
     const textColorElement = document.getElementById('color-text');
@@ -787,38 +860,47 @@ function renderAppearanceOptions(options) {
         textFontSizeElement.value = textFontSizeElement.value.slice(0, 3);
     });
 
-    const hideGestureTextElement = document.getElementById('hide-gesture-text');
-    hideGestureTextElement.checked = options.hideGestureText;
-    hideGestureTextElement.addEventListener('change', () => {
-        textColorElement.disabled = hideGestureTextElement.checked;
-        textFontSizeElement.disabled = hideGestureTextElement.checked;
+    const enabledGestureTextElement = document.getElementById('enabled-gesture-text');
+    enabledGestureTextElement.checked = !options.hideGestureText;
+    enabledGestureTextElement.addEventListener('change', () => {
+        textColorElement.disabled = !enabledGestureTextElement.checked;
+        textFontSizeElement.disabled = !enabledGestureTextElement.checked;
     });
 
     const backgroundColorElement = document.getElementById('color-background');
     backgroundColorElement.value = options.gestureBackgroundColor;
     backgroundColorElement.disabled = options.hideGestureBackground;
 
-    const hideGestureBackgroundElement = document.getElementById('hide-gesture-background');
-    hideGestureBackgroundElement.checked = options.hideGestureBackground;
-    hideGestureBackgroundElement.addEventListener('change', () => {
-        backgroundColorElement.disabled = hideGestureBackgroundElement.checked;
+    const enabledGestureBackgroundElement = document.getElementById('enabled-gesture-background');
+    enabledGestureBackgroundElement.checked = !options.hideGestureBackground;
+    enabledGestureBackgroundElement.addEventListener('change', () => {
+        backgroundColorElement.disabled = !enabledGestureBackgroundElement.checked;
     });
+
+    const showArrowsPositionElement = document.getElementById('show-arrows-position');
+    if (showArrowsPositionElement) {
+        const value = options.showArrowsPosition;
+        for (const opt of showArrowsPositionElement.options) {
+            opt.selected = (opt.value === value);
+        }
+    }
 
     const saveButtonElement = document.getElementById('color-save');
     saveButtonElement.addEventListener('click', () => {
         (async () => {
             const lineColor = lineColorElement.value;
-            const hideLine = hideGestureLineElement.checked;
+            const hideLine = !enabledGestureLineElement.checked;
             const arrowColor = arrowColorElement.value;
             const arrowSize = parseInt(arrowFontSizeElement.value);
-            const hideArrow = hideGestureArrowElement.checked;
+            const hideArrow = !enabledGestureArrowElement.checked;
             const textColor = textColorElement.value;
             const textSize = parseInt(textFontSizeElement.value);
-            const hideText = hideGestureTextElement.checked;
+            const hideText = !enabledGestureTextElement.checked;
             const backgroundColor = backgroundColorElement.value;
-            const hideBackground = hideGestureBackgroundElement.checked;
+            const hideBackground = !enabledGestureBackgroundElement.checked;
+            const showArrowsPosition = showArrowsPositionElement.value;
 
-            await options.setGestureAppearance(lineColor, hideLine, arrowColor, arrowSize, hideArrow, textColor, textSize, hideText, backgroundColor, hideBackground);
+            await options.setGestureAppearance(lineColor, hideLine, arrowColor, arrowSize, hideArrow, textColor, textSize, hideText, backgroundColor, hideBackground, showArrowsPosition);
 
             window.alert(chrome.i18n.getMessage('messageSucceededInSave'));
             window.location.reload();
@@ -1100,7 +1182,7 @@ function translate(element) {
 
 (async () => {
     let options = new ExtensionOptions();
-    await options.loadFromStrageLocal();
+    await options.loadFromStorage();
     await options.createDefaultCustomUrlSettingsIfNotExist();
     render(options);
     translate(document.body);
