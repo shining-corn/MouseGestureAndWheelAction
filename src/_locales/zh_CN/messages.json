@@ -2,14 +2,29 @@
     "extensionDescription": {
         "message": "使用鼠标手势、右键+滚轮以及摇杆手势来操控浏览器。"
     },
-    "actionCategoryHistory": {
-        "message": "历史记录操作"
+    "actionCategoryNavigation": {
+        "message": "导航操作"
     },
     "back": {
         "message": "后退"
     },
     "forward": {
         "message": "前进"
+    },
+    "reloadtab": {
+        "message": "重新加载"
+    },
+    "reloadtabhard": {
+        "message": "强制重新加载"
+    },
+    "reloadtaball": {
+        "message": "重新加载该窗口的全部标签页"
+    },
+    "gotoparentdirectory": {
+        "message": "转到上一级目录"
+    },
+    "gotorootdirectory": {
+        "message": "转到根目录"
     },
     "actionCategoryLink": {
         "message": "链接操作"
@@ -160,18 +175,6 @@
     },
     "gotonexttabloop": {
         "message": "切换至下一个标签页 (循环)"
-    },
-    "actionCategoryReload": {
-        "message": "重新加载操作"
-    },
-    "reloadtab": {
-        "message": "重新加载"
-    },
-    "reloadtabhard": {
-        "message": "强制重新加载"
-    },
-    "reloadtaball": {
-        "message": "重新加载该窗口的全部标签页"
     },
     "actionCategoryBookmark": {
         "message": "书签操作"
@@ -373,6 +376,9 @@
     },
     "optionsGoToOnCloseTabLeft": {
         "message": "左侧的标签页"
+    },
+    "optionsZoomInOutStep": {
+        "message": "缩放步长"
     },
     "optionsPageTitleRockerGesture": {
         "message": "摇杆手势"

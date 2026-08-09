@@ -405,6 +405,10 @@ class ExtensionOptions {
         await chrome.storage.sync.set({ 'options': this.#options });
     }
 
+    /**
+     * @summary Set the goToOnCloseTab option.
+     * @param {string} to - The tab to go to when closing a tab.
+     */
     async setGoToOnCloseTab(to) {
         if (!this.#options) {
             await this.loadFromStorage();
@@ -413,8 +417,32 @@ class ExtensionOptions {
         await chrome.storage.sync.set({ 'options': this.#options });
     }
 
+    /**
+     * @summary Get the goToOnCloseTab option.
+     * @returns {string} The tab to go to when closing a tab.
+     */
     get goToOnCloseTab() {
         return this.#options?.goToOnCloseTab ?? 'auto';
+    }
+
+    /**
+     * @summary Set the zoomInOutStep option.
+     * @param {number} step 
+     */
+    async setZoomInOutStep(step) {
+        if (!this.#options) {
+            await this.loadFromStorage();
+        }
+        this.#options.zoomInOutStep = step;
+        await chrome.storage.sync.set({ 'options': this.#options });
+    }
+
+    /**
+     * @summary Get the zoomInOutStep option.
+     * @returns {number} The step size for zooming in and out.
+     */
+    get zoomInOutStep() {
+        return this.#options?.zoomInOutStep ?? 25;
     }
 
     /**

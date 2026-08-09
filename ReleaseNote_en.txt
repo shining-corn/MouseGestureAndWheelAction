@@ -1,60 +1,18 @@
-Control tabs, windows, bookmarks, mute, change zoom factor, full screen, custom URLs, and more.
+Control tabs, windows, bookmarks, mute, change zoom level, full screen, custom URLs, and more.
 
+----
 Functions that can be performed
+
+Navigation
 - Go back
 - Go forward
-- Scroll up
-- Scroll down
-- Scroll left
-- Scroll right
-- Scroll to top
-- Scroll to bottom
-- Scroll to the leftmost
-- Scroll to the rightmost
-- Add tab to group
-- Remove tab from group
-- New tab
-- New tab (leftmost)
-- New tab (rightmost)
-- Duplicate tab
-- Pin tab
-- Close tab
-- Close tabs to the left
-- Close tabs to the right
-- Close other tabs
-- Reopen closed tab
 - Reload
 - Hard reload
-- Reload all tabs
-- Go to left tab
-- Go to right tab
-- Go to left tab (or the other side if at the edge)
-- Go to right tab (or the other side if at the edge)
-- Go to the leftmost tab
-- Go to the rightmost tab
-- Go to previous tab
-- Go to previous tab (loop)
-- Go to next tab
-- Go to next tab (loop)
-- Add to bookmarks bar
-- Add bookmark
-- Delete bookmark
-- New window
-- Close window
-- Close all windows
-- Maximize window
-- Minimize window
-- Fullscreen
-- Copy url
-- Copy title
-- Mute
-- Unmute
-- Toggle mute
-- Mute all tabs
-- Unmute all tabs
-- Zoom in
-- Zoom out
-- Reset to default zoom level
+- Reload all tabs in the same window
+- Go to parent directory
+- Go to root directory
+
+Link
 - Open link in new tab
 - Open link in new tab and activate
 - Open link in new window
@@ -71,40 +29,114 @@ Functions that can be performed
 - Open image in new tab (rightmost)
 - Open image in new tab and activate (leftmost)
 - Open image in new tab and activate (rightmost)
+
+Tab open/close
+- Close tab
+- Close tabs to the left
+- Close tabs to the right
+- Close other tabs
+- Reopen closed tab
+- New tab
+- New tab (leftmost)
+- New tab (rightmost)
+- Duplicate tab
+
+Tab manipulation
+- Pin tab
+- Add tab to group
+- Remove tab from group
+- Mute
+- Unmute
+- Toggle mute
+- Mute all tabs
+- Unmute all tabs
+- Zoom in
+- Zoom out
+- Reset zoom level
+
+Tab move
+- Go to left tab
+- Go to right tab
+- Go to left tab (or the other side if at the edge)
+- Go to right tab (or the other side if at the edge)
+- Go to the leftmost tab
+- Go to the rightmost tab
+- Go to previous tab
+- Go to previous tab (loop)
+- Go to next tab
+- Go to next tab (loop)
+
+Bookmarks
+- Add to bookmarks bar
+- Add bookmark
+- Delete bookmark
+
+Scroll
+- Scroll up
+- Scroll down
+- Scroll left
+- Scroll right
+- Scroll to top
+- Scroll to bottom
+- Scroll to the leftmost
+- Scroll to the rightmost
+
+Window
+- New window
+- Close window
+- Close all windows
+- Maximize window
+- Minimize window
+- Fullscreen
+
+Misc
+- Copy URL
+- Copy title
 - Open options
 - Save image as
 - Disable this extension on this tab
 - Open custom URL
 
-Version History
+----
+Other configurable items
+- Blacklist (disable mouse gestures and similar features on specified websites)
+- Customize the appearance of mouse gestures
+- Import and export
+- Add a new tab when the last tab is closed
+- Enable or disable diagonal mouse gestures
+
+----
+Version history
 1.0.0: Initial version
-1.1.0: Add bookmark function
+1.1.0: Enhanced bookmark functionality
 1.1.1: Bug fixes
 1.1.2: Bug fixes
-1.2.0: Add tab grouping function. Changed full screen and window maximization to a toggle system.
-1.3.0: Add functions such as opening links in a new tab. Add the ability to use clicks as mouse gesture actions.
-1.4.0: Add "Reload all tabs" and "Open custom URL". Add export/import function. Add customizing color function.
-1.4.1:Fixed a bug that "Close tabs on the right" and "Close other tabs" did not work on the leftmost tab. Add function that hide hint  on the options page permanently.
-1.5.0: Add "Go to previous/next tab" and "Open image in new tab/window". Add disable extension function by URL on the options page. Add "Change to open context menu on right double-click" for macOS/Linux. Add "Hide" to Mouse Gesture Color options. 
-1.6.0: Add Rocker Gesture. Modified to allow execution of 1.6.1: custom URLs without {} even if the text is not pre-selected.
-Fixed an issue where some functions did not work with wheel actions. Fixed an issue where extensions would not work correctly after a rocker gesture.
-1.6.1: Fixed problem with some actions not working with wheel actions. Fixed an issue with extensions behaving erratically after a rocker gesture.
-1.7.0: Improved behavior within IFRAME. Enhanced mouse gesture appearance customization options. Fixed mouse gesture “Click” not working. Enhancements to allow scrolling of elements as well as the parent window. Other minor bug fixes.
-1.7.1: Fixed a problem with right double-click not opening the context menu. Fixed an issue that prevented scrolling on some web sites. Fixed Issue with moving tabs using rocker gestures. 
-1.8.0: Enhancement to not close pinned tabs with multiple tab close action. Add "Pin tab", "Go to previous/next tab (loop)".  Changed rocker gesture to be performed when the mouse button is pressed instead of when it is released. 
-1.8.1: Fixed an issue where adding mouse gestures on the options page did not work. Fixed an issue where exporting on the options page did not work.
-1.9.0: Add option to create a new tab when the last tab is closed.
-1.10.0: Improved the options page. Fixed bookmark action. Improved 'close tab'. Fixed other minor details.
-1.11.0: Add option to specify behavior on closing tabs. Other minor functionality improvements.
-1.11.1: Fixed an issue where mouse gesture malfunction on certain websites.
-1.11.2: Fixed an issue where mouse gestures are not executed occasionally.
-1.12.0: Added a feature to embed page URLs in custom URLs. Added a feature to share settings information within an account. Added 'Arrows and Text Position' option. Added new actions for opening links and images in new tabs at leftmost and rightmost positions. Added “Go to selected URL” as a default option for Custom URL settings.
-1.13.0: Improved handling so that the context menu is less likely to appear after moving to a new tab with a rocker gesture. Added an option to enable diagonal mouse gestures.
-1.14.0: Add `New tab (leftmost)` and `New tab (rightmost)`
-1.15.0: Fixed an issue where links did not mark as visited when opened via mouse gestures.
-1.15.1: Fixed an issue where links opened via mouse gestures in Incognito Mode were added to history. Added Incognito Mode support for the “Open in New Window” feature. Fixed an issue where `Enabled mouse gesture` could not be turned OFF in the Options screen.
-1.16.0: Supports Simplified Chinese.
-1.17.0: Added a new action to save images by choosing a file name.
+1.2.0: Added tab grouping. Added a toggle behavior for fullscreen and window maximization.
+1.3.0: Added features such as opening links in new tabs. Added support for using clicks as mouse gesture actions.
+1.4.0: Added "Reload all tabs" and "Open custom URL". Added export/import functionality. Added color customization.
+1.4.1: Fixed an issue where "Close tabs to the right" and "Close other tabs" did not work on the leftmost tab. Added a feature to hide hints on the options page.
+1.5.0: Added "Go to previous/next tab" and "Open image in new tab/window". Added URL-based extension disabling. Added a feature to open the context menu on right double-click for macOS/Linux. Added a "Hide" option for mouse gesture colors.
+1.6.0: Added rocker gestures. Added support for executing custom URLs even when no text is pre-selected if the URL does not include {}.
+1.6.1: Fixed an issue where some actions did not work with wheel actions. Fixed an issue where the extension behaved abnormally after a rocker gesture.
+1.7.0: Improved behavior within iframes. Enhanced mouse gesture appearance customization. Fixed the mouse gesture "Click" action. Improved support for scrolling elements as well as the parent window. Fixed other minor bugs.
+1.7.1: Fixed an issue where right double-click did not open the context menu. Fixed a scrolling issue on some websites. Improved tab movement behavior with rocker gestures.
+1.8.0: Fixed multiple tab close actions so pinned tabs are not closed. Added "Pin tab" and "Go to previous/next tab (loop)". Changed rocker gestures to execute when the mouse button is pressed instead of released.
+1.8.1: Fixed an issue where mouse gestures could not be added on the options page. Fixed an issue where export on the options page did not work.
+1.9.0: Added an option to create a new tab when the last tab is closed.
+1.10.0: Improved the options page. Fixed bookmark-related actions. Improved tab closing behavior. Fixed other minor issues.
+1.11.0: Added an option to specify behavior when closing tabs. Improved other minor behavior.
+1.11.1: Fixed an issue where mouse gestures malfunctioned on certain websites.
+1.11.2: Fixed an issue where mouse gestures were occasionally not executed.
+1.12.0: Added the ability to embed the current page URL in custom URLs. Added support for sharing settings within a browser account. Added an option for arrow/text position. Added new actions for opening links and images in new tabs at the leftmost and rightmost positions. Added "Go to selected URL" as a default custom URL option.
+1.13.0: Improved handling so the context menu is less likely to appear after moving to a new tab with a rocker gesture. Added an option to enable diagonal mouse gestures.
+1.14.0: Added "New tab (leftmost)" and "New tab (rightmost)".
+1.15.0: Fixed an issue where links opened via mouse gestures were not marked as visited.
+1.15.1: Fixed an issue where links opened via mouse gestures in Incognito Mode were added to history. Added Incognito Mode support for the "Open in New Window" feature. Fixed an issue where "Enabled mouse gesture" could not be turned off in the options screen.
+1.16.0: Added support for Simplified Chinese.
+1.17.0: Added a "Go to parent directory" and "Go to root directory" action. Added a feature to customize the zoom in/out step size.
 
+----
 Repository
 https://github.com/shining-corn/MouseGestureAndWheelAction
+
+This extension is open source. It is free and contains no ads.

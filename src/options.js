@@ -515,6 +515,9 @@ function renderMouseGestureOptions(options) {
         const goToOnCloseTabElement = document.getElementById('go-to-on-close-tab');
         goToOnCloseTabElement.disabled = !enabledMouseGestureElement.checked;
 
+        const zoomInOutStepElement = document.getElementById('zoom-in-out-step');
+        zoomInOutStepElement.disabled = !enabledMouseGestureElement.checked;
+
         options.setEnabledMouseGesture(enabledMouseGestureElement.checked);
     });
 
@@ -628,6 +631,16 @@ function renderMouseGestureOptions(options) {
     goToOnCloseTabElement.disabled = !options.enabledMouseGesture;
     goToOnCloseTabElement.addEventListener('change', () => {
         options.setGoToOnCloseTab(goToOnCloseTabElement.value);
+    });
+
+    const zoomInOutStepElement = document.getElementById('zoom-in-out-step');
+    zoomInOutStepElement.value = options.zoomInOutStep;
+    zoomInOutStepElement.disabled = !options.enabledMouseGesture;
+    zoomInOutStepElement.addEventListener('change', () => {
+        const step = parseInt(zoomInOutStepElement.value);
+        if (step) {
+            options.setZoomInOutStep(step);
+        }
     });
 }
 
