@@ -242,6 +242,15 @@
     "saveimageas": {
         "message": "Save image as"
     },
+    "saveimage": {
+        "message": "Save image"
+    },
+    "savelinkas": {
+        "message": "Save link as"
+    },
+    "savelink": {
+        "message": "Save link"
+    },
     "actionCategoryMisc": {
         "message": "Misc"
     },
@@ -255,7 +264,7 @@
         "message": "Open options"
     },
     "disableextension": {
-        "message": "Disable this extension on this tab"
+        "message": "Temporarily disable this extension on this tab"
     },
     "actionCategoryCustomUrl": {
         "message": "Custom URL"

@@ -778,9 +778,36 @@ const mouseGestureActionCategories = [
             {
                 id: 'saveimageas',
                 function: (option) => {
-                    const imageUrl = option.src || option.url;
+                    const imageUrl = option.src;
                     if (imageUrl) {
-                        sendChromeMessage({ action: 'saveimageas', url: imageUrl });
+                        sendChromeMessage({ action: 'save', url: imageUrl, saveAs: true });
+                    }
+                },
+            },
+            {
+                id: 'saveimage',
+                function: (option) => {
+                    const imageUrl = option.src;
+                    if (imageUrl) {
+                        sendChromeMessage({ action: 'save', url: imageUrl, saveAs: false });
+                    }
+                },
+            },
+            {
+                id: 'savelinkas',
+                function: (option) => {
+                    const linkUrl = option.url;
+                    if (linkUrl) {
+                        sendChromeMessage({ action: 'save', url: linkUrl, saveAs: true });
+                    }
+                },
+            },
+            {
+                id: 'savelink',
+                function: (option) => {
+                    const linkUrl = option.url;
+                    if (linkUrl) {
+                        sendChromeMessage({ action: 'save', url: linkUrl, saveAs: false });
                     }
                 },
             },

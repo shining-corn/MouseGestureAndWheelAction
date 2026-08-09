@@ -36,8 +36,15 @@
         "storage",
         "sessions",
         "bookmarks",
-        "history",
+        "history"
+    ],
+    "optional_permissions": [
         "downloads"
+    ],
+    "optional_host_permissions": [
+        "http://*/*",
+        "https://*/*",
+        "file://*/*"
     ],
     "options_ui": {
         "page": "options.html",

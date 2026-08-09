@@ -121,45 +121,6 @@ function goToMostRightTab(allTabs, shouldPreventContextMenu) {
 }
 
 /**
- * @summary Get a suggested file name for an image download based on the URL.
- * @param {string} url - The URL of the image.
- * @returns {string} - The suggested file name.
- */
-function getSuggestedDownloadFilename(url) {
-    try {
-        const parsedUrl = new URL(url);
-        const pathname = parsedUrl.pathname || '/';
-        const basename = pathname.split('/').pop() || 'image';
-        const extensionMatch = basename.match(/\.([a-z0-9]+)$/i);
-        if (extensionMatch) {
-            return basename;
-        }
-
-        const lowerPath = pathname.toLowerCase();
-        if (lowerPath.endsWith('.png')) {
-            return 'image.png';
-        }
-        if (lowerPath.endsWith('.jpg') || lowerPath.endsWith('.jpeg')) {
-            return 'image.jpg';
-        }
-        if (lowerPath.endsWith('.gif')) {
-            return 'image.gif';
-        }
-        if (lowerPath.endsWith('.webp')) {
-            return 'image.webp';
-        }
-        if (lowerPath.endsWith('.svg')) {
-            return 'image.svg';
-        }
-
-        return 'image.png';
-    }
-    catch (_) {
-        return 'image.png';
-    }
-}
-
-/**
  * @summary Wrap chrome.downloads.download() with a result object that normalizes success and failure.
  * @param {{ url: string, saveAs?: boolean, filename?: string }} options - Download options.
  * @returns {Promise<{ success: boolean, id?: number, error?: string }>} Download result.
@@ -207,27 +168,6 @@ async function downloadResource(options) {
         };
 
         chrome.downloads.onChanged.addListener(listener);
-    });
-}
-
-/**
- * @summary Download an image with a browser-friendly suggested filename while allowing the caller to choose saveAs.
- * @param {{ url: string, saveAs?: boolean, filename?: string }} options - Image download options.
- * @returns {Promise<{ success: boolean, id?: number, error?: string }>} Download result.
- */
-async function downloadImage(options) {
-    const imageUrl = options.url;
-    if (!imageUrl) {
-        return {
-            success: false,
-            error: 'INVALID_URL',
-        };
-    }
-
-    return downloadResource({
-        url: imageUrl,
-        saveAs: options.saveAs ?? true,
-        filename: options.filename ?? getSuggestedDownloadFilename(imageUrl),
     });
 }
 
@@ -498,31 +438,49 @@ class MouseGestureService {
                     case 'gotonexttabloop':
                         this.goToNextTab(sender, true, request.shouldPreventContextMenu);
                         break;
-                    case 'saveimageas':
+                    case 'save':
                         if (request.url) {
                             (async () => {
-                                const result = await downloadImage({
-                                    url: request.url,
-                                    saveAs: true,
-                                });
+                                chrome.permissions.request({
+                                    permissions: ['downloads'],
+                                    origins: [
+                                        "http://*/*",
+                                        "https://*/*",
+                                        "file://*/*"
+                                    ]
+                                }, async (granted) => {
+                                    if (granted) {
+                                        try {
+                                            const result = await downloadResource({
+                                                url: request.url,
+                                                saveAs: request.saveAs ?? true,
+                                            });
 
-                                if (!result.success) {
-                                    switch (result.error) {
-                                        case 'SERVER_FORBIDDEN':
-                                            sendMessageToTabs({ type: 'show-error-message', message: chrome.i18n.getMessage('messageDownloadErrorServerForbidden') }, [sender.tab]);
-                                            break;
-                                        case 'USER_CANCELED':
-                                            // Do nothing
-                                            break;
-                                        case `USER_SHUTDOWN`:
-                                            // Do nothing
-                                            break;
-                                        default:
+                                            if (!result.success) {
+                                                switch (result.error) {
+                                                    case 'SERVER_FORBIDDEN':
+                                                        sendMessageToTabs({ type: 'show-error-message', message: chrome.i18n.getMessage('messageDownloadErrorServerForbidden') }, [sender.tab]);
+                                                        break;
+                                                    case 'USER_CANCELED':
+                                                        // Do nothing
+                                                        break;
+                                                    case `USER_SHUTDOWN`:
+                                                        // Do nothing
+                                                        break;
+                                                    default:
+                                                        const message = chrome.i18n.getMessage('messageDownloadErrorGeneric');
+                                                        sendMessageToTabs({ type: 'show-error-message', message: `${message} (${result.error})` }, [sender.tab]);
+                                                        break;
+                                                }
+                                            }
+                                        } catch (error) {
                                             const message = chrome.i18n.getMessage('messageDownloadErrorGeneric');
-                                            sendMessageToTabs({ type: 'show-error-message', message: `${message} (${result.error})` }, [sender.tab]);
-                                            break;
+                                            sendMessageToTabs({ type: 'show-error-message', message: `${message} (${error})` }, [sender.tab]);
+                                        }
+                                    } else {
+                                        // Do nothing since this is a user operation failure, do not display an error.
                                     }
-                                }
+                                });
                             })();
                         }
                         break;

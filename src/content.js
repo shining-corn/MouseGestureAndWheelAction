@@ -521,20 +521,29 @@ class MouseGestureAndWheelActionClient {
     setActionOptionsFromElement(element) {
         this.#target = element;
 
-        // get url and src attribute
-        this.#url = undefined;
-        this.#src = undefined;
-        let elem = element;
-        while (elem) {if (elem.href) {
-                this.#url = elem.href;
-                break;
+        // get src attribute
+        if (element.src) {
+            this.#src = element.src;
+        }
+        else if (element.tagName === 'OBJECT' && element.data) {
+            this.#src = element.data;
+        }
+        else {
+            const srcElement = element.querySelector('[src]');
+            if (srcElement && srcElement.src) {
+                this.#src = srcElement.src;
             }
-            else if (elem.src) {
-                this.#src = elem.src;
-                break;
+            else {
+                this.#src = undefined;
             }
+        }
 
-            elem = elem.parentNode;
+        // get url
+        for (let i = element; i; i = i.parentNode) {
+            if (i.href) {
+                this.#url = i.href;
+                break;
+            }
         }
     }
 
