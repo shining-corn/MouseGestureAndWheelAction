@@ -36,12 +36,12 @@
         "storage",
         "sessions",
         "bookmarks",
-        "history"
+        "history",
+        "downloads"
     ],
-    "optional_permissions": [
-        "downloads",
-        "activeTab",
-    ]
+    "host_permissions": [
+        "<all_urls>"
+    ],
     "options_ui": {
         "page": "options.html",
         "open_in_tab": true
