@@ -236,6 +236,21 @@
     "fullscreenwindow": {
         "message": "全屏"
     },
+    "actionCategorySave": {
+        "message": "保存"
+    },
+    "saveimageas": {
+        "message": "图片另存为"
+    },
+    "saveimage": {
+        "message": "保存图片"
+    },
+    "savelinkas": {
+        "message": "链接另存为"
+    },
+    "savelink": {
+        "message": "保存链接"
+    },
     "actionCategoryMisc": {
         "message": "其他操作"
     },
@@ -249,7 +264,7 @@
         "message": "打开扩展程序设置页面"
     },
     "disableextension": {
-        "message": "在当前标签页禁用该扩展"
+        "message": "在当前标签页临时禁用该扩展"
     },
     "actionCategoryCustomUrl": {
         "message": "自定义链接操作"
@@ -271,6 +286,12 @@
     },
     "messageExtensionHasBeenUpdated": {
         "message": "由于扩展已更新，无法在该页面上继续使用鼠标手势。\n请重新加载后再试。"
+    },
+    "messageDownloadErrorGeneric": {
+        "message": "下载失败。"
+    },
+    "messageDownloadErrorServerForbidden": {
+        "message": "服务器禁止下载。"
     },
     "strBookmarkDialogTitleAdd": {
         "message": "已添加书签"
