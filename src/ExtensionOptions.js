@@ -109,6 +109,7 @@ class ExtensionOptions {
             enabledMouseGesture: true,
             gestureSettings: [
                 { gesture: 'Click ', action: 'openlinkinnwetabandactivate' },
+                { gesture: 'Click Click ', action: 'customurl:Google'},
                 { gesture: '←', action: 'back' },
                 { gesture: '→', action: 'forward' },
                 { gesture: '↑', action: 'scrollup' },
@@ -117,6 +118,7 @@ class ExtensionOptions {
                 { gesture: '→↓', action: 'scrolltobottom' },
                 { gesture: '↓→', action: 'closetab' },
                 { gesture: '↓←', action: 'reopenclosedtab' },
+                { gesture: '↓↑', action: 'fullscreenwindow'},
                 { gesture: '↑↓', action: 'reloadtab' },
                 { gesture: '↑↓↑', action: 'reloadtabhard' },
                 { gesture: '↑←', action: 'gotolefttabwithloop' },
