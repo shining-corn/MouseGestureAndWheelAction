@@ -791,6 +791,9 @@ const mouseGestureActionCategories = [
                     if (imageUrl) {
                         sendChromeMessage({ action: 'save', url: imageUrl, saveAs: false });
                     }
+                    else {
+                        window.alert(chrome.i18n.getMessage('messageDownloadableContentNotFound'));
+                    }
                 },
             },
             {
@@ -809,6 +812,9 @@ const mouseGestureActionCategories = [
                     if (linkUrl) {
                         sendChromeMessage({ action: 'save', url: linkUrl, saveAs: false });
                     }
+                    else {
+                        window.alert(chrome.i18n.getMessage('messageDownloadableContentNotFound'));
+                    }
                 },
             },
         ]
@@ -822,10 +828,10 @@ const mouseGestureActionCategories = [
                     if (isInRootWindow()) {
                         if (navigator.clipboard) {
                             navigator.clipboard.writeText(document.location.href).then(() => { });
-                            alert(`${chrome.i18n.getMessage('messageCopied')}\n ${document.location.href}`);
+                            window.alert(`${chrome.i18n.getMessage('messageCopied')}\n ${document.location.href}`);
                         }
                         else {
-                            alert(chrome.i18n.getMessage('messageCopyError'));
+                            window.alert(chrome.i18n.getMessage('messageCopyError'));
                         }
                     }
                     else {
@@ -845,10 +851,10 @@ const mouseGestureActionCategories = [
                     if (isInRootWindow()) {
                         if (navigator.clipboard) {
                             navigator.clipboard.writeText(document.title).then(() => { });
-                            alert(`${chrome.i18n.getMessage('messageCopied')}\n ${document.title}`);
+                            window.alert(`${chrome.i18n.getMessage('messageCopied')}\n ${document.title}`);
                         }
                         else {
-                            alert(chrome.i18n.getMessage('messageCopyError'));
+                            window.alert(chrome.i18n.getMessage('messageCopyError'));
                         }
                     }
                     else {
