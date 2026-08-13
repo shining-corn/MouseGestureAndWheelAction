@@ -293,6 +293,9 @@
     "messageDownloadErrorServerForbidden": {
         "message": "Download is forbidden by the server."
     },
+    "messageDownloadableContentNotFound": {
+        "message": "Downloadable content not found."
+    },
     "strBookmarkDialogTitleAdd": {
         "message": "Add Bookmark"
     },

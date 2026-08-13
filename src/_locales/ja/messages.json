@@ -243,7 +243,7 @@
         "message": "名前を付けて画像を保存"
     },
     "saveimage": {
-        "message": "画像を保存（自動）"
+        "message": "画像を保存"
     },
     "savelinkas": {
         "message": "名前を付けてリンク先を保存"
@@ -292,6 +292,9 @@
     },
     "messageDownloadErrorServerForbidden": {
         "message": "サーバーからダウンロードを禁止されています。"
+    },
+    "messageDownloadableContentNotFound": {
+        "message": "ダウンロード可能なコンテンツが見つかりません。"
     },
     "strBookmarkDialogTitleAdd": {
         "message": "ブックマークを追加"

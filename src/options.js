@@ -1117,7 +1117,7 @@ function renderImportExportOptions(options) {
     const copyToClipboardButtonElement = document.getElementById('import-export-copy-to-clipboard');
     copyToClipboardButtonElement.addEventListener('click', () => {
         navigator.clipboard.writeText(JSON.stringify(options.options));
-        alert(chrome.i18n.getMessage('messageCopied'));
+        window.alert(chrome.i18n.getMessage('messageCopied'));
     });
 
     const saveButtonElement = document.getElementById('import-export-save');
