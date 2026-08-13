@@ -105,7 +105,7 @@ Misc
 
 ----
 Other configurable items
-- Blacklist (disable mouse gestures and similar features on specified websites)
+- Disable mouse gestures and similar features on specified websites
 - Customize the appearance of mouse gestures
 - Import and export
 - Add a new tab when the last tab is closed

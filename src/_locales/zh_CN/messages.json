@@ -293,6 +293,9 @@
     "messageDownloadErrorServerForbidden": {
         "message": "服务器禁止下载。"
     },
+    "messageDownloadableContentNotFound": {
+        "message": "未找到可下载的内容。"
+    },
     "strBookmarkDialogTitleAdd": {
         "message": "已添加书签"
     },
