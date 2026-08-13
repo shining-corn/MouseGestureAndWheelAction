@@ -89,12 +89,18 @@ Window
 - Minimize window
 - Fullscreen
 
+Save
+・Save image as (If it is not an image, it will attempt to save any element with a src attribute, such as <video>.)
+・Save Image (Same as above)
+・Save Link As
+・Save Link
+
 Misc
 - Copy URL
 - Copy title
 - Open options
 - Save image as
-- Disable this extension on this tab
+- Temporarily disable this extension on this tab
 - Open custom URL
 
 ----
@@ -133,7 +139,7 @@ Version history
 1.15.0: Fixed an issue where links opened via mouse gestures were not marked as visited.
 1.15.1: Fixed an issue where links opened via mouse gestures in Incognito Mode were added to history. Added Incognito Mode support for the "Open in New Window" feature. Fixed an issue where "Enabled mouse gesture" could not be turned off in the options screen.
 1.16.0: Added support for Simplified Chinese.
-1.17.0: Added a "Go to parent directory" and "Go to root directory" action. Added a feature to customize the zoom in/out step size.
+1.17.0: Added a "Save image as", "Save image", "Save link as", "Save link", "Go to parent directory", "Go to root directory" action. Added a feature to customize the zoom in/out step size.
 
 ----
 Repository

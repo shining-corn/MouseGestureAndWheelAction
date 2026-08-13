@@ -236,6 +236,21 @@
     "fullscreenwindow": {
         "message": "フルスクリーン"
     },
+    "actionCategorySave": {
+        "message": "保存"
+    },
+    "saveimageas": {
+        "message": "名前を付けて画像を保存"
+    },
+    "saveimage": {
+        "message": "画像を保存（自動）"
+    },
+    "savelinkas": {
+        "message": "名前を付けてリンク先を保存"
+    },
+    "savelink": {
+        "message": "リンク先を保存"
+    },
     "actionCategoryMisc": {
         "message": "その他"
     },
@@ -252,7 +267,7 @@
         "message": "オプションを開く"
     },
     "disableextension": {
-        "message": "このタブでこの拡張機能を無効化"
+        "message": "このタブでこの拡張機能を一時的に無効化"
     },
     "actionCategoryCustomUrl": {
         "message": "カスタムURL"
@@ -274,6 +289,12 @@
     },
     "messageExtensionHasBeenUpdated": {
         "message": "拡張機能がバージョンアップされたため、この画面ではマウスジェスチャーが動作しなくなりました。\n画面をリロードしてください。"
+    },
+    "messageDownloadErrorGeneric": {
+        "message": "ダウンロードに失敗しました。"
+    },
+    "messageDownloadErrorServerForbidden": {
+        "message": "サーバーからダウンロードを禁止されています。"
     },
     "strBookmarkDialogTitleAdd": {
         "message": "ブックマークを追加"

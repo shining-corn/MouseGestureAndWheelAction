@@ -236,6 +236,21 @@
     "fullscreenwindow": {
         "message": "Fullscreen"
     },
+    "actionCategorySave": {
+        "message": "Save"
+    },
+    "saveimageas": {
+        "message": "Save image as"
+    },
+    "saveimage": {
+        "message": "Save image"
+    },
+    "savelinkas": {
+        "message": "Save link as"
+    },
+    "savelink": {
+        "message": "Save link"
+    },
     "actionCategoryMisc": {
         "message": "Misc"
     },
@@ -252,7 +267,7 @@
         "message": "Open options"
     },
     "disableextension": {
-        "message": "Disable this extension on this tab"
+        "message": "Temporarily disable this extension on this tab"
     },
     "actionCategoryCustomUrl": {
         "message": "Custom URL"
@@ -274,6 +289,12 @@
     },
     "messageExtensionHasBeenUpdated": {
         "message": "Because the extension has been updated, mouse gestures no longer work on this screen.\nPlease reload the web page."
+    },
+    "messageDownloadErrorGeneric": {
+        "message": "Failed to download."
+    },
+    "messageDownloadErrorServerForbidden": {
+        "message": "Download is forbidden by the server."
     },
     "strBookmarkDialogTitleAdd": {
         "message": "Add Bookmark"
