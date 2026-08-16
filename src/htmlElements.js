@@ -338,6 +338,7 @@ class ShowArrowsElement {
                 this.#actionNameArea.innerText = chrome.i18n.getMessage(action);
             }
             this.#actionNameArea.style.display = 'block';
+            this.#actionNameArea.style.backgroundColor = this.#options.gestureBackgroundColor;
         }
         else {
             this.#actionNameArea.innerText = '';
